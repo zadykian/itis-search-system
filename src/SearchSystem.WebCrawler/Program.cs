@@ -3,7 +3,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using AngleSharp;
-using AngleSharp.Html.Dom;
 
 namespace SearchSystem.WebCrawler
 {
@@ -17,6 +16,7 @@ namespace SearchSystem.WebCrawler
 			}
 
 			var webPage = await GetWebPage(rootUri);
+			var words = webPage.AllVisibleWords();
 		}
 
 		private static bool TryGetRootUri(
@@ -47,15 +47,7 @@ namespace SearchSystem.WebCrawler
 				.New(configuration)
 				.OpenAsync(pageUri.ToString());
 
-			var urls = document
-				.All
-				.OfType<IHtmlAnchorElement>()
-				.Select(element => element.Href)
-				.Where(uriString => Uri.TryCreate(uriString, UriKind.Absolute, out _) && uriString != pageUri.ToString())
-				.Select(uriString => new Uri(uriString));
-
-			var content = document.ToHtml();
-			return new WebPage(pageUri, content, urls);
+			return new WebPage(document);
 		}
 	}
 }
