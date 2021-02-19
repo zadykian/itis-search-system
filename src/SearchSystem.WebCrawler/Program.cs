@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using AngleSharp;
@@ -18,7 +19,9 @@ namespace SearchSystem.WebCrawler
 			var webPage = await GetWebPage(rootUri);
 		}
 
-		private static bool TryGetRootUri(string[] args, out Uri rootUri)
+		private static bool TryGetRootUri(
+			string[] args,
+			[NotNullWhen(returnValue: true)] out Uri? rootUri)
 		{
 			if (!args.Any())
 			{
