@@ -8,17 +8,29 @@ using AngleSharp.Html.Dom;
 
 namespace SearchSystem.WebCrawler
 {
+	/// <summary>
+	/// Web page.
+	/// </summary>
 	public class WebPage
 	{
 		private readonly IDocument document;
 
-		public WebPage(IDocument document) => this.document = document;
+		protected WebPage(IDocument document) => this.document = document;
 
-		public Uri Uri => new (document.Url);
+		/// <summary>
+		/// Page URI.
+		/// </summary>
+		public Uri Url => new (document.Url);
 
-		public string RawContent() => document.ToHtml();
+		/// <summary>
+		/// Page raw content. 
+		/// </summary>
+		public virtual string RawContent() => document.ToHtml();
 
-		public IReadOnlyCollection<Uri> ChildrenUrls()
+		/// <summary>
+		/// Page child URLs. 
+		/// </summary>
+		public virtual IReadOnlyCollection<Uri> ChildUrls()
 			=> document
 				.All
 				.OfType<IHtmlAnchorElement>()
@@ -27,7 +39,10 @@ namespace SearchSystem.WebCrawler
 				.Select(uriString => new Uri(uriString))
 				.ToImmutableArray();
 
-		public IEnumerable<string> AllVisibleWords()
+		/// <summary>
+		/// All words visible to user. 
+		/// </summary>
+		public virtual IReadOnlyCollection<string> AllVisibleWords()
 			=> document
 				.All
 				.Where(element => element

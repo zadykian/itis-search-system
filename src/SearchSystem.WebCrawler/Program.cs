@@ -47,7 +47,7 @@ namespace SearchSystem.WebCrawler
 				.New(configuration)
 				.OpenAsync(pageUri.ToString());
 
-			return new WebPage(document);
+			return new CachedWebPage(document);
 		}
 	}
 }
