@@ -11,7 +11,7 @@ namespace SearchSystem.WebCrawler
 	/// <summary>
 	/// Web page.
 	/// </summary>
-	public class WebPage
+	public class WebPage : IEquatable<WebPage>
 	{
 		private readonly IDocument document;
 
@@ -54,5 +54,28 @@ namespace SearchSystem.WebCrawler
 				.Where(elementText => !string.IsNullOrWhiteSpace(elementText))
 				.SelectMany(elementText => elementText.Split(separator: ' '))
 				.ToImmutableArray();
+
+		/// <inheritdoc />
+		public bool Equals(WebPage? other)
+		{
+			if (ReferenceEquals(null, other)) return false;
+			if (ReferenceEquals(this, other)) return true;
+			return document.Url.Equals(other.document.Url);
+		}
+
+		/// <inheritdoc />
+		public override bool Equals(object? obj)
+		{
+			if (ReferenceEquals(null, obj)) return false;
+			if (ReferenceEquals(this, obj)) return true;
+			if (obj.GetType() != this.GetType()) return false;
+			return Equals((WebPage) obj);
+		}
+
+		/// <inheritdoc />
+		public override int GetHashCode() => document.Url.GetHashCode();
+
+		/// <inheritdoc />
+		public override string ToString() => document.Url;
 	}
 }
