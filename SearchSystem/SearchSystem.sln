@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "SearchSystem.App", "SearchSystem.App\SearchSystem.App.fsproj", "{4E861F4D-786D-4C44-ACF1-C277FD31B8BA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4E861F4D-786D-4C44-ACF1-C277FD31B8BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E861F4D-786D-4C44-ACF1-C277FD31B8BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E861F4D-786D-4C44-ACF1-C277FD31B8BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E861F4D-786D-4C44-ACF1-C277FD31B8BA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
