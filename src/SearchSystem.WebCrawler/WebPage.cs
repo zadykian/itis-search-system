@@ -11,7 +11,7 @@ namespace SearchSystem.WebCrawler
 	/// <summary>
 	/// Web page.
 	/// </summary>
-	public class WebPage : IEquatable<WebPage>
+	internal class WebPage : IEquatable<WebPage>
 	{
 		private readonly IDocument document;
 

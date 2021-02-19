@@ -5,7 +5,7 @@ using AngleSharp.Dom;
 namespace SearchSystem.WebCrawler
 {
 	/// <inheritdoc />
-	public class CachedWebPage : WebPage
+	internal class CachedWebPage : WebPage
 	{
 		private string? rawContent;
 		private IReadOnlyCollection<Uri>? childUrls;
