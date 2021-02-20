@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using AngleSharp;
+using System.Text.RegularExpressions;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 
@@ -13,7 +13,7 @@ namespace SearchSystem.WebCrawler
 	/// </summary>
 	internal class WebPage : IEquatable<WebPage>
 	{
-		private readonly IDocument document;
+		public readonly IDocument document;
 
 		protected WebPage(IDocument document) => this.document = document;
 
@@ -21,11 +21,6 @@ namespace SearchSystem.WebCrawler
 		/// Page URI.
 		/// </summary>
 		public Uri Url => new (document.Url);
-
-		/// <summary>
-		/// Page raw content. 
-		/// </summary>
-		public virtual string RawContent() => document.ToHtml();
 
 		/// <summary>
 		/// Page child URLs. 
@@ -40,19 +35,20 @@ namespace SearchSystem.WebCrawler
 				.ToImmutableArray();
 
 		/// <summary>
-		/// All words visible to user. 
+		/// All text lines visible to user. 
 		/// </summary>
-		public virtual IReadOnlyCollection<string> AllVisibleWords()
+		public virtual IReadOnlyCollection<string> AllVisibleLines()
 			=> document
 				.All
 				.Where(element => element
 					is IHtmlSpanElement
-					or IHtmlDivElement
 					or IHtmlTitleElement
-					or IHtmlAnchorElement)
-				.Select(element => element.Text())
+					or IHtmlAnchorElement
+					|| element is IHtmlListItemElement && element.ChildElementCount == 1
+					)
+				.Select(element => Regex.Replace(element.Text(), @"\s+", " "))
 				.Where(elementText => !string.IsNullOrWhiteSpace(elementText))
-				.SelectMany(elementText => elementText.Split(separator: ' '))
+				.Distinct()
 				.ToImmutableArray();
 
 		/// <inheritdoc />

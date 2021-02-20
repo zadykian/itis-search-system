@@ -27,7 +27,10 @@ namespace SearchSystem.WebCrawler
 
 			await webPages
 				.Download(rootUri)
-				.Where(page => page.AllVisibleWords().Count >= Parameters.WordsPerPage)
+				.Where(page => page
+					.AllVisibleLines()
+					.SelectMany(line => line.Split(separator: ' '))
+					.Count() >= Parameters.WordsPerPage)
 				.Distinct()
 				.Take((int) Parameters.TotalPages)
 				.Zip(AsyncEnumerable.Range(start: 0, (int) Parameters.TotalPages))
@@ -37,16 +40,19 @@ namespace SearchSystem.WebCrawler
 
 					var currentUrl = $"{index}. {webPage.Url}";
 					await textWriter.WriteLineAsync(currentUrl);
+					await textWriter.FlushAsync();
 					Console.WriteLine($"'{currentUrl}' is saved.");
 
 					var currentFilePath = Path.Combine(destinationDirectory, $"{index}.txt");
-					await File.AppendAllTextAsync(currentFilePath, webPage.RawContent());
+					await File.AppendAllLinesAsync(currentFilePath, webPage.AllVisibleLines());
 				});
+
+			Console.WriteLine("done.");
 		}
 
 		private static string GetDestinationDirectory()
 		{
-			var destinationDirectory = Path.Combine(Environment.CurrentDirectory, "pages");
+			var destinationDirectory = Path.Combine(Environment.CurrentDirectory, "pages", DateTime.Now.ToString("s"));
 			Directory.CreateDirectory(destinationDirectory);
 			return destinationDirectory;
 		}

@@ -7,7 +7,6 @@ namespace SearchSystem.WebCrawler
 	/// <inheritdoc />
 	internal class CachedWebPage : WebPage
 	{
-		private string? rawContent;
 		private IReadOnlyCollection<Uri>? childUrls;
 		private IReadOnlyCollection<string>? allVisibleWords;
 
@@ -16,12 +15,9 @@ namespace SearchSystem.WebCrawler
 		}
 
 		/// <inheritdoc />
-		public override string RawContent() => rawContent ??= base.RawContent();
-
-		/// <inheritdoc />
 		public override IReadOnlyCollection<Uri> ChildUrls() => childUrls ??= base.ChildUrls();
 
 		/// <inheritdoc />
-		public override IReadOnlyCollection<string> AllVisibleWords() => allVisibleWords ??= base.AllVisibleWords();
+		public override IReadOnlyCollection<string> AllVisibleLines() => allVisibleWords ??= base.AllVisibleLines();
 	}
 }
