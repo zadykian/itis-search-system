@@ -5,8 +5,14 @@ using System.Threading.Tasks;
 
 namespace SearchSystem.WebCrawler
 {
+	/// <summary>
+	/// Application entry point.
+	/// </summary>
 	internal static class Program
 	{
+		/// <summary>
+		/// Entry point method. 
+		/// </summary>
 		private static async Task Main(string[] args)
 		{
 			if (!TryGetRootUri(args, out var rootUri))

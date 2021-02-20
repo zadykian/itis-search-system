@@ -14,7 +14,7 @@ namespace SearchSystem.WebCrawler
 		private readonly Parameters parameters = new();
 
 		/// <summary>
-		/// Save web pages to destination directory. 
+		/// Get web pages which satisfy required conditions.
 		/// </summary>
 		public IAsyncEnumerable<WebPage> CrawlThrough(Uri rootUri)
 			=> webPages

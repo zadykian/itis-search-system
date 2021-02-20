@@ -7,10 +7,16 @@ using SearchSystem.WebCrawler.Pages;
 
 namespace SearchSystem.WebCrawler
 {
+	/// <summary>
+	/// File system representation.
+	/// </summary>
 	internal class FileSystem
 	{
 		private readonly Parameters parameters = new();
 
+		/// <summary>
+		/// Save web pages to file system. 
+		/// </summary>
 		public async Task SaveWebPagesAsync(IAsyncEnumerable<WebPage> webPages)
 		{
 			var destinationDirectory = GetDestinationDirectory();
@@ -39,6 +45,9 @@ namespace SearchSystem.WebCrawler
 			Console.WriteLine("done.");
 		}
 
+		/// <summary>
+		/// Get full path to destination directory. 
+		/// </summary>
 		private static string GetDestinationDirectory()
 		{
 			var destinationDirectoryPath = Path.Combine(
