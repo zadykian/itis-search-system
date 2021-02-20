@@ -13,7 +13,7 @@ namespace SearchSystem.WebCrawler
 	/// </summary>
 	internal class WebPage : IEquatable<WebPage>
 	{
-		public readonly IDocument document;
+		private readonly IDocument document;
 
 		protected WebPage(IDocument document) => this.document = document;
 
