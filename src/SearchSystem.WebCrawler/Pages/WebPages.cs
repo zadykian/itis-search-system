@@ -3,14 +3,16 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using AngleSharp;
 
-namespace SearchSystem.WebCrawler
+namespace SearchSystem.WebCrawler.Pages
 {
 	internal class WebPages
 	{
 		/// <summary>
 		/// Download web page located at <paramref name="pageUri"/> recursively with referenced ones.
 		/// </summary>
-		public async IAsyncEnumerable<WebPage> Download(Uri pageUri, bool withCurrent = true)
+		public IAsyncEnumerable<WebPage> Download(Uri pageUri) => DownloadPages(pageUri, withCurrent: true);
+		
+		private static async IAsyncEnumerable<WebPage> DownloadPages(Uri pageUri, bool withCurrent = true)
 		{
 			var currentPage = await DownloadSingle(pageUri);
 
@@ -26,12 +28,13 @@ namespace SearchSystem.WebCrawler
 
 			foreach (var childUrl in currentPage.ChildUrls())
 			{
-				await foreach (var childPage in Download(childUrl, withCurrent: false))
+				await foreach (var childPage in DownloadPages(childUrl, withCurrent: false))
 				{
 					yield return childPage;
 				}
 			}
 		}
+
 
 		/// <summary>
 		/// Download web page located at <paramref name="pageUri"/>.

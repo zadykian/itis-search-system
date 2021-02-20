@@ -1,0 +1,53 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using SearchSystem.WebCrawler.Pages;
+
+namespace SearchSystem.WebCrawler
+{
+	internal class FileSystem
+	{
+		private readonly Parameters parameters = new();
+
+		public async Task SaveWebPagesAsync(IAsyncEnumerable<WebPage> webPages)
+		{
+			var destinationDirectory = GetDestinationDirectory();
+
+			var indexFileStream = File.Open(
+				Path.Combine(destinationDirectory, "index.txt"),
+				FileMode.OpenOrCreate);
+
+			await using var textWriter = new StreamWriter(indexFileStream);
+
+			await webPages
+				.Zip(AsyncEnumerable.Range(start: 0, (int) parameters.TotalPages))
+				.ForEachAwaitAsync(async tuple =>
+				{
+					var (webPage, index) = tuple;
+
+					var currentUrl = $"{index}. {webPage.Url}";
+					await textWriter.WriteLineAsync(currentUrl);
+					await textWriter.FlushAsync();
+					Console.WriteLine($"'{currentUrl}' is saved.");
+
+					var currentFilePath = Path.Combine(destinationDirectory, $"{index}.txt");
+					await File.AppendAllLinesAsync(currentFilePath, webPage.AllVisibleLines());
+				});
+
+			Console.WriteLine("done.");
+		}
+
+		private static string GetDestinationDirectory()
+		{
+			var destinationDirectoryPath = Path.Combine(
+				Environment.CurrentDirectory,
+				"pages",
+				DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss-fff"));
+
+			Directory.CreateDirectory(destinationDirectoryPath);
+			return destinationDirectoryPath;
+		}
+	}
+}

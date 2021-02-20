@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 
-namespace SearchSystem.WebCrawler
+namespace SearchSystem.WebCrawler.Pages
 {
 	/// <summary>
 	/// Web page.

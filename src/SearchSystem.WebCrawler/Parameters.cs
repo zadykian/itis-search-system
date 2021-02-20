@@ -3,16 +3,16 @@ namespace SearchSystem.WebCrawler
 	/// <summary>
 	/// Application parameters.
 	/// </summary>
-	internal static class Parameters
+	internal class Parameters
 	{
 		/// <summary>
 		/// Required words per page.
 		/// </summary>
-		public const uint WordsPerPage = 1000;
+		public uint WordsPerPage => 1000;
 
 		/// <summary>
 		/// Total count of pages to be downloaded.
 		/// </summary>
-		public const uint TotalPages = 100;
+		public uint TotalPages => 100;
 	}
 }

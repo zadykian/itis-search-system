@@ -9,7 +9,13 @@ namespace SearchSystem.WebCrawler
 	{
 		private static async Task Main(string[] args)
 		{
-			if (TryGetRootUri(args, out var rootUri)) await new Crawler().SaveWebPages(rootUri);
+			if (!TryGetRootUri(args, out var rootUri))
+			{
+				return;
+			}
+
+			var webPages = new Crawler().CrawlThrough(rootUri);
+			await new FileSystem().SaveWebPagesAsync(webPages);
 		}
 
 		/// <summary>
