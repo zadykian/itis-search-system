@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using AngleSharp.Dom;
+using HtmlAgilityPack;
 
 namespace SearchSystem.WebCrawler.Pages
 {
@@ -10,7 +10,7 @@ namespace SearchSystem.WebCrawler.Pages
 		private IReadOnlyCollection<Uri>? childUrls;
 		private IReadOnlyCollection<string>? allVisibleWords;
 
-		public CachedWebPage(IDocument document) : base(document)
+		public CachedWebPage(Uri pageUrl, HtmlDocument htmlDocument) : base(pageUrl, htmlDocument)
 		{
 		}
 
