@@ -31,8 +31,8 @@ namespace SearchSystem.WebCrawler.Pages
 		public virtual IReadOnlyCollection<Uri> ChildUrls()
 			=> htmlDocument
 				.DocumentNode
-				.SelectNodes("//cite")
-				.Select(htmlNode => htmlNode.InnerText)
+				.SelectNodes("//a[@href]")
+				.Select(htmlNode => htmlNode.GetAttributeValue("href", string.Empty))
 				.Where(uriString => Uri.TryCreate(uriString, UriKind.Absolute, out _) && uriString != Url.ToString() && uriString.StartsWith("http"))
 				.Distinct()
 				.Select(uriString => new Uri(uriString))
@@ -42,20 +42,6 @@ namespace SearchSystem.WebCrawler.Pages
 		/// All text lines visible to user. 
 		/// </summary>
 		public virtual IReadOnlyCollection<string> AllVisibleLines()
-			// => document
-			// 	.All
-			// 	// .Where(element => element
-			// 	// 	is IHtmlSpanElement
-			// 	// 	or IHtmlTitleElement
-			// 	// 	or IHtmlAnchorElement
-			// 	// 	or IHtmlDivElement
-			// 	// 	or IHtmlListItemElement)
-			// 	.Where(element => element is not IHtmlScriptElement)
-			// 	.Where(element => element.NodeType == NodeType.Text)
-			// 	//.Where(element => Regex.IsMatch(element.InnerHtml.Trim(), @"^(?!.*<[^>]+>).*"))
-			// 	.Select(element => Regex.Replace(element.Text(), @"\s+", " "))
-			// 	.Where(elementText => !string.IsNullOrWhiteSpace(elementText))
-			// 	.ToImmutableArray();
 			=> htmlDocument
 				.DocumentNode
 				.SelectNodes("//text()")
