@@ -33,7 +33,7 @@ namespace SearchSystem.WebCrawler
 				{
 					var (webPage, index) = tuple;
 
-					var currentUrl = $"{index}. {webPage.Url}";
+					var currentUrl = $"{index}. {webPage.Uri}";
 					await textWriter.WriteLineAsync(currentUrl);
 					await textWriter.FlushAsync();
 					Console.WriteLine($"'{currentUrl}' is saved.");

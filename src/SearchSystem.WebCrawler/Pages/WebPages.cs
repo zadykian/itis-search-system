@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using HtmlAgilityPack;
+using AngleSharp;
 
 namespace SearchSystem.WebCrawler.Pages
 {
@@ -43,10 +43,14 @@ namespace SearchSystem.WebCrawler.Pages
 		/// Download web page located at <paramref name="pageUri"/>.
 		/// </summary>
 		private static async Task<WebPage> DownloadSingle(Uri pageUri)
-		{
-			Console.WriteLine($"{pageUri} is downloaded.");
-			var htmlDocument = await new HtmlWeb().LoadFromWebAsync(pageUri.ToString());
-			return new CachedWebPage(pageUri, htmlDocument);
+		{ 
+			var configuration = Configuration.Default.WithDefaultLoader();
+
+			var document = await BrowsingContext
+				.New(configuration)
+				.OpenAsync(pageUri.ToString());
+
+			return new CachedWebPage(document);
 		}
 	}
 }

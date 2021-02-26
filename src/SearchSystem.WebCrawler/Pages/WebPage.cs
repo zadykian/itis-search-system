@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text.RegularExpressions;
-using HtmlAgilityPack;
+using AngleSharp.Dom;
+using AngleSharp.Html.Dom;
 
 namespace SearchSystem.WebCrawler.Pages
 {
@@ -12,29 +13,25 @@ namespace SearchSystem.WebCrawler.Pages
 	/// </summary>
 	internal class WebPage : IEquatable<WebPage>
 	{
-		private readonly HtmlDocument htmlDocument;
+		private readonly IDocument document;
 
-		protected WebPage(Uri pageUrl, HtmlDocument htmlDocument)
-		{
-			Url = pageUrl;
-			this.htmlDocument = htmlDocument;
-		}
+		protected WebPage(IDocument document) => this.document = document;
 
 		/// <summary>
 		/// Page URI.
 		/// </summary>
-		public Uri Url { get; }
+		public Uri Uri => new (document.Url);
 
 		/// <summary>
 		/// Page child URLs. 
 		/// </summary>
 		public virtual IReadOnlyCollection<Uri> ChildUrls()
-			=> htmlDocument
-				.DocumentNode
-				.SelectNodes("//a[@href]")
-				.Select(htmlNode => htmlNode.GetAttributeValue("href", string.Empty))
-				.Where(uriString => Uri.TryCreate(uriString, UriKind.Absolute, out _) && uriString != Url.ToString() && uriString.StartsWith("http"))
-				.Distinct()
+			=> document
+				.All
+				.OfType<IHtmlAnchorElement>()
+				.Where(anchorElement => anchorElement.ClassName is null)
+				.Select(element => element.Href)
+				.Where(uriString => Uri.TryCreate(uriString, UriKind.Absolute, out var uri) && uri != Uri)
 				.Select(uriString => new Uri(uriString))
 				.ToImmutableArray();
 
@@ -42,19 +39,26 @@ namespace SearchSystem.WebCrawler.Pages
 		/// All text lines visible to user. 
 		/// </summary>
 		public virtual IReadOnlyCollection<string> AllVisibleLines()
-			=> htmlDocument
-				.DocumentNode
-				.SelectNodes("//text()")
-				.Select(htmlNode => Regex.Replace(htmlNode.InnerText, @"\s+", " "))
-				.Where(innerText => !string.IsNullOrWhiteSpace(innerText))
+			=> document
+				.All
+				.Where(element => element
+					is IHtmlSpanElement
+					or IHtmlTitleElement
+					or IHtmlAnchorElement
+				    || element is IHtmlListItemElement && element.ChildElementCount == 1
+				)
+				.Select(element => Regex.Replace(element.Text(), @"\s+", " "))
+				.Where(elementText => !string.IsNullOrWhiteSpace(elementText))
+				.Distinct()
 				.ToImmutableArray();
+
 
 		/// <inheritdoc />
 		public bool Equals(WebPage? other)
 		{
 			if (ReferenceEquals(null, other)) return false;
 			if (ReferenceEquals(this, other)) return true;
-			return Url.Equals(other.Url);
+			return Uri.Equals(other.Uri);
 		}
 
 		/// <inheritdoc />
@@ -67,9 +71,9 @@ namespace SearchSystem.WebCrawler.Pages
 		}
 
 		/// <inheritdoc />
-		public override int GetHashCode() => Url.GetHashCode();
+		public override int GetHashCode() => Uri.GetHashCode();
 
 		/// <inheritdoc />
-		public override string ToString() => Url.ToString();
+		public override string ToString() => Uri.ToString();
 	}
 }

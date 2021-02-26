@@ -7,7 +7,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="HtmlAgilityPack" Version="1.11.30" />
+		<PackageReference Include="AngleSharp" Version="0.14.0" />
 		<PackageReference Include="System.Linq.Async" Version="5.0.0" />
 	</ItemGroup>
 
