@@ -31,7 +31,11 @@ namespace SearchSystem.WebCrawler.Pages
 				.OfType<IHtmlAnchorElement>()
 				.Where(anchorElement => anchorElement.ClassName is null)
 				.Select(element => element.Href)
-				.Where(uriString => Uri.TryCreate(uriString, UriKind.Absolute, out var uri) && uri != Uri)
+				.Where(uriString =>
+					Uri.TryCreate(uriString, UriKind.Absolute, out var uri)
+					&& uri != Uri
+					&& (uri.Scheme == "http" || uri.Scheme == "https"))
+				.Distinct()
 				.Select(uriString => new Uri(uriString))
 				.ToImmutableArray();
 
@@ -41,17 +45,10 @@ namespace SearchSystem.WebCrawler.Pages
 		public virtual IReadOnlyCollection<string> AllVisibleLines()
 			=> document
 				.All
-				.Where(element => element
-					is IHtmlSpanElement
-					or IHtmlTitleElement
-					or IHtmlAnchorElement
-				    || element is IHtmlListItemElement && element.ChildElementCount == 1
-				)
+				.Where(element => element is not IHtmlScriptElement && element.ChildElementCount == 0)
 				.Select(element => Regex.Replace(element.Text(), @"\s+", " "))
 				.Where(elementText => !string.IsNullOrWhiteSpace(elementText))
-				.Distinct()
 				.ToImmutableArray();
-
 
 		/// <inheritdoc />
 		public bool Equals(WebPage? other)
@@ -66,7 +63,7 @@ namespace SearchSystem.WebCrawler.Pages
 		{
 			if (ReferenceEquals(null, obj)) return false;
 			if (ReferenceEquals(this, obj)) return true;
-			if (obj.GetType() != this.GetType()) return false;
+			if (obj.GetType() != GetType()) return false;
 			return Equals((WebPage) obj);
 		}
 
