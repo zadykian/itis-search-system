@@ -21,7 +21,7 @@ namespace SearchSystem.WebCrawler.Pages
 		/// <summary>
 		/// Page URI.
 		/// </summary>
-		public Uri Uri => new (document.Url);
+		public Uri Uri => new(document.Url);
 
 		/// <summary>
 		/// Page child URLs. 
