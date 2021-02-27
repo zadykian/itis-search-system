@@ -25,7 +25,7 @@ namespace SearchSystem.WebCrawler
 				Path.Combine(destinationDirectory, "index.txt"),
 				FileMode.OpenOrCreate);
 
-			await using var textWriter = new StreamWriter(indexFileStream);
+			await using var indexFileTextWriter = new StreamWriter(indexFileStream);
 
 			await webPages
 				.Zip(AsyncEnumerable.Range(start: 0, (int) parameters.TotalPages))
@@ -34,8 +34,8 @@ namespace SearchSystem.WebCrawler
 					var (webPage, index) = tuple;
 
 					var currentUrl = $"{index}. {webPage.Uri}";
-					await textWriter.WriteLineAsync(currentUrl);
-					await textWriter.FlushAsync();
+					await indexFileTextWriter.WriteLineAsync(currentUrl);
+					await indexFileTextWriter.FlushAsync();
 					Console.WriteLine($"'{currentUrl}' is saved.");
 
 					var currentFilePath = Path.Combine(destinationDirectory, $"{index}.txt");
