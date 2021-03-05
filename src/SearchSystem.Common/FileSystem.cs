@@ -3,21 +3,20 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using SearchSystem.WebCrawler.Pages;
 
-namespace SearchSystem.WebCrawler
+namespace SearchSystem.Common
 {
 	/// <summary>
 	/// File system representation.
 	/// </summary>
-	internal class FileSystem
+	public class FileSystem
 	{
 		private readonly Parameters parameters = new();
 
 		/// <summary>
 		/// Save web pages to file system. 
 		/// </summary>
-		public async Task SaveWebPagesAsync(IAsyncEnumerable<WebPage> webPages)
+		public async Task SaveWebPagesAsync(IAsyncEnumerable<IWebPage> webPages)
 		{
 			var destinationDirectory = GetDestinationDirectory();
 
@@ -31,14 +30,14 @@ namespace SearchSystem.WebCrawler
 				.Zip(AsyncEnumerable.Range(start: 0, (int) parameters.TotalPages))
 				.ForEachAwaitAsync(async tuple =>
 				{
-					var (webPage, index) = tuple;
+					var (webPage, pageIndex) = tuple;
 
-					var currentUrl = $"{index}. {webPage.Uri}";
+					var currentUrl = $"{pageIndex}. {webPage.Uri}";
 					await indexFileTextWriter.WriteLineAsync(currentUrl);
 					await indexFileTextWriter.FlushAsync();
 					Console.WriteLine($"'{currentUrl}' is saved.");
 
-					var currentFilePath = Path.Combine(destinationDirectory, $"{index}.txt");
+					var currentFilePath = Path.Combine(destinationDirectory, "raw_text_files", $"{pageIndex}.txt");
 					await File.AppendAllLinesAsync(currentFilePath, webPage.AllVisibleLines());
 				});
 

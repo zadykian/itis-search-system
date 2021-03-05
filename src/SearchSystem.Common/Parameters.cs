@@ -1,9 +1,9 @@
-namespace SearchSystem.WebCrawler
+namespace SearchSystem.Common
 {
 	/// <summary>
 	/// Application parameters.
 	/// </summary>
-	internal class Parameters
+	public class Parameters
 	{
 		/// <summary>
 		/// Required words per page.

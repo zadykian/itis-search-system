@@ -6,13 +6,14 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
+using SearchSystem.Common;
 
 namespace SearchSystem.WebCrawler.Pages
 {
 	/// <summary>
 	/// Web page.
 	/// </summary>
-	internal class WebPage : IEquatable<WebPage>
+	internal class WebPage : IWebPage, IEquatable<WebPage>
 	{
 		private readonly IDocument document;
 

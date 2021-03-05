@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<Import Project="$(MsBuildThisFileDirectory)\..\common.props"/>
+
+</Project>

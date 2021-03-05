@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
+using SearchSystem.Common;
 
 namespace SearchSystem.WebCrawler
 {

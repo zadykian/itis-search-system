@@ -11,4 +11,8 @@
 		<PackageReference Include="System.Linq.Async" Version="5.0.0" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\SearchSystem.Common\SearchSystem.Common.csproj" />
+	</ItemGroup>
+
 </Project>
