@@ -8,7 +8,7 @@ using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using SearchSystem.Common;
 
-namespace SearchSystem.WebCrawler.Pages
+namespace SearchSystem.WebCrawler
 {
 	/// <summary>
 	/// Web page.

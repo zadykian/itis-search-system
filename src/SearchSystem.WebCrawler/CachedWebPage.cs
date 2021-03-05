@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using AngleSharp.Dom;
 
-namespace SearchSystem.WebCrawler.Pages
+namespace SearchSystem.WebCrawler
 {
 	/// <inheritdoc />
 	internal class CachedWebPage : WebPage

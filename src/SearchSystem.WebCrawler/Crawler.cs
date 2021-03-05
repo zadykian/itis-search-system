@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using SearchSystem.Common;
-using SearchSystem.WebCrawler.Pages;
 
 namespace SearchSystem.WebCrawler
 {

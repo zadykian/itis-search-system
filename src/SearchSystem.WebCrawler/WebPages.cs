@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using AngleSharp;
 
-namespace SearchSystem.WebCrawler.Pages
+namespace SearchSystem.WebCrawler
 {
 	/// <summary>
 	/// Representation of multiple web pages.
