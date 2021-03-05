@@ -12,16 +12,15 @@ namespace SearchSystem.Common
 	public class FileSystem
 	{
 		private readonly Parameters parameters = new();
+		private readonly string destinationDirectoryFullPath = GetDestinationDirectory();
 
 		/// <summary>
 		/// Save web pages to file system. 
 		/// </summary>
 		public async Task SaveWebPagesAsync(IAsyncEnumerable<IWebPage> webPages)
 		{
-			var destinationDirectory = GetDestinationDirectory();
-
 			var indexFileStream = File.Open(
-				Path.Combine(destinationDirectory, "index.txt"),
+				Path.Combine(destinationDirectoryFullPath, "index.txt"),
 				FileMode.OpenOrCreate);
 
 			await using var indexFileTextWriter = new StreamWriter(indexFileStream);
@@ -37,7 +36,7 @@ namespace SearchSystem.Common
 					await indexFileTextWriter.FlushAsync();
 					Console.WriteLine($"'{currentUrl}' is saved.");
 
-					var currentFilePath = Path.Combine(destinationDirectory, "raw_text_files", $"{pageIndex}.txt");
+					var currentFilePath = Path.Combine(destinationDirectoryFullPath, "raw_text_files", $"{pageIndex}.txt");
 					await File.AppendAllLinesAsync(currentFilePath, webPage.AllVisibleLines());
 				});
 

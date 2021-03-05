@@ -2,10 +2,6 @@
 
 	<Import Project="$(MsBuildThisFileDirectory)\..\common.props" />
 
-	<PropertyGroup>
-		<OutputType>Exe</OutputType>
-	</PropertyGroup>
-
 	<ItemGroup>
 		<PackageReference Include="AngleSharp" Version="0.14.0" />
 		<PackageReference Include="System.Linq.Async" Version="5.0.0" />
