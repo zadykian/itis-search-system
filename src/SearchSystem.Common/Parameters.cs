@@ -1,5 +1,7 @@
 namespace SearchSystem.Common
 {
+	// todo: replace with IConfiguration
+	
 	/// <summary>
 	/// Application parameters.
 	/// </summary>

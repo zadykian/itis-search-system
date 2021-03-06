@@ -15,7 +15,7 @@ namespace SearchSystem.WebCrawler
 		{
 			while (element.ChildElementCount == 1)
 			{
-				element = element.Children.First();
+				element = element.Children.Single();
 			}
 
 			return element.ChildElementCount == 0;
