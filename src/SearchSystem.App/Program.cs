@@ -20,8 +20,7 @@ namespace SearchSystem.App
 					options.ValidateScopes = true;
 					options.ValidateOnBuild = true;
 				})
-				.ConfigureServices((_, services) => services
-					.AddHostedService<Worker>())
+				.ConfigureServices((_, services) => services.AddHostedService<Worker>())
 				.Build()
 				.RunAsync();
 	}
