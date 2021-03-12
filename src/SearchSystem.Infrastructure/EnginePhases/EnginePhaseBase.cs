@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using SearchSystem.Infrastructure.Configuration;
 
 namespace SearchSystem.Infrastructure.EnginePhases
@@ -7,14 +8,26 @@ namespace SearchSystem.Infrastructure.EnginePhases
 	public abstract class EnginePhaseBase<TIn, TOut> : ISearchEnginePhase<TIn, TOut>
 	{
 		private readonly IAppConfiguration appConfiguration;
+		private readonly ILogger logger;
 
-		protected EnginePhaseBase(IAppConfiguration appConfiguration) => this.appConfiguration = appConfiguration;
+		protected EnginePhaseBase(IAppConfiguration appConfiguration, ILogger logger)
+		{
+			this.appConfiguration = appConfiguration;
+			this.logger = logger;
+		}
 
 		/// <inheritdoc />
-		Task<TOut> ISearchEnginePhase<TIn, TOut>.ExecuteAsync(TIn inputData)
-			=> appConfiguration.UsePreviousResultsFor(ComponentName)
-				? LoadPreviousResults()
-				: CreateNewData(inputData);
+		async Task<TOut> ISearchEnginePhase<TIn, TOut>.ExecuteAsync(TIn inputData)
+		{
+			logger.LogInformation($"Phase '{ComponentName}' is started.");
+
+			var output = appConfiguration.UsePreviousResultsFor(ComponentName)
+				? await LoadPreviousResults()
+				: await CreateNewData(inputData);
+
+			logger.LogInformation($"Phase '{ComponentName}' is finished successfully.");
+			return output;
+		}
 
 		/// <summary>
 		/// Name of component which this phase belongs to.

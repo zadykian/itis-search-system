@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using SearchSystem.Crawl.Crawler;
 using SearchSystem.Infrastructure.Configuration;
 using SearchSystem.Infrastructure.Documents;
@@ -8,6 +9,7 @@ using SearchSystem.Infrastructure.EnginePhases;
 
 namespace SearchSystem.Crawl
 {
+	/// <inheritdoc />
 	internal class CrawlEnginePhase : EnginePhaseBase<Unit, IReadOnlyCollection<IDocument>>
 	{
 		private readonly IWebCrawler webCrawler;
@@ -18,7 +20,8 @@ namespace SearchSystem.Crawl
 		public CrawlEnginePhase(
 			IWebCrawler webCrawler,
 			IDocumentStorage documentStorage,
-			IAppConfiguration appConfiguration) : base(appConfiguration)
+			IAppConfiguration appConfiguration,
+			ILogger logger) : base(appConfiguration, logger)
 		{
 			this.documentStorage = documentStorage;
 			this.webCrawler = webCrawler;
@@ -30,6 +33,8 @@ namespace SearchSystem.Crawl
 		/// <inheritdoc />
 		protected override async Task<IReadOnlyCollection<IDocument>> CreateNewData(Unit _)
 		{
+			// todo: create index file
+			
 			var documents = await webCrawler
 				.CrawlThroughPages()
 				.Zip(AsyncEnumerable.Range(0, int.MaxValue))
