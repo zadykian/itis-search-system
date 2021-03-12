@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AngleSharp;
-using SearchSystem.Common;
 using SearchSystem.Common.Configuration;
 using SearchSystem.Common.Extensions;
 using SearchSystem.Crawl.Pages;
