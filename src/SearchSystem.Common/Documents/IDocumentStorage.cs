@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace SearchSystem.Common.Documents
@@ -11,5 +12,10 @@ namespace SearchSystem.Common.Documents
 		/// Save document. 
 		/// </summary>
 		Task SaveAsync(IDocument document);
+
+		/// <summary>
+		/// Load documents from subsection named <paramref name="subsectionName"/>. 
+		/// </summary>
+		IAsyncEnumerable<IDocument> LoadFromSubsection(string subsectionName);
 	}
 }

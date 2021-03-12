@@ -8,9 +8,14 @@ namespace SearchSystem.Common.Documents
 	public interface IDocument
 	{
 		/// <summary>
-		/// Document path relative to current directory.
+		/// Document subsection name.
 		/// </summary>
-		string RelativePath { get; }
+		string SubsectionName { get; }
+		
+		/// <summary>
+		/// Document name.
+		/// </summary>
+		string Name { get; }
 
 		/// <summary>
 		/// Document text lines. 
