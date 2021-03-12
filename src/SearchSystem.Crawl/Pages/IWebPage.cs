@@ -3,14 +3,6 @@ using System.Collections.Generic;
 
 namespace SearchSystem.Crawl.Pages
 {
-	public interface IFile
-	{
-		string Name { get; }
-
-		IReadOnlyCollection<string> AllLines();
-	}
-
-
 	/// <summary>
 	/// Web page.
 	/// </summary>
