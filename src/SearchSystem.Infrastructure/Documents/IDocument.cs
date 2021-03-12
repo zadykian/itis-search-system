@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace SearchSystem.Common.Documents
+namespace SearchSystem.Infrastructure.Documents
 {
 	/// <summary>
 	/// Text document.

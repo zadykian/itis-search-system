@@ -1,6 +1,6 @@
 using System;
 
-namespace SearchSystem.Common.Configuration
+namespace SearchSystem.Infrastructure.Configuration
 {
 	/// <summary>
 	/// Application configuration.

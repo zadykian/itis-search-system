@@ -8,7 +8,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\SearchSystem.Common\SearchSystem.Common.csproj" />
+	  <ProjectReference Include="..\SearchSystem.Infrastructure\SearchSystem.Infrastructure.csproj" />
 	</ItemGroup>
 
 </Project>

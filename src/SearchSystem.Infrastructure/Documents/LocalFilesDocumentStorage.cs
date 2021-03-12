@@ -4,18 +4,21 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using SearchSystem.Common.Extensions;
+using SearchSystem.Infrastructure.Extensions;
 
-namespace SearchSystem.Common.Documents
+namespace SearchSystem.Infrastructure.Documents
 {
 	/// <inheritdoc />
-	internal class DocumentStorage : IDocumentStorage
+	/// <remarks>
+	/// This implementation stores documents in local directory.
+	/// </remarks>
+	internal class LocalFilesDocumentStorage : IDocumentStorage
 	{
 		private static readonly string appDataRootDirectory = Path.Combine(Environment.CurrentDirectory, "results");
 		private readonly string currentDirectoryPath = GetDestinationDirectory();
-		private readonly ILogger<DocumentStorage> logger;
+		private readonly ILogger<LocalFilesDocumentStorage> logger;
 
-		public DocumentStorage(ILogger<DocumentStorage> logger) => this.logger = logger;
+		public LocalFilesDocumentStorage(ILogger<LocalFilesDocumentStorage> logger) => this.logger = logger;
 
 		/// <inheritdoc />
 		async Task IDocumentStorage.SaveAsync(IDocument document)

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace SearchSystem.Common.Documents
+namespace SearchSystem.Infrastructure.Documents
 {
 	/// <summary>
 	/// Document storage.

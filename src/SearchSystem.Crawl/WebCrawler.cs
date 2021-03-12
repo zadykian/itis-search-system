@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AngleSharp;
-using SearchSystem.Common.Configuration;
-using SearchSystem.Common.Extensions;
+using SearchSystem.Infrastructure.Configuration;
+using SearchSystem.Infrastructure.Extensions;
 using SearchSystem.Crawl.Pages;
 
 namespace SearchSystem.Crawl

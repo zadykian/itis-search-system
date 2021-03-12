@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace SearchSystem.Common.Documents
+namespace SearchSystem.Infrastructure.Documents
 {
 	/// <inheritdoc cref="IDocument"/>
 	public record Document(

@@ -1,6 +1,6 @@
 using System;
 
-namespace SearchSystem.Common.Extensions
+namespace SearchSystem.Infrastructure.Extensions
 {
 	/// <summary>
 	/// Generic extension methods.

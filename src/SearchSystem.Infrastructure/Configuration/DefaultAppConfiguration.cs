@@ -1,8 +1,8 @@
 using System;
 using Microsoft.Extensions.Configuration;
-using SearchSystem.Common.Extensions;
+using SearchSystem.Infrastructure.Extensions;
 
-namespace SearchSystem.Common.Configuration
+namespace SearchSystem.Infrastructure.Configuration
 {
 	/// <inheritdoc />
 	internal class DefaultAppConfiguration : IAppConfiguration
