@@ -19,7 +19,7 @@ namespace SearchSystem.Crawl.Pages
 		/// <summary>
 		/// Page URI.
 		/// </summary>
-		Uri Uri { get; }
+		Uri Url { get; }
 
 		/// <summary>
 		/// All text lines visible to user. 

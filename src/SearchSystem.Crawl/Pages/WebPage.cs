@@ -21,7 +21,7 @@ namespace SearchSystem.Crawl.Pages
 		/// <summary>
 		/// Page URI.
 		/// </summary>
-		public Uri Uri => new(document.Url);
+		public Uri Url => new(document.Url);
 
 		/// <summary>
 		/// Page child URLs. 
@@ -34,7 +34,7 @@ namespace SearchSystem.Crawl.Pages
 				.Where(uriString =>
 					Uri.TryCreate(uriString, UriKind.Absolute, out var uri)
 					&& !Path.HasExtension(uriString)
-					&& uri != Uri
+					&& uri != Url
 					&& (uri.Scheme == "http" || uri.Scheme == "https"))
 				.Distinct()
 				.Select(uriString => new Uri(uriString))
@@ -73,7 +73,7 @@ namespace SearchSystem.Crawl.Pages
 		{
 			if (ReferenceEquals(null, other)) return false;
 			if (ReferenceEquals(this, other)) return true;
-			return Uri.Equals(other.Uri);
+			return Url.Equals(other.Url);
 		}
 
 		/// <inheritdoc />
@@ -86,9 +86,9 @@ namespace SearchSystem.Crawl.Pages
 		}
 
 		/// <inheritdoc />
-		public override int GetHashCode() => Uri.GetHashCode();
+		public override int GetHashCode() => Url.GetHashCode();
 
 		/// <inheritdoc />
-		public override string ToString() => Uri.ToString();
+		public override string ToString() => Url.ToString();
 	}
 }
