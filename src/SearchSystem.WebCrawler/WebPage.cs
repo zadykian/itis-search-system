@@ -60,14 +60,14 @@ namespace SearchSystem.WebCrawler
 		/// </summary>
 		private static bool ElementPredicate(IElement element)
 			=> element is not (
-				   IHtmlScriptElement
-				   or IHtmlHtmlElement
-				   or IHtmlHeadElement
-				   or IHtmlBodyElement
-				   or IHtmlStyleElement
-				   or IHtmlDivElement)
-			   && element.GetType().Name != "HtmlSemanticElement"
-			   && element.HasZeroOrOneChild();
+					IHtmlScriptElement
+					or IHtmlHtmlElement
+					or IHtmlHeadElement
+					or IHtmlBodyElement
+					or IHtmlStyleElement
+					or IHtmlDivElement)
+				&& element.GetType().Name != "HtmlSemanticElement"
+				&& element.HasZeroOrOneChild();
 
 		/// <inheritdoc />
 		public bool Equals(WebPage? other)

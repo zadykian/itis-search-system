@@ -11,7 +11,6 @@ namespace SearchSystem.Common
 	/// </summary>
 	public class FileSystem
 	{
-		private readonly Parameters parameters = new();
 		private readonly string destinationDirectoryFullPath = GetDestinationDirectory();
 
 		/// <summary>
@@ -26,7 +25,7 @@ namespace SearchSystem.Common
 			await using var indexFileTextWriter = new StreamWriter(indexFileStream);
 
 			await webPages
-				.Zip(AsyncEnumerable.Range(start: 0, (int) parameters.TotalPages))
+				.Zip(AsyncEnumerable.Range(start: 0, int.MaxValue))
 				.ForEachAwaitAsync(async tuple =>
 				{
 					var (webPage, pageIndex) = tuple;
