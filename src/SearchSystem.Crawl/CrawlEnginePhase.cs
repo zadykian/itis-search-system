@@ -10,7 +10,12 @@ using SearchSystem.Infrastructure.EnginePhases;
 namespace SearchSystem.Crawl
 {
 	/// <inheritdoc />
-	internal class CrawlEnginePhase : EnginePhaseBase<Unit, IReadOnlyCollection<IDocument>>
+	public interface ICrawlEnginePhase : ISearchEnginePhase<Unit, IReadOnlyCollection<IDocument>>
+	{
+	}
+
+	/// <inheritdoc cref="ICrawlEnginePhase"/>
+	internal class CrawlEnginePhase : EnginePhaseBase<Unit, IReadOnlyCollection<IDocument>>, ICrawlEnginePhase
 	{
 		private readonly IWebCrawler webCrawler;
 
@@ -28,13 +33,10 @@ namespace SearchSystem.Crawl
 		}
 
 		/// <inheritdoc />
-		protected override string ComponentName => "Crawl";
-
-		/// <inheritdoc />
 		protected override async Task<IReadOnlyCollection<IDocument>> CreateNewData(Unit _)
 		{
 			// todo: create index file
-			
+
 			var documents = await webCrawler
 				.CrawlThroughPages()
 				.Zip(AsyncEnumerable.Range(0, int.MaxValue))

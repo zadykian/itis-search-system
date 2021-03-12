@@ -32,7 +32,7 @@ namespace SearchSystem.Infrastructure.EnginePhases
 		/// <summary>
 		/// Name of component which this phase belongs to.
 		/// </summary>
-		protected abstract string ComponentName { get; }
+		private string ComponentName => GetType().Name.Replace("EnginePhase", string.Empty);
 
 		/// <summary>
 		/// Perform new execution.

@@ -8,7 +8,6 @@ namespace SearchSystem.Lemmatization
 	{
 		/// <inheritdoc />
 		void IAppComponent.RegisterServices(IServiceCollection serviceCollection)
-		{
-		}
+			=> serviceCollection.AddSingleton<ILemmatizationEnginePhase, LemmatizationEnginePhase>();
 	}
 }

@@ -9,6 +9,8 @@ namespace SearchSystem.Crawl
 	{
 		/// <inheritdoc />
 		void IAppComponent.RegisterServices(IServiceCollection serviceCollection)
-			=> serviceCollection.AddSingleton<IWebCrawler, WebCrawler>();
+			=> serviceCollection
+				.AddSingleton<IWebCrawler, WebCrawler>()
+				.AddSingleton<ICrawlEnginePhase, CrawlEnginePhase>();
 	}
 }
