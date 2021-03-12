@@ -5,6 +5,9 @@ using AngleSharp.Dom;
 namespace SearchSystem.Crawl.Pages
 {
 	/// <inheritdoc />
+	/// <remarks>
+	/// This type performs caching of previously calculated results.
+	/// </remarks>
 	internal class CachedWebPage : WebPage
 	{
 		private IReadOnlyCollection<Uri>? childUrls;

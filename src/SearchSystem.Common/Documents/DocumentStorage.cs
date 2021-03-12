@@ -17,7 +17,7 @@ namespace SearchSystem.Common.Documents
 		async Task IDocumentStorage.SaveAsync(IDocument document)
 		{
 			var currentFilePath = Path.Combine(currentDirectoryPath, document.RelativePath);
-			await File.AppendAllLinesAsync(currentFilePath, document.Lines());
+			await File.AppendAllLinesAsync(currentFilePath, document.Lines);
 			logger.LogInformation($"document '{document.RelativePath}' is saved.");
 		}
 

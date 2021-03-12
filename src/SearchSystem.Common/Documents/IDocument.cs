@@ -15,6 +15,6 @@ namespace SearchSystem.Common.Documents
 		/// <summary>
 		/// Document text lines. 
 		/// </summary>
-		IReadOnlyCollection<string> Lines();
+		IReadOnlyCollection<string> Lines { get; }
 	}
 }
