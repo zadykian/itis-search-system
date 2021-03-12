@@ -2,6 +2,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using SearchSystem.Crawl;
+using SearchSystem.Infrastructure.EnginePhases;
 using SearchSystem.Lemmatization;
 
 namespace SearchSystem.AppHost
@@ -23,9 +24,8 @@ namespace SearchSystem.AppHost
 		/// <inheritdoc />
 		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 		{
-			await Task.CompletedTask;
-			
-			
+			var crawledPages = await crawlEnginePhase.ExecuteAsync(Unit.Instance);
+			var lemmatizedDocuments = await lemmatizationEnginePhase.ExecuteAsync(crawledPages);
 		}
 	}
 }

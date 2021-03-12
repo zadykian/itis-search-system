@@ -5,5 +5,9 @@ namespace SearchSystem.Infrastructure.EnginePhases
 	/// </summary>
 	public readonly struct Unit
 	{
+		/// <summary>
+		/// Instance of unit type.
+		/// </summary>
+		public static Unit Instance => new();
 	}
 }
