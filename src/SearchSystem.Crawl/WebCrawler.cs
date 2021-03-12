@@ -3,25 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AngleSharp;
+using SearchSystem.Common;
 using SearchSystem.Common.Configuration;
+using SearchSystem.Common.Extensions;
 
-namespace SearchSystem.WebCrawler
+namespace SearchSystem.Crawl
 {
-	/// <summary>
-	/// Web crawler.
-	/// </summary>
-	internal class Crawler
+	/// <inheritdoc />
+	internal class WebCrawler : IWebCrawler
 	{
 		private readonly IAppConfiguration appConfiguration;
 
-		public Crawler(IAppConfiguration appConfiguration) => this.appConfiguration = appConfiguration;
+		public WebCrawler(IAppConfiguration appConfiguration) => this.appConfiguration = appConfiguration;
 
-		/// <summary>
-		/// Get web pages which satisfy required conditions.
-		/// </summary>
-		public IAsyncEnumerable<WebPage> CrawlThrough(Uri rootUri)
-			=> WebPages
-				.Download(rootUri)
+		/// <inheritdoc />
+		IAsyncEnumerable<IWebPage> IWebCrawler.CrawlThroughPages()
+			=> appConfiguration
+				.RootPageUri()
+				.To(WebPages.Download)
 				.Where(page => page
 					.AllVisibleLines()
 					.SelectMany(line => line.Split(separator: ' '))
