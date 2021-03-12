@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using SearchSystem.Common;
+using SearchSystem.Crawl.Pages;
 
 namespace SearchSystem.Crawl
 {

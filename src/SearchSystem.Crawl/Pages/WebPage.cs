@@ -6,9 +6,8 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
-using SearchSystem.Common;
 
-namespace SearchSystem.Crawl
+namespace SearchSystem.Crawl.Pages
 {
 	/// <summary>
 	/// Web page.

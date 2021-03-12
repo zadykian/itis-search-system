@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace SearchSystem.Common
+namespace SearchSystem.Crawl.Pages
 {
 	public interface IFile
 	{
@@ -25,5 +25,10 @@ namespace SearchSystem.Common
 		/// All text lines visible to user. 
 		/// </summary>
 		IReadOnlyCollection<string> AllVisibleLines();
+
+		/// <summary>
+		/// Page child URLs. 
+		/// </summary>
+		IReadOnlyCollection<Uri> ChildUrls();
 	}
 }

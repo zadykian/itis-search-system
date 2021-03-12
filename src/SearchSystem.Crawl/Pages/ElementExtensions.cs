@@ -1,7 +1,7 @@
 using System.Linq;
 using AngleSharp.Dom;
 
-namespace SearchSystem.Crawl
+namespace SearchSystem.Crawl.Pages
 {
 	/// <summary>
 	/// Extension methods for <see cref="IElement"/> type;
