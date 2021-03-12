@@ -24,6 +24,7 @@ namespace SearchSystem.AppHost
 		/// <inheritdoc />
 		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 		{
+			// todo: perform composition of phases
 			var crawledPages = await crawlEnginePhase.ExecuteAsync(Unit.Instance);
 			var lemmatizedDocuments = await lemmatizationEnginePhase.ExecuteAsync(crawledPages);
 		}
