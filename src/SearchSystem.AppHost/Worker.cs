@@ -1,7 +1,9 @@
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using SearchSystem.Crawl;
+using SearchSystem.Infrastructure.Documents;
 using SearchSystem.Infrastructure.EnginePhases;
 using SearchSystem.Lemmatization;
 
@@ -22,11 +24,10 @@ namespace SearchSystem.AppHost
 		}
 
 		/// <inheritdoc />
-		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-		{
-			// todo: perform composition of phases
-			var crawledPages = await crawlEnginePhase.ExecuteAsync(Unit.Instance);
-			var lemmatizedDocuments = await lemmatizationEnginePhase.ExecuteAsync(crawledPages);
-		}
+		protected override Task ExecuteAsync(CancellationToken stoppingToken)
+			=> Composable
+				.Add<Unit, Task<IReadOnlyCollection<IDocument>>>(crawlEnginePhase.ExecuteAsync)
+				.Add(lemmatizationEnginePhase.ExecuteAsync)
+				.Invoke(Unit.Instance);
 	}
 }
