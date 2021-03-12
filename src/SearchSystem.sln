@@ -9,9 +9,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SearchSystem.Crawl", "Searc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SearchSystem.Lemmatization", "SearchSystem.Lemmatization\SearchSystem.Lemmatization.csproj", "{107228E3-CEF3-4404-A4D6-5817E0847123}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SearchSystem.Common", "SearchSystem.Common\SearchSystem.Common.csproj", "{0E0A3FFB-44F0-466C-B0FC-891B68077047}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SearchSystem.Infrastructure", "SearchSystem.Infrastructure\SearchSystem.Infrastructure.csproj", "{0E0A3FFB-44F0-466C-B0FC-891B68077047}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SearchSystem.App", "SearchSystem.App\SearchSystem.App.csproj", "{D9F33EA6-2948-44A7-9300-B15FF529B357}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SearchSystem.AppHost", "SearchSystem.AppHost\SearchSystem.AppHost.csproj", "{D9F33EA6-2948-44A7-9300-B15FF529B357}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

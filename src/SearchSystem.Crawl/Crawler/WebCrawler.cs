@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AngleSharp;
-using SearchSystem.Common;
-using SearchSystem.Common.Configuration;
-using SearchSystem.Common.Extensions;
+using SearchSystem.Crawl.Pages;
+using SearchSystem.Infrastructure.Configuration;
+using SearchSystem.Infrastructure.Extensions;
 
-namespace SearchSystem.Crawl
+namespace SearchSystem.Crawl.Crawler
 {
 	/// <inheritdoc />
 	internal class WebCrawler : IWebCrawler
@@ -36,10 +36,10 @@ namespace SearchSystem.Crawl
 			/// <summary>
 			/// Download web page located at <paramref name="pageUri"/> recursively with referenced ones.
 			/// </summary>
-			public static IAsyncEnumerable<WebPage> Download(Uri pageUri) => Download(pageUri, withCurrent: true);
+			public static IAsyncEnumerable<IWebPage> Download(Uri pageUri) => Download(pageUri, withCurrent: true);
 
 			/// <inheritdoc cref="Download(Uri)"/>
-			private static async IAsyncEnumerable<WebPage> Download(Uri pageUri, bool withCurrent)
+			private static async IAsyncEnumerable<IWebPage> Download(Uri pageUri, bool withCurrent)
 			{
 				var currentPage = await DownloadSingle(pageUri);
 
@@ -65,7 +65,7 @@ namespace SearchSystem.Crawl
 			/// <summary>
 			/// Download web page located at <paramref name="pageUri"/>.
 			/// </summary>
-			private static async Task<WebPage> DownloadSingle(Uri pageUri)
+			private static async Task<IWebPage> DownloadSingle(Uri pageUri)
 			{
 				var configuration = Configuration.Default.WithDefaultLoader();
 

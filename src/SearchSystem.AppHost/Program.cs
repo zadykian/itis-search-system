@@ -1,8 +1,11 @@
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SearchSystem.Crawl;
+using SearchSystem.Infrastructure;
+using SearchSystem.Infrastructure.Extensions;
+using SearchSystem.Lemmatization;
 
-namespace SearchSystem.App
+namespace SearchSystem.AppHost
 {
 	/// <summary>
 	/// Application entry point. 
@@ -20,7 +23,11 @@ namespace SearchSystem.App
 					options.ValidateScopes = true;
 					options.ValidateOnBuild = true;
 				})
-				.ConfigureServices((_, services) => services.AddHostedService<Worker>())
+				.ConfigureServices((_, services) => services
+					.AddComponent<InfrastructureAppComponent>()
+					.AddComponent<CrawlAppComponent>()
+					.AddComponent<LemmatizationAppComponent>()
+					.AddComponent<AppHostAppComponent>())
 				.Build()
 				.RunAsync();
 	}
