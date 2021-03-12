@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using SearchSystem.Crawl.Pages;
 
-namespace SearchSystem.Crawl
+namespace SearchSystem.Crawl.Crawler
 {
 	/// <summary>
 	/// Web crawler.
