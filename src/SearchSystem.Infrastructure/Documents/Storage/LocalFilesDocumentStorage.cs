@@ -13,13 +13,14 @@ namespace SearchSystem.Infrastructure.Documents.Storage
 	/// </remarks>
 	internal class LocalFilesDocumentStorage : IDocumentStorage
 	{
-		private static readonly string appDataRootDirectory = Path.Combine(Environment.CurrentDirectory, "results");
-		private readonly string currentDirectoryPath = GetDestinationDirectory();
+		private static string AppDataRootDirectory => Path.Combine(Environment.CurrentDirectory, "results");
+
+		private static string CurrentDirectoryPath => GetDestinationDirectory();
 
 		/// <inheritdoc />
 		async Task IDocumentStorage.SaveOrAppendAsync(IDocument document)
 		{
-			var subsectionDirectory = Path.Combine(currentDirectoryPath, document.SubsectionName);
+			var subsectionDirectory = Path.Combine(CurrentDirectoryPath, document.SubsectionName);
 			Directory.CreateDirectory(subsectionDirectory);
 
 			var currentFilePath = Path.Combine(subsectionDirectory, document.Name);
@@ -29,11 +30,12 @@ namespace SearchSystem.Infrastructure.Documents.Storage
 		/// <inheritdoc />
 		IAsyncEnumerable<IDocument> IDocumentStorage.LoadFromSubsection(string subsectionName)
 			=> Directory
-				.EnumerateDirectories(appDataRootDirectory)
-				.OrderByDescending(directory => directory)
+				.EnumerateDirectories(AppDataRootDirectory)
+				.OrderByDescending(Path.GetFileName)
 				.First()
 				.To(mostResentDirectory => Path.Combine(mostResentDirectory, subsectionName))
 				.To(Directory.EnumerateFiles)
+				.OrderBy(Path.GetFileName)
 				.ToAsyncEnumerable()
 				.SelectAwait(async fileFullPath =>
 				{
@@ -48,7 +50,7 @@ namespace SearchSystem.Infrastructure.Documents.Storage
 		private static string GetDestinationDirectory()
 		{
 			var currentDirectoryName = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss-fff");
-			var destinationDirectoryPath = Path.Combine(appDataRootDirectory, currentDirectoryName);
+			var destinationDirectoryPath = Path.Combine(AppDataRootDirectory, currentDirectoryName);
 			Directory.CreateDirectory(destinationDirectoryPath);
 			return destinationDirectoryPath;
 		}
