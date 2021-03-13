@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SearchSystem.Crawl.Crawler;
+using SearchSystem.Crawl.Pages;
 using SearchSystem.Infrastructure.Configuration;
 using SearchSystem.Infrastructure.Documents;
 using SearchSystem.Infrastructure.Documents.Storage;
@@ -35,22 +36,25 @@ namespace SearchSystem.Crawl
 
 		/// <inheritdoc />
 		protected override async Task<IReadOnlyCollection<IDocument>> CreateNewData(Unit _)
-		{
-			// todo: create index file
-
-			var documents = await webCrawler
+			=> await webCrawler
 				.CrawlThroughPages()
 				.Zip(AsyncEnumerable.Range(start: 0, int.MaxValue))
-				.SelectAwait(async tuple =>
-				{
-					var (webPage, pageIndex) = tuple;
-					var document = new Document(subsectionName, $"{pageIndex}.txt", webPage.AllVisibleLines());
-					await documentStorage.SaveOrAppendAsync(document);
-					return document;
-				})
+				.SelectAwait(async tuple => await SaveWebPageAsDocument(tuple.First, tuple.Second))
 				.ToArrayAsync();
 
-			return documents;
+		/// <summary>
+		/// Save web page to document storage and return saved <see cref="IDocument"/>. 
+		/// </summary>
+		private async Task<Document> SaveWebPageAsDocument(IWebPage webPage, int pageIndex)
+		{
+			var document = new Document(subsectionName, $"{pageIndex}.txt", webPage.AllVisibleLines());
+			await documentStorage.SaveOrAppendAsync(document);
+			Logger.LogInformation($"Document '{document.Name}' is saved.");
+
+			var indexDocument = new Document(string.Empty, "index.txt", new[] {$"{pageIndex}. {webPage.Url}"});
+			await documentStorage.SaveOrAppendAsync(indexDocument);
+
+			return document;
 		}
 
 		/// <inheritdoc />

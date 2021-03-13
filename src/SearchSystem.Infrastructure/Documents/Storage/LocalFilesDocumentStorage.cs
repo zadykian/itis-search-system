@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using SearchSystem.Infrastructure.Extensions;
 
 namespace SearchSystem.Infrastructure.Documents.Storage
@@ -16,9 +15,6 @@ namespace SearchSystem.Infrastructure.Documents.Storage
 	{
 		private static readonly string appDataRootDirectory = Path.Combine(Environment.CurrentDirectory, "results");
 		private readonly string currentDirectoryPath = GetDestinationDirectory();
-		private readonly ILogger<LocalFilesDocumentStorage> logger;
-
-		public LocalFilesDocumentStorage(ILogger<LocalFilesDocumentStorage> logger) => this.logger = logger;
 
 		/// <inheritdoc />
 		async Task IDocumentStorage.SaveOrAppendAsync(IDocument document)
@@ -28,8 +24,6 @@ namespace SearchSystem.Infrastructure.Documents.Storage
 
 			var currentFilePath = Path.Combine(subsectionDirectory, document.Name);
 			await File.AppendAllLinesAsync(currentFilePath, document.Lines);
-
-			logger.LogInformation($"Document '{document.Name}' is saved.");
 		}
 
 		/// <inheritdoc />
