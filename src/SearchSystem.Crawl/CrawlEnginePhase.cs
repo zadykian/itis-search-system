@@ -17,20 +17,16 @@ namespace SearchSystem.Crawl
 	}
 
 	/// <inheritdoc cref="ICrawlEnginePhase"/>
-	internal class CrawlEnginePhase : EnginePhaseBase<Unit, IReadOnlyCollection<IDocument>>, ICrawlEnginePhase
+	internal class CrawlEnginePhase : DocumentsOutputPhaseBase<Unit>, ICrawlEnginePhase
 	{
 		private readonly IWebCrawler webCrawler;
-		private readonly IDocumentStorage documentStorage;
 
 		public CrawlEnginePhase(
 			IWebCrawler webCrawler,
 			IDocumentStorage documentStorage,
 			IAppConfiguration appConfiguration,
-			ILogger<CrawlEnginePhase> logger) : base(appConfiguration, logger)
-		{
-			this.documentStorage = documentStorage;
-			this.webCrawler = webCrawler;
-		}
+			ILogger<CrawlEnginePhase> logger) : base(documentStorage, appConfiguration, logger)
+			=> this.webCrawler = webCrawler;
 
 		/// <inheritdoc />
 		protected override async Task<IReadOnlyCollection<IDocument>> CreateNewData(Unit _)
@@ -46,19 +42,13 @@ namespace SearchSystem.Crawl
 		private async Task<Document> SaveWebPageAsDocument(IWebPage webPage, int pageIndex)
 		{
 			var document = new Document(ComponentName, $"{pageIndex}.txt", webPage.AllVisibleLines());
-			await documentStorage.SaveOrAppendAsync(document);
+			await DocumentStorage.SaveOrAppendAsync(document);
 
 			var indexDocument = new Document(string.Empty, "index.txt", new[] {$"{pageIndex}. {webPage.Url}"});
-			await documentStorage.SaveOrAppendAsync(indexDocument);
+			await DocumentStorage.SaveOrAppendAsync(indexDocument);
 
 			Logger.LogInformation($"Document '{document.Name}' is saved.");
 			return document;
 		}
-
-		/// <inheritdoc />
-		protected override async Task<IReadOnlyCollection<IDocument>> LoadPreviousResults()
-			=> await documentStorage
-				.LoadFromSubsection(ComponentName)
-				.ToArrayAsync();
 	}
 }

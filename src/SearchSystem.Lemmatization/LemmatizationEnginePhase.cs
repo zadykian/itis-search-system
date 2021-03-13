@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SearchSystem.Infrastructure.Configuration;
 using SearchSystem.Infrastructure.Documents;
+using SearchSystem.Infrastructure.Documents.Storage;
 using SearchSystem.Infrastructure.EnginePhases;
 
 namespace SearchSystem.Lemmatization
@@ -16,25 +17,18 @@ namespace SearchSystem.Lemmatization
 
 	/// <inheritdoc cref="ILemmatizationEnginePhase"/>
 	internal class LemmatizationEnginePhase :
-		EnginePhaseBase<IReadOnlyCollection<IDocument>, IReadOnlyCollection<IDocument>>,
+		DocumentsOutputPhaseBase<IReadOnlyCollection<IDocument>>,
 		ILemmatizationEnginePhase
 	{
 		public LemmatizationEnginePhase(
+			IDocumentStorage documentStorage,
 			IAppConfiguration appConfiguration,
-			ILogger<LemmatizationEnginePhase> logger) : base(appConfiguration, logger)
+			ILogger<LemmatizationEnginePhase> logger) : base(documentStorage, appConfiguration, logger)
 		{
 		}
 
 		/// <inheritdoc />
 		protected override async Task<IReadOnlyCollection<IDocument>> CreateNewData(IReadOnlyCollection<IDocument> inputData)
-		{
-			// todo
-			await Task.CompletedTask;
-			return ImmutableArray<IDocument>.Empty;
-		}
-
-		/// <inheritdoc />
-		protected override async Task<IReadOnlyCollection<IDocument>> LoadPreviousResults()
 		{
 			// todo
 			await Task.CompletedTask;
