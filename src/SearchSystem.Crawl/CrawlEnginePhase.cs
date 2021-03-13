@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using SearchSystem.Crawl.Crawler;
 using SearchSystem.Infrastructure.Configuration;
 using SearchSystem.Infrastructure.Documents;
+using SearchSystem.Infrastructure.Documents.Storage;
 using SearchSystem.Infrastructure.EnginePhases;
 
 namespace SearchSystem.Crawl

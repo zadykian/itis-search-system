@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SearchSystem.Infrastructure.Extensions;
 
-namespace SearchSystem.Infrastructure.Documents
+namespace SearchSystem.Infrastructure.Documents.Storage
 {
 	/// <inheritdoc />
 	/// <remarks>
