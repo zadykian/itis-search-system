@@ -20,6 +20,11 @@ namespace SearchSystem.Infrastructure.EnginePhases
 		/// </summary>
 		protected ILogger<EnginePhaseBase<TIn, TOut>> Logger { get; }
 
+		/// <summary>
+		/// Name of component which this phase belongs to.
+		/// </summary>
+		protected string ComponentName => GetType().Name.Replace("EnginePhase", string.Empty);
+
 		/// <inheritdoc />
 		async Task<TOut> ISearchEnginePhase<TIn, TOut>.ExecuteAsync(TIn inputData)
 		{
@@ -32,11 +37,6 @@ namespace SearchSystem.Infrastructure.EnginePhases
 			Logger.LogInformation($"Phase '{ComponentName}' is finished successfully.");
 			return output;
 		}
-
-		/// <summary>
-		/// Name of component which this phase belongs to.
-		/// </summary>
-		private string ComponentName => GetType().Name.Replace("EnginePhase", string.Empty);
 
 		/// <summary>
 		/// Perform new execution.

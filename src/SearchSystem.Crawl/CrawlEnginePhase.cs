@@ -20,8 +20,6 @@ namespace SearchSystem.Crawl
 	internal class CrawlEnginePhase : EnginePhaseBase<Unit, IReadOnlyCollection<IDocument>>, ICrawlEnginePhase
 	{
 		private readonly IWebCrawler webCrawler;
-
-		private const string subsectionName = "crawled-pages";
 		private readonly IDocumentStorage documentStorage;
 
 		public CrawlEnginePhase(
@@ -47,20 +45,20 @@ namespace SearchSystem.Crawl
 		/// </summary>
 		private async Task<Document> SaveWebPageAsDocument(IWebPage webPage, int pageIndex)
 		{
-			var document = new Document(subsectionName, $"{pageIndex}.txt", webPage.AllVisibleLines());
+			var document = new Document(ComponentName, $"{pageIndex}.txt", webPage.AllVisibleLines());
 			await documentStorage.SaveOrAppendAsync(document);
-			Logger.LogInformation($"Document '{document.Name}' is saved.");
 
 			var indexDocument = new Document(string.Empty, "index.txt", new[] {$"{pageIndex}. {webPage.Url}"});
 			await documentStorage.SaveOrAppendAsync(indexDocument);
 
+			Logger.LogInformation($"Document '{document.Name}' is saved.");
 			return document;
 		}
 
 		/// <inheritdoc />
 		protected override async Task<IReadOnlyCollection<IDocument>> LoadPreviousResults()
 			=> await documentStorage
-				.LoadFromSubsection(subsectionName)
+				.LoadFromSubsection(ComponentName)
 				.ToArrayAsync();
 	}
 }
