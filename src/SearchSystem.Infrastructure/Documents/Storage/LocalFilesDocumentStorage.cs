@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -48,11 +49,12 @@ namespace SearchSystem.Infrastructure.Documents.Storage
 		/// Get full path to destination directory. 
 		/// </summary>
 		private static string GetDestinationDirectory()
-		{
-			var currentDirectoryName = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss-fff");
-			var destinationDirectoryPath = Path.Combine(AppDataRootDirectory, currentDirectoryName);
-			Directory.CreateDirectory(destinationDirectoryPath);
-			return destinationDirectoryPath;
-		}
+			=> Process
+				.GetCurrentProcess()
+				.StartTime
+				.ToString("yyyy-MM-dd_HH-mm-ss-fff")
+				.To(currentDirectory => Path.Combine(AppDataRootDirectory, currentDirectory))
+				.To(Directory.CreateDirectory)
+				.FullName;
 	}
 }
