@@ -9,9 +9,9 @@ namespace SearchSystem.Infrastructure.Documents.Storage
 	public interface IDocumentStorage
 	{
 		/// <summary>
-		/// Save document. 
+		/// Save document or append <see cref="IDocument.Lines"/> to existing one.
 		/// </summary>
-		Task SaveAsync(IDocument document);
+		Task SaveOrAppendAsync(IDocument document);
 
 		/// <summary>
 		/// Load documents from subsection named <paramref name="subsectionName"/>. 

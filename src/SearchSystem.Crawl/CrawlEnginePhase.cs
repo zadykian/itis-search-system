@@ -40,19 +40,15 @@ namespace SearchSystem.Crawl
 
 			var documents = await webCrawler
 				.CrawlThroughPages()
-				.Zip(AsyncEnumerable.Range(0, int.MaxValue))
-				.Select(tuple =>
+				.Zip(AsyncEnumerable.Range(start: 0, int.MaxValue))
+				.SelectAwait(async tuple =>
 				{
 					var (webPage, pageIndex) = tuple;
-					Logger.LogInformation($"{pageIndex}. Page '{webPage.Url}' is retrieved.");
-					return new Document(subsectionName, $"{pageIndex}.txt", webPage.AllVisibleLines());
+					var document = new Document(subsectionName, $"{pageIndex}.txt", webPage.AllVisibleLines());
+					await documentStorage.SaveOrAppendAsync(document);
+					return document;
 				})
 				.ToArrayAsync();
-
-			foreach (var document in documents)
-			{
-				await documentStorage.SaveAsync(document);
-			}
 
 			return documents;
 		}

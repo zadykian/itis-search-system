@@ -21,11 +21,15 @@ namespace SearchSystem.Infrastructure.Documents.Storage
 		public LocalFilesDocumentStorage(ILogger<LocalFilesDocumentStorage> logger) => this.logger = logger;
 
 		/// <inheritdoc />
-		async Task IDocumentStorage.SaveAsync(IDocument document)
+		async Task IDocumentStorage.SaveOrAppendAsync(IDocument document)
 		{
-			var currentFilePath = Path.Combine(currentDirectoryPath, document.Name);
+			var subsectionDirectory = Path.Combine(currentDirectoryPath, document.SubsectionName);
+			Directory.CreateDirectory(subsectionDirectory);
+
+			var currentFilePath = Path.Combine(subsectionDirectory, document.Name);
 			await File.AppendAllLinesAsync(currentFilePath, document.Lines);
-			logger.LogInformation($"document '{document.Name}' is saved.");
+
+			logger.LogInformation($"Document '{document.Name}' is saved.");
 		}
 
 		/// <inheritdoc />
