@@ -8,24 +8,28 @@ namespace SearchSystem.Infrastructure.EnginePhases
 	public abstract class EnginePhaseBase<TIn, TOut> : ISearchEnginePhase<TIn, TOut>
 	{
 		private readonly IAppConfiguration appConfiguration;
-		private readonly ILogger<EnginePhaseBase<TIn, TOut>> logger;
 
 		protected EnginePhaseBase(IAppConfiguration appConfiguration, ILogger<EnginePhaseBase<TIn, TOut>> logger)
 		{
 			this.appConfiguration = appConfiguration;
-			this.logger = logger;
+			Logger = logger;
 		}
+
+		/// <summary>
+		/// Logger.
+		/// </summary>
+		protected ILogger<EnginePhaseBase<TIn, TOut>> Logger { get; }
 
 		/// <inheritdoc />
 		async Task<TOut> ISearchEnginePhase<TIn, TOut>.ExecuteAsync(TIn inputData)
 		{
-			logger.LogInformation($"Phase '{ComponentName}' is started.");
+			Logger.LogInformation($"Phase '{ComponentName}' is started.");
 
 			var output = appConfiguration.UsePreviousResultsFor(ComponentName)
 				? await LoadPreviousResults()
 				: await CreateNewData(inputData);
 
-			logger.LogInformation($"Phase '{ComponentName}' is finished successfully.");
+			Logger.LogInformation($"Phase '{ComponentName}' is finished successfully.");
 			return output;
 		}
 
