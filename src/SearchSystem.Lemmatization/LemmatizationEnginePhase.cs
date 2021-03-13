@@ -19,7 +19,9 @@ namespace SearchSystem.Lemmatization
 		EnginePhaseBase<IReadOnlyCollection<IDocument>, IReadOnlyCollection<IDocument>>,
 		ILemmatizationEnginePhase
 	{
-		public LemmatizationEnginePhase(IAppConfiguration appConfiguration, ILogger logger) : base(appConfiguration, logger)
+		public LemmatizationEnginePhase(
+			IAppConfiguration appConfiguration,
+			ILogger<LemmatizationEnginePhase> logger) : base(appConfiguration, logger)
 		{
 		}
 

@@ -8,9 +8,9 @@ namespace SearchSystem.Infrastructure.EnginePhases
 	public abstract class EnginePhaseBase<TIn, TOut> : ISearchEnginePhase<TIn, TOut>
 	{
 		private readonly IAppConfiguration appConfiguration;
-		private readonly ILogger logger;
+		private readonly ILogger<EnginePhaseBase<TIn, TOut>> logger;
 
-		protected EnginePhaseBase(IAppConfiguration appConfiguration, ILogger logger)
+		protected EnginePhaseBase(IAppConfiguration appConfiguration, ILogger<EnginePhaseBase<TIn, TOut>> logger)
 		{
 			this.appConfiguration = appConfiguration;
 			this.logger = logger;

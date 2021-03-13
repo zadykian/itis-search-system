@@ -14,21 +14,21 @@ namespace SearchSystem.Infrastructure.Configuration
 		/// <inheritdoc />
 		Uri IAppConfiguration.RootPageUri()
 			=> configuration
-				.GetSection("WebCrawler:RootPageUri")
+				.GetSection("Crawl:RootPageUri")
 				.Value
 				.To(stringValue => new Uri(stringValue));
 
 		/// <inheritdoc />
 		uint IAppConfiguration.WordsPerPage()
 			=> configuration
-				.GetSection("WebCrawler:WordsPerPage")
+				.GetSection("Crawl:WordsPerPage")
 				.Value
 				.To(uint.Parse);
 
 		/// <inheritdoc />
 		uint IAppConfiguration.TotalPages()
 			=> configuration
-				.GetSection("WebCrawler:TotalPages")
+				.GetSection("Crawl:TotalPages")
 				.Value
 				.To(uint.Parse);
 

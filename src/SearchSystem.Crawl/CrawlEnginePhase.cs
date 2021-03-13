@@ -26,7 +26,7 @@ namespace SearchSystem.Crawl
 			IWebCrawler webCrawler,
 			IDocumentStorage documentStorage,
 			IAppConfiguration appConfiguration,
-			ILogger logger) : base(appConfiguration, logger)
+			ILogger<CrawlEnginePhase> logger) : base(appConfiguration, logger)
 		{
 			this.documentStorage = documentStorage;
 			this.webCrawler = webCrawler;
