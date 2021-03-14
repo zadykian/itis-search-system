@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using SearchSystem.Infrastructure.AppComponents;
+using SearchSystem.Infrastructure.Configuration;
 
 namespace SearchSystem.Tests.Base
 {
@@ -46,6 +47,7 @@ namespace SearchSystem.Tests.Base
 					=> new ConfigurationBuilder()
 						.AddJsonFile("appsettings.json")
 						.AddJsonFile("appsettings.local.json", optional: true)
-						.Build());
+						.Build())
+				.AddSingleton<IAppConfiguration, DefaultAppConfiguration>();
 	}
 }

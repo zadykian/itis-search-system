@@ -1,7 +1,10 @@
+using System.Runtime.CompilerServices;
 using Microsoft.Extensions.DependencyInjection;
 using SearchSystem.Infrastructure.AppComponents;
 using SearchSystem.Infrastructure.Configuration;
 using SearchSystem.Infrastructure.Documents.Storage;
+
+[assembly: InternalsVisibleTo("SearchSystem.Tests")]
 
 namespace SearchSystem.Infrastructure
 {

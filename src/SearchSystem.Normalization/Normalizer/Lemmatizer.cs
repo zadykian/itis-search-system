@@ -1,4 +1,7 @@
+using System;
 using LemmaSharp;
+using SearchSystem.Infrastructure.Configuration;
+using SearchSystem.Infrastructure.Extensions;
 
 namespace SearchSystem.Normalization.Normalizer
 {
@@ -8,11 +11,20 @@ namespace SearchSystem.Normalization.Normalizer
 	/// </remarks>
 	internal class Lemmatizer : INormalizer
 	{
+		private readonly ILemmatizer internalLemmatizer;
+
+		public Lemmatizer(IAppConfiguration appConfiguration)
+			=> internalLemmatizer = appConfiguration
+				.DocumentsLanguage()
+				.To(language => language switch
+				{
+					Language.English => LanguagePrebuilt.English,
+					Language.Russian => LanguagePrebuilt.Russian,
+					_ => throw new ArgumentOutOfRangeException(nameof(language), language, message: null)
+				})
+				.To(languagePrebuilt => new LemmatizerPrebuiltFull(languagePrebuilt));
+
 		/// <inheritdoc />
-		string INormalizer.Normalize(string word)
-		{
-			var lemmatizer = new LemmatizerPrebuiltFull(LanguagePrebuilt.English);
-			return lemmatizer.Lemmatize(word);
-		}
+		string INormalizer.Normalize(string word) => internalLemmatizer.Lemmatize(word);
 	}
 }

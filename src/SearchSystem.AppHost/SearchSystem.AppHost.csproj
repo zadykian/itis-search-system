@@ -11,4 +11,5 @@
 		<ProjectReference Include="..\SearchSystem.Infrastructure\SearchSystem.Infrastructure.csproj" />
 		<ProjectReference Include="..\SearchSystem.Normalization\SearchSystem.Normalization.csproj" />
 	</ItemGroup>
+
 </Project>

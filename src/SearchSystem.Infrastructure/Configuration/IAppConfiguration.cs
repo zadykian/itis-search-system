@@ -26,5 +26,10 @@ namespace SearchSystem.Infrastructure.Configuration
 		/// Do not perform new calculations in context of component named <paramref name="componentName"/>. 
 		/// </summary>
 		bool UsePreviousResultsFor(string componentName);
+
+		/// <summary>
+		/// Language of documents being normalized.
+		/// </summary>
+		Language DocumentsLanguage();
 	}
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using Microsoft.Extensions.Configuration;
 using SearchSystem.Infrastructure.Extensions;
 
@@ -38,5 +39,14 @@ namespace SearchSystem.Infrastructure.Configuration
 				.GetSection($"{componentName}:UsePreviousResults")
 				.Value
 				.To(bool.Parse);
+
+		/// <inheritdoc />
+		Language IAppConfiguration.DocumentsLanguage()
+			=> configuration
+				.GetSection("Normalization:DocumentsLanguage")
+				.Value
+				.To(stringValue => (Language) typeof(Language)
+					.GetField(stringValue, BindingFlags.Public | BindingFlags.Static)!
+					.GetValue(obj: null)!);
 	}
 }
