@@ -1,11 +1,11 @@
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
-using SearchSystem.Crawl;
-using SearchSystem.Infrastructure.Documents;
+using SearchSystem.Crawl.Phase;
 using SearchSystem.Infrastructure.EnginePhases;
-using SearchSystem.Normalization;
+using SearchSystem.Normalization.Phase;
+
+using Docs = System.Collections.Generic.IReadOnlyCollection<SearchSystem.Infrastructure.Documents.IDocument>;
 
 namespace SearchSystem.AppHost
 {
@@ -26,7 +26,7 @@ namespace SearchSystem.AppHost
 		/// <inheritdoc />
 		protected override Task ExecuteAsync(CancellationToken stoppingToken)
 			=> Composable
-				.Add<Unit, Task<IReadOnlyCollection<IDocument>>>(crawlEnginePhase.ExecuteAsync)
+				.Add<Unit, Task<Docs>>(crawlEnginePhase.ExecuteAsync)
 				.Add(normalizationEnginePhase.ExecuteAsync)
 				.Invoke(Unit.Instance);
 	}

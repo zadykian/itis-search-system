@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using SearchSystem.Crawl.Crawler;
+using SearchSystem.Crawl.Phase;
 using SearchSystem.Infrastructure.AppComponents;
 
 namespace SearchSystem.Crawl

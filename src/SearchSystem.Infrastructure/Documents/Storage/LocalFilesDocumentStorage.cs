@@ -10,7 +10,7 @@ namespace SearchSystem.Infrastructure.Documents.Storage
 {
 	/// <inheritdoc />
 	/// <remarks>
-	/// This implementation stores documents in local directory.
+	/// This implementation stores documents as files in local directory.
 	/// </remarks>
 	internal class LocalFilesDocumentStorage : IDocumentStorage
 	{

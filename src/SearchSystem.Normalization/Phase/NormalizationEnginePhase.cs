@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -7,18 +6,12 @@ using SearchSystem.Infrastructure.Documents;
 using SearchSystem.Infrastructure.Documents.Storage;
 using SearchSystem.Infrastructure.EnginePhases;
 
-namespace SearchSystem.Normalization
-{
-	/// <inheritdoc />
-	public interface INormalizationEnginePhase
-		: ISearchEnginePhase<IReadOnlyCollection<IDocument>, IReadOnlyCollection<IDocument>>
-	{
-	}
+using Docs = System.Collections.Generic.IReadOnlyCollection<SearchSystem.Infrastructure.Documents.IDocument>;
 
+namespace SearchSystem.Normalization.Phase
+{
 	/// <inheritdoc cref="INormalizationEnginePhase"/>
-	internal class NormalizationEnginePhase :
-		DocumentsOutputPhaseBase<IReadOnlyCollection<IDocument>>,
-		INormalizationEnginePhase
+	internal class NormalizationEnginePhase : DocumentsOutputPhaseBase<Docs>, INormalizationEnginePhase
 	{
 		public NormalizationEnginePhase(
 			IDocumentStorage documentStorage,
@@ -28,7 +21,7 @@ namespace SearchSystem.Normalization
 		}
 
 		/// <inheritdoc />
-		protected override async Task<IReadOnlyCollection<IDocument>> CreateNewData(IReadOnlyCollection<IDocument> inputData)
+		protected override async Task<Docs> CreateNewData(Docs inputData)
 		{
 			// todo
 			await Task.CompletedTask;

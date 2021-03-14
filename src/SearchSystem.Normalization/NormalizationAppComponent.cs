@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using SearchSystem.Infrastructure.AppComponents;
+using SearchSystem.Normalization.Phase;
 
 namespace SearchSystem.Normalization
 {

@@ -9,13 +9,8 @@ using SearchSystem.Infrastructure.Documents;
 using SearchSystem.Infrastructure.Documents.Storage;
 using SearchSystem.Infrastructure.EnginePhases;
 
-namespace SearchSystem.Crawl
+namespace SearchSystem.Crawl.Phase
 {
-	/// <inheritdoc />
-	public interface ICrawlEnginePhase : ISearchEnginePhase<Unit, IReadOnlyCollection<IDocument>>
-	{
-	}
-
 	/// <inheritdoc cref="ICrawlEnginePhase"/>
 	internal class CrawlEnginePhase : DocumentsOutputPhaseBase<Unit>, ICrawlEnginePhase
 	{
