@@ -14,4 +14,13 @@
 		<ProjectReference Include="..\SearchSystem.Normalization\SearchSystem.Normalization.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<None Update="appsettings.json">
+	    	<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  	</None>
+	  	<None Update="appsettings.local.json">
+	    	<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  	</None>
+	</ItemGroup>
+
 </Project>
