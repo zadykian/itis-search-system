@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SearchSystem.Infrastructure
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SearchSystem.AppHost", "SearchSystem.AppHost\SearchSystem.AppHost.csproj", "{D9F33EA6-2948-44A7-9300-B15FF529B357}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SearchSystem.Tests", "SearchSystem.Tests\SearchSystem.Tests.csproj", "{6620D7A3-83B6-46B3-8E0F-B4C9F818D1E3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,5 +37,9 @@ Global
 		{D9F33EA6-2948-44A7-9300-B15FF529B357}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D9F33EA6-2948-44A7-9300-B15FF529B357}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D9F33EA6-2948-44A7-9300-B15FF529B357}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6620D7A3-83B6-46B3-8E0F-B4C9F818D1E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6620D7A3-83B6-46B3-8E0F-B4C9F818D1E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6620D7A3-83B6-46B3-8E0F-B4C9F818D1E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6620D7A3-83B6-46B3-8E0F-B4C9F818D1E3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
