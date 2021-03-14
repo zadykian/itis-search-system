@@ -31,6 +31,5 @@ namespace SearchSystem.Tests.Normalization
 			{
 				("houses", "house")
 			};
-
 	}
 }
