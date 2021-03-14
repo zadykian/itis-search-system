@@ -42,7 +42,7 @@ namespace SearchSystem.Crawl.Phase
 			var indexDocument = new Document(string.Empty, "index.txt", new[] {$"{pageIndex}. {webPage.Url}"});
 			await DocumentStorage.SaveOrAppendAsync(indexDocument);
 
-			Logger.LogInformation($"Document '{document.Name}' is saved.");
+			Logger.LogInformation($"Document '{document.Name}' ({webPage.Url}) is saved.");
 			return document;
 		}
 	}
