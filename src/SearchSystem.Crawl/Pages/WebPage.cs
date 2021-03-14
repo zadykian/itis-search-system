@@ -50,8 +50,9 @@ namespace SearchSystem.Crawl.Pages
 				.Select(element => element.Flatten())
 				.Distinct()
 				.Where(element => !string.IsNullOrWhiteSpace(element.TextContent))
-				.Select(element => Regex.Replace(element.TextContent, @"\n+", "\n"))
-				.Select(text => Regex.Replace(text, @"\t+", "\t"))
+				.Select(element => element.TextContent)
+				.Select(text => Regex.Replace(text, @"\n+", "\n"))
+				.Select(text => Regex.Replace(text, "( |\t)+", " "))
 				.ToImmutableArray();
 
 		/// <summary>
