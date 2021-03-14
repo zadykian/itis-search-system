@@ -7,23 +7,23 @@ using SearchSystem.Infrastructure.Documents;
 using SearchSystem.Infrastructure.Documents.Storage;
 using SearchSystem.Infrastructure.EnginePhases;
 
-namespace SearchSystem.Lemmatization
+namespace SearchSystem.Normalization
 {
 	/// <inheritdoc />
-	public interface ILemmatizationEnginePhase
+	public interface INormalizationEnginePhase
 		: ISearchEnginePhase<IReadOnlyCollection<IDocument>, IReadOnlyCollection<IDocument>>
 	{
 	}
 
-	/// <inheritdoc cref="ILemmatizationEnginePhase"/>
-	internal class LemmatizationEnginePhase :
+	/// <inheritdoc cref="INormalizationEnginePhase"/>
+	internal class NormalizationEnginePhase :
 		DocumentsOutputPhaseBase<IReadOnlyCollection<IDocument>>,
-		ILemmatizationEnginePhase
+		INormalizationEnginePhase
 	{
-		public LemmatizationEnginePhase(
+		public NormalizationEnginePhase(
 			IDocumentStorage documentStorage,
 			IAppConfiguration appConfiguration,
-			ILogger<LemmatizationEnginePhase> logger) : base(documentStorage, appConfiguration, logger)
+			ILogger<NormalizationEnginePhase> logger) : base(documentStorage, appConfiguration, logger)
 		{
 		}
 

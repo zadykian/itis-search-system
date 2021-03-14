@@ -3,7 +3,7 @@ using Microsoft.Extensions.Hosting;
 using SearchSystem.Crawl;
 using SearchSystem.Infrastructure;
 using SearchSystem.Infrastructure.Extensions;
-using SearchSystem.Lemmatization;
+using SearchSystem.Normalization;
 
 namespace SearchSystem.AppHost
 {
@@ -26,7 +26,7 @@ namespace SearchSystem.AppHost
 				.ConfigureServices((_, services) => services
 					.AddComponent<InfrastructureAppComponent>()
 					.AddComponent<CrawlAppComponent>()
-					.AddComponent<LemmatizationAppComponent>()
+					.AddComponent<NormalizationAppComponent>()
 					.AddComponent<AppHostAppComponent>())
 				.Build()
 				.RunAsync();

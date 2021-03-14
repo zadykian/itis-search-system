@@ -7,7 +7,7 @@ EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SearchSystem.Crawl", "SearchSystem.Crawl\SearchSystem.Crawl.csproj", "{847468B0-5577-46D4-A869-0EA5DBAEF952}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SearchSystem.Lemmatization", "SearchSystem.Lemmatization\SearchSystem.Lemmatization.csproj", "{107228E3-CEF3-4404-A4D6-5817E0847123}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SearchSystem.Normalization", "SearchSystem.Normalization\SearchSystem.Normalization.csproj", "{107228E3-CEF3-4404-A4D6-5817E0847123}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SearchSystem.Infrastructure", "SearchSystem.Infrastructure\SearchSystem.Infrastructure.csproj", "{0E0A3FFB-44F0-466C-B0FC-891B68077047}"
 EndProject

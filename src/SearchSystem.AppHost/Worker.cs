@@ -5,7 +5,7 @@ using Microsoft.Extensions.Hosting;
 using SearchSystem.Crawl;
 using SearchSystem.Infrastructure.Documents;
 using SearchSystem.Infrastructure.EnginePhases;
-using SearchSystem.Lemmatization;
+using SearchSystem.Normalization;
 
 namespace SearchSystem.AppHost
 {
@@ -13,21 +13,21 @@ namespace SearchSystem.AppHost
 	internal class Worker : BackgroundService
 	{
 		private readonly ICrawlEnginePhase crawlEnginePhase;
-		private readonly ILemmatizationEnginePhase lemmatizationEnginePhase;
+		private readonly INormalizationEnginePhase normalizationEnginePhase;
 
 		public Worker(
 			ICrawlEnginePhase crawlEnginePhase,
-			ILemmatizationEnginePhase lemmatizationEnginePhase)
+			INormalizationEnginePhase normalizationEnginePhase)
 		{
 			this.crawlEnginePhase = crawlEnginePhase;
-			this.lemmatizationEnginePhase = lemmatizationEnginePhase;
+			this.normalizationEnginePhase = normalizationEnginePhase;
 		}
 
 		/// <inheritdoc />
 		protected override Task ExecuteAsync(CancellationToken stoppingToken)
 			=> Composable
 				.Add<Unit, Task<IReadOnlyCollection<IDocument>>>(crawlEnginePhase.ExecuteAsync)
-				.Add(lemmatizationEnginePhase.ExecuteAsync)
+				.Add(normalizationEnginePhase.ExecuteAsync)
 				.Invoke(Unit.Instance);
 	}
 }

@@ -9,6 +9,6 @@
 	<ItemGroup>
 		<ProjectReference Include="..\SearchSystem.Crawl\SearchSystem.Crawl.csproj" />
 		<ProjectReference Include="..\SearchSystem.Infrastructure\SearchSystem.Infrastructure.csproj" />
-		<ProjectReference Include="..\SearchSystem.Lemmatization\SearchSystem.Lemmatization.csproj" />
+		<ProjectReference Include="..\SearchSystem.Normalization\SearchSystem.Normalization.csproj" />
 	</ItemGroup>
 </Project>

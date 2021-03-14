@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<Import Project="$(MsBuildThisFileDirectory)\..\common.props" />
+
+	<ItemGroup>
+		<ProjectReference Include="..\SearchSystem.Infrastructure\SearchSystem.Infrastructure.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="LemmaSharp-std" Version="1.0.1" />
+	</ItemGroup>
+
+</Project>

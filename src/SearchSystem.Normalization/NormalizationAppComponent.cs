@@ -1,13 +1,13 @@
 using Microsoft.Extensions.DependencyInjection;
 using SearchSystem.Infrastructure.AppComponents;
 
-namespace SearchSystem.Lemmatization
+namespace SearchSystem.Normalization
 {
 	/// <inheritdoc />
-	public class LemmatizationAppComponent : IAppComponent
+	public class NormalizationAppComponent : IAppComponent
 	{
 		/// <inheritdoc />
 		void IAppComponent.RegisterServices(IServiceCollection serviceCollection)
-			=> serviceCollection.AddSingleton<ILemmatizationEnginePhase, LemmatizationEnginePhase>();
+			=> serviceCollection.AddSingleton<INormalizationEnginePhase, NormalizationEnginePhase>();
 	}
 }
