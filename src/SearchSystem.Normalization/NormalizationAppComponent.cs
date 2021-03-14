@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using SearchSystem.Infrastructure.AppComponents;
+using SearchSystem.Normalization.Normalizer;
 using SearchSystem.Normalization.Phase;
 
 namespace SearchSystem.Normalization
@@ -9,6 +10,8 @@ namespace SearchSystem.Normalization
 	{
 		/// <inheritdoc />
 		void IAppComponent.RegisterServices(IServiceCollection serviceCollection)
-			=> serviceCollection.AddSingleton<INormalizationEnginePhase, NormalizationEnginePhase>();
+			=> serviceCollection
+				.AddSingleton<INormalizer, Lemmatizer>()
+				.AddSingleton<INormalizationEnginePhase, NormalizationEnginePhase>();
 	}
 }
