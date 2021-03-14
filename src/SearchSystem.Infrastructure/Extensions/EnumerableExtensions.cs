@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace SearchSystem.Infrastructure.Extensions
@@ -9,14 +8,9 @@ namespace SearchSystem.Infrastructure.Extensions
 	public static class EnumerableExtensions
 	{
 		/// <summary>
-		/// Perform action <paramref name="action"/> for each item in <paramref name="enumerable"/>. 
+		/// Join string values <paramref name="stringValues"/> with separator <paramref name="separator"/>. 
 		/// </summary>
-		public static void ForEach<T>(this IEnumerable<T> enumerable, Action<T> action)
-		{
-			foreach (var item in enumerable)
-			{
-				action(item);
-			}
-		}
+		public static string JoinBy(this IEnumerable<string> stringValues, string separator)
+			=> string.Join(separator, stringValues);
 	}
 }

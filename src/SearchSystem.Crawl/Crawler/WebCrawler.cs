@@ -23,7 +23,7 @@ namespace SearchSystem.Crawl.Crawler
 				.To(WebPages.Download)
 				.Where(page => page
 					.AllVisibleLines()
-					.SelectMany(line => line.Split(separator: ' '))
+					.SelectMany(line => line.Words())
 					.Count() >= appConfiguration.WordsPerPage())
 				.Distinct()
 				.Take((int) appConfiguration.TotalPages());
