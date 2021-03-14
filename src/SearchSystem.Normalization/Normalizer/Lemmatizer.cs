@@ -1,3 +1,5 @@
+using LemmaSharp;
+
 namespace SearchSystem.Normalization.Normalizer
 {
 	/// <inheritdoc />
@@ -7,6 +9,10 @@ namespace SearchSystem.Normalization.Normalizer
 	internal class Lemmatizer : INormalizer
 	{
 		/// <inheritdoc />
-		string INormalizer.Normalize(string word) => throw new System.NotImplementedException();
+		string INormalizer.Normalize(string word)
+		{
+			var lemmatizer = new LemmatizerPrebuiltFull(LanguagePrebuilt.English);
+			return lemmatizer.Lemmatize(word);
+		}
 	}
 }
