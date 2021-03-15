@@ -1,5 +1,4 @@
 using Microsoft.Extensions.DependencyInjection;
-using SearchSystem.Indexing.Index;
 using SearchSystem.Indexing.Phase;
 using SearchSystem.Infrastructure.AppComponents;
 
