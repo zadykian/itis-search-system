@@ -17,7 +17,6 @@ namespace SearchSystem.Indexing.Phase
 	/// <inheritdoc cref="IIndexingEnginePhase"/>
 	internal class IndexingEnginePhase : EnginePhaseBase<Docs, IDocumentsIndex>, IIndexingEnginePhase
 	{
-		private const string indexDocumentName = "terms-index.json";
 		private readonly IDocumentStorage documentStorage;
 
 		public IndexingEnginePhase(
@@ -28,7 +27,7 @@ namespace SearchSystem.Indexing.Phase
 		/// <inheritdoc />
 		protected override async Task<IDocumentsIndex> CreateNewData(Docs inputData)
 		{
-			IDocumentsIndex documentsIndex = new DocumentsIndex(inputData);
+			var documentsIndex = new DocumentsIndex(inputData);
 
 			try
 			{
@@ -47,17 +46,8 @@ namespace SearchSystem.Indexing.Phase
 		/// <inheritdoc />
 		protected override async Task<IDocumentsIndex> LoadPreviousResults()
 		{
-			var document = await documentStorage.LoadAsync(new DocumentLink(string.Empty, indexDocumentName));
-			var documentIndex = JsonSerializer.Deserialize<DocumentsIndex>(document.Lines.Single())!;
-
-			if (documentIndex is null)
-			{
-				const string message = "Failed to deserialize terms index from file.";
-				Environment.Logger.LogError(message);
-				throw new ApplicationException(message);
-			}
-
-			return documentIndex;
+			var document = await documentStorage.LoadAsync(new DocumentLink(string.Empty, "terms-index.json"));
+			return DocumentsIndex.FromDocument(document);
 		}
 	}
 }

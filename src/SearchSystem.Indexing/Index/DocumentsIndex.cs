@@ -17,7 +17,11 @@ namespace SearchSystem.Indexing.Index
 	{
 		private readonly ConcurrentDictionary<Term, DocumentsSet> termsToDocuments;
 
-		public DocumentsIndex(IEnumerable<IDocument> allDocuments) => termsToDocuments = PerformIndexation(allDocuments);
+		private DocumentsIndex(ConcurrentDictionary<Term, DocumentsSet> termsToDocuments)
+			=> this.termsToDocuments = termsToDocuments;
+
+		public DocumentsIndex(IEnumerable<IDocument> allDocuments)
+			=> termsToDocuments = PerformIndexation(allDocuments);
 
 		/// <inheritdoc />
 		DocumentsSet IDocumentsIndex.AllWhichContains(Term term)
@@ -31,11 +35,31 @@ namespace SearchSystem.Indexing.Index
 				.Values
 				.Aggregate(ImmutableHashSet<IDocumentLink>.Empty, (firstSet, secondSet) => firstSet.Union(secondSet));
 
-		/// <inheritdoc />
-		IDocument IDocumentsIndex.AsDocument()
+		/// <summary>
+		/// Represent itself as <see cref="IDocument"/> instance. 
+		/// </summary>
+		public IDocument AsDocument()
 			=> JsonSerializer
 				.Serialize(termsToDocuments)
 				.To(serialized => new Document(string.Empty, "terms-index.json", new [] {serialized}));
+
+		/// <summary>
+		/// Convert <paramref name="indexDocument"/> to <see cref="IDocumentsIndex"/> instance. 
+		/// </summary>
+		public static IDocumentsIndex FromDocument(IDocument indexDocument)
+			=> indexDocument
+				.Lines
+				.Single()
+				.To(serialized => JsonSerializer.Deserialize<Dictionary<Term, IImmutableSet<DocumentLink>>>(serialized)!)
+				.Select(pair => (
+					Term: pair.Key,
+					DocsSet: pair
+						.Value
+						.Cast<IDocumentLink>()
+						.ToImmutableHashSet()))
+				.Select(tuple => new KeyValuePair<Term, DocumentsSet>(tuple.Term, tuple.DocsSet))
+				.To(keyValuePairs => new ConcurrentDictionary<Term, DocumentsSet>(keyValuePairs))
+				.To(dictionary => new DocumentsIndex(dictionary));
 
 		/// <summary>
 		/// Perform indexation of documents <paramref name="allDocuments"/>. 
@@ -54,6 +78,6 @@ namespace SearchSystem.Indexing.Index
 						.Cast<IDocumentLink>()
 						.ToImmutableHashSet()))
 				.Select(tuple => new KeyValuePair<Term, DocumentsSet>(tuple.Term, tuple.DocsSet))
-				.To(keyValuePairs => new ConcurrentDictionary<string, DocumentsSet>(keyValuePairs));
+				.To(keyValuePairs => new ConcurrentDictionary<Term, DocumentsSet>(keyValuePairs));
 	}
 }

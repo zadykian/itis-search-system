@@ -11,7 +11,6 @@ namespace SearchSystem.Indexing
 		/// <inheritdoc />
 		void IAppComponent.RegisterServices(IServiceCollection serviceCollection)
 			=> serviceCollection
-				.AddSingleton<IDocumentsIndex, DocumentsIndex>()
 				.AddSingleton<IIndexingEnginePhase, IndexingEnginePhase>();
 	}
 }
