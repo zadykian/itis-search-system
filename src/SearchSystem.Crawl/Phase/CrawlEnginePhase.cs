@@ -38,7 +38,7 @@ namespace SearchSystem.Crawl.Phase
 			var document = new Document(ComponentName, $"{pageIndex}.txt", webPage.AllVisibleLines());
 			await DocumentStorage.SaveOrAppendAsync(document);
 
-			var indexDocument = new Document(string.Empty, "index.txt", new[] {$"{pageIndex}. {webPage.Url}"});
+			var indexDocument = new Document(string.Empty, "web-pages-index.txt", new[] {$"{pageIndex}. {webPage.Url}"});
 			await DocumentStorage.SaveOrAppendAsync(indexDocument);
 
 			Environment.Logger.LogInformation($"Document '{document.Name}' ({webPage.Url}) is saved.");

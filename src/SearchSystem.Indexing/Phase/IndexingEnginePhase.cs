@@ -1,6 +1,11 @@
+using System;
+using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using SearchSystem.Indexing.Index;
 using SearchSystem.Infrastructure.AppEnvironment;
+using SearchSystem.Infrastructure.Documents;
 using SearchSystem.Infrastructure.Documents.Storage;
 using SearchSystem.Infrastructure.EnginePhases;
 
@@ -23,7 +28,19 @@ namespace SearchSystem.Indexing.Phase
 			=> throw new System.NotImplementedException();
 
 		/// <inheritdoc />
-		protected override Task<IDocumentsIndex> LoadPreviousResults()
-			=> throw new System.NotImplementedException();
+		protected override async Task<IDocumentsIndex> LoadPreviousResults()
+		{
+			var document = await documentStorage.LoadAsync(new DocumentLink(string.Empty, "terms-index.json"));
+			var documentIndex = JsonSerializer.Deserialize<DocumentsIndex>(document.Lines.Single())!;
+
+			if (documentIndex is null)
+			{
+				const string message = "Failed to deserialize terms index from file.";
+				Environment.Logger.LogError(message);
+				throw new ApplicationException(message);
+			}
+
+			return documentIndex;
+		}
 	}
 }
