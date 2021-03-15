@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using SearchSystem.Infrastructure.Documents;
 
 // ReSharper disable BuiltInTypeReferenceStyle
@@ -21,6 +22,12 @@ namespace SearchSystem.Indexing.Index
 			=> termsToDocuments.TryGetValue(term, out var documentsSet)
 				? documentsSet
 				: ImmutableHashSet<IDocumentLink>.Empty;
+
+		/// <inheritdoc />
+		DocumentsSet IDocumentsIndex.AllDocuments()
+			=> termsToDocuments
+				.Values
+				.Aggregate(ImmutableHashSet<IDocumentLink>.Empty, (firstSet, secondSet) => firstSet.Union(secondSet));
 
 		/// <summary>
 		/// Perform indexation of documents <paramref name="allDocuments"/>. 
