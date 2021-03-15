@@ -1,24 +1,17 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using SearchSystem.Infrastructure.Configuration;
+using SearchSystem.Infrastructure.AppEnvironment;
 
 namespace SearchSystem.Infrastructure.EnginePhases
 {
 	/// <inheritdoc />
 	public abstract class EnginePhaseBase<TIn, TOut> : ISearchEnginePhase<TIn, TOut>
 	{
-		private readonly IAppConfiguration appConfiguration;
+		protected EnginePhaseBase(IAppEnvironment<EnginePhaseBase<TIn, TOut>> appEnvironment)
+			=> Environment = appEnvironment;
 
-		protected EnginePhaseBase(IAppConfiguration appConfiguration, ILogger<EnginePhaseBase<TIn, TOut>> logger)
-		{
-			this.appConfiguration = appConfiguration;
-			Logger = logger;
-		}
-
-		/// <summary>
-		/// Logger.
-		/// </summary>
-		protected ILogger<EnginePhaseBase<TIn, TOut>> Logger { get; }
+		/// <inheritdoc cref="IAppEnvironment{T}"/>>
+		protected IAppEnvironment<EnginePhaseBase<TIn, TOut>> Environment { get; }
 
 		/// <summary>
 		/// Name of component which this phase belongs to.
@@ -28,13 +21,13 @@ namespace SearchSystem.Infrastructure.EnginePhases
 		/// <inheritdoc />
 		async Task<TOut> ISearchEnginePhase<TIn, TOut>.ExecuteAsync(TIn inputData)
 		{
-			Logger.LogInformation($"Phase '{ComponentName}' is started.");
+			Environment.Logger.LogInformation($"Phase '{ComponentName}' is started.");
 
-			var output = appConfiguration.UsePreviousResultsFor(ComponentName)
+			var output = Environment.Configuration.UsePreviousResultsFor(ComponentName)
 				? await LoadPreviousResults()
 				: await CreateNewData(inputData);
 
-			Logger.LogInformation($"Phase '{ComponentName}' is finished successfully.");
+			Environment.Logger.LogInformation($"Phase '{ComponentName}' is finished successfully.");
 			return output;
 		}
 
