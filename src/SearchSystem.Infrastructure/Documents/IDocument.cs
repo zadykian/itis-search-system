@@ -5,18 +5,8 @@ namespace SearchSystem.Infrastructure.Documents
 	/// <summary>
 	/// Text document.
 	/// </summary>
-	public interface IDocument
+	public interface IDocument : IDocumentLink
 	{
-		/// <summary>
-		/// Document subsection name.
-		/// </summary>
-		string SubsectionName { get; }
-		
-		/// <summary>
-		/// Document name.
-		/// </summary>
-		string Name { get; }
-
 		/// <summary>
 		/// Document text lines. 
 		/// </summary>

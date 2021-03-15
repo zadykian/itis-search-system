@@ -2,4 +2,8 @@
 
 	<Import Project="$(MsBuildThisFileDirectory)\..\common.props" />
 
+	<ItemGroup>
+		<ProjectReference Include="..\SearchSystem.Infrastructure\SearchSystem.Infrastructure.csproj" />
+	</ItemGroup>
+
 </Project>
