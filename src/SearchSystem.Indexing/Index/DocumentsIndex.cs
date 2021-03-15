@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Text.Json;
 using SearchSystem.Infrastructure.Documents;
 using SearchSystem.Infrastructure.Extensions;
 
@@ -29,6 +30,12 @@ namespace SearchSystem.Indexing.Index
 			=> termsToDocuments
 				.Values
 				.Aggregate(ImmutableHashSet<IDocumentLink>.Empty, (firstSet, secondSet) => firstSet.Union(secondSet));
+
+		/// <inheritdoc />
+		IDocument IDocumentsIndex.AsDocument()
+			=> JsonSerializer
+				.Serialize(termsToDocuments)
+				.To(serialized => new Document(string.Empty, "terms-index.json", new [] {serialized}));
 
 		/// <summary>
 		/// Perform indexation of documents <paramref name="allDocuments"/>. 

@@ -28,13 +28,12 @@ namespace SearchSystem.Indexing.Phase
 		/// <inheritdoc />
 		protected override async Task<IDocumentsIndex> CreateNewData(Docs inputData)
 		{
-			var documentsIndex = new DocumentsIndex(inputData);
+			IDocumentsIndex documentsIndex = new DocumentsIndex(inputData);
 
 			try
 			{
-				await JsonSerializer
-					.Serialize(documentsIndex)
-					.To(serialized => new Document(string.Empty, indexDocumentName, new [] {serialized}))
+				await documentsIndex
+					.AsDocument()
 					.To(documentStorage.SaveOrAppendAsync);
 			}
 			catch (Exception exception)

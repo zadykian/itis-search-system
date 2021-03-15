@@ -1,5 +1,6 @@
-// ReSharper disable BuiltInTypeReferenceStyle
+using SearchSystem.Infrastructure.Documents;
 
+// ReSharper disable BuiltInTypeReferenceStyle
 using Term = System.String;
 using DocumentsSet = System.Collections.Immutable.IImmutableSet<SearchSystem.Infrastructure.Documents.IDocumentLink>;
 
@@ -19,5 +20,10 @@ namespace SearchSystem.Indexing.Index
 		/// Get set of all indexed document links.
 		/// </summary>
 		DocumentsSet AllDocuments();
+
+		/// <summary>
+		/// Represent itself as <see cref="IDocument"/> instance. 
+		/// </summary>
+		IDocument AsDocument();
 	}
 }
