@@ -1,7 +1,6 @@
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using SearchSystem.Infrastructure.Configuration;
+using SearchSystem.Infrastructure.AppEnvironment;
 using SearchSystem.Infrastructure.Documents.Storage;
 
 using Docs = System.Collections.Generic.IReadOnlyCollection<SearchSystem.Infrastructure.Documents.IDocument>;
@@ -16,8 +15,7 @@ namespace SearchSystem.Infrastructure.EnginePhases
 	{
 		protected DocumentsOutputPhaseBase(
 			IDocumentStorage documentStorage,
-			IAppConfiguration appConfiguration,
-			ILogger<EnginePhaseBase<TIn, Docs>> logger) : base(appConfiguration, logger)
+			IAppEnvironment<DocumentsOutputPhaseBase<TIn>> appEnvironment) : base(appEnvironment)
 			=> DocumentStorage = documentStorage;
 
 		/// <inheritdoc cref="IDocumentStorage"/>

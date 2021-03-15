@@ -1,6 +1,7 @@
 using System.Runtime.CompilerServices;
 using Microsoft.Extensions.DependencyInjection;
 using SearchSystem.Infrastructure.AppComponents;
+using SearchSystem.Infrastructure.AppEnvironment;
 using SearchSystem.Infrastructure.Configuration;
 using SearchSystem.Infrastructure.Documents.Storage;
 
@@ -15,6 +16,7 @@ namespace SearchSystem.Infrastructure
 		void IAppComponent.RegisterServices(IServiceCollection serviceCollection)
 			=> serviceCollection
 				.AddSingleton<IAppConfiguration, DefaultAppConfiguration>()
+				.AddSingleton(typeof(IAppEnvironment<>), typeof(DefaultAppEnvironment<>))
 				.AddSingleton<IDocumentStorage, LocalFilesDocumentStorage>();
 	}
 }
