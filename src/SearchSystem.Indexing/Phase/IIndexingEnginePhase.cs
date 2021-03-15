@@ -7,7 +7,7 @@ namespace SearchSystem.Indexing.Phase
 {
 	/// <inheritdoc />
 	/// <remarks>
-	/// This phase performs normalized documents indexing.
+	/// This phase performs indexing of normalized documents.
 	/// </remarks>
 	public interface IIndexingEnginePhase : ISearchEnginePhase<Docs, IDocumentsIndex>
 	{

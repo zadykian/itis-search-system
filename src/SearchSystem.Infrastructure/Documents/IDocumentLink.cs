@@ -1,3 +1,5 @@
+using System.IO;
+
 namespace SearchSystem.Infrastructure.Documents
 {
 	/// <summary>
@@ -14,5 +16,17 @@ namespace SearchSystem.Infrastructure.Documents
 		/// Document name.
 		/// </summary>
 		string Name { get; }
+	}
+
+	/// <summary>
+	/// Extension methods for <see cref="IDocumentLink"/> type.
+	/// </summary>
+	internal static class DocumentLinkExtensions
+	{
+		/// <summary>
+		/// Get relative path to file by its link. 
+		/// </summary>
+		public static string RelativePath(this IDocumentLink documentLink)
+			=> Path.Combine(documentLink.SubsectionName, documentLink.Name);
 	}
 }
