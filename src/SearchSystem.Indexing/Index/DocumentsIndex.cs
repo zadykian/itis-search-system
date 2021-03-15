@@ -6,7 +6,8 @@ using DocumentsSet = System.Collections.Immutable.IImmutableSet<SearchSystem.Inf
 
 namespace SearchSystem.Indexing.Index
 {
-	public class DocumentsIndex
+	/// <inheritdoc />
+	internal class DocumentsIndex : IDocumentsIndex
 	{
 		private readonly ConcurrentDictionary<Term, DocumentsSet> termsToDocuments = new();
 	}
