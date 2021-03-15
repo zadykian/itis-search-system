@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using SearchSystem.Infrastructure.Documents;
+using SearchSystem.Infrastructure.Extensions;
 
 // ReSharper disable BuiltInTypeReferenceStyle
 using Term = System.String;
@@ -33,8 +34,19 @@ namespace SearchSystem.Indexing.Index
 		/// Perform indexation of documents <paramref name="allDocuments"/>. 
 		/// </summary>
 		private static ConcurrentDictionary<Term, DocumentsSet> PerformIndexation(IEnumerable<IDocument> allDocuments)
-		{
-			throw new System.NotImplementedException();
-		}
+			=> allDocuments
+				.SelectMany(document => document
+					.Lines
+					.SelectMany(line => line.Words())
+					.Select(term => (Term: term, Document: document)))
+				.GroupBy(tuple => tuple.Term)
+				.Select(group => (
+					Term: group.Key,
+					DocsSet: group
+						.Select(tuple => new DocumentLink(tuple.Document.SubsectionName, tuple.Document.Name))
+						.Cast<IDocumentLink>()
+						.ToImmutableHashSet()))
+				.Select(tuple => new KeyValuePair<Term, DocumentsSet>(tuple.Term, tuple.DocsSet))
+				.To(keyValuePairs => new ConcurrentDictionary<string, DocumentsSet>(keyValuePairs));
 	}
 }
