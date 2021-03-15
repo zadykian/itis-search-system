@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SearchSystem.Crawl.Crawler;
 using SearchSystem.Crawl.Pages;
-using SearchSystem.Infrastructure.Configuration;
+using SearchSystem.Infrastructure.AppEnvironment;
 using SearchSystem.Infrastructure.Documents;
 using SearchSystem.Infrastructure.Documents.Storage;
 using SearchSystem.Infrastructure.EnginePhases;
@@ -19,8 +19,7 @@ namespace SearchSystem.Crawl.Phase
 		public CrawlEnginePhase(
 			IWebCrawler webCrawler,
 			IDocumentStorage documentStorage,
-			IAppConfiguration appConfiguration,
-			ILogger<CrawlEnginePhase> logger) : base(documentStorage, appConfiguration, logger)
+			IAppEnvironment<CrawlEnginePhase> appEnvironment) : base(documentStorage, appEnvironment)
 			=> this.webCrawler = webCrawler;
 
 		/// <inheritdoc />
@@ -42,7 +41,7 @@ namespace SearchSystem.Crawl.Phase
 			var indexDocument = new Document(string.Empty, "index.txt", new[] {$"{pageIndex}. {webPage.Url}"});
 			await DocumentStorage.SaveOrAppendAsync(indexDocument);
 
-			Logger.LogInformation($"Document '{document.Name}' ({webPage.Url}) is saved.");
+			Environment.Logger.LogInformation($"Document '{document.Name}' ({webPage.Url}) is saved.");
 			return document;
 		}
 	}

@@ -1,8 +1,7 @@
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using SearchSystem.Infrastructure.Configuration;
+using SearchSystem.Infrastructure.AppEnvironment;
 using SearchSystem.Infrastructure.Documents;
 using SearchSystem.Infrastructure.Documents.Storage;
 using SearchSystem.Infrastructure.EnginePhases;
@@ -21,8 +20,7 @@ namespace SearchSystem.Normalization.Phase
 		public NormalizationEnginePhase(
 			INormalizer normalizer,
 			IDocumentStorage documentStorage,
-			IAppConfiguration appConfiguration,
-			ILogger<NormalizationEnginePhase> logger) : base(documentStorage, appConfiguration, logger)
+			IAppEnvironment<NormalizationEnginePhase> appEnvironment) : base(documentStorage, appEnvironment)
 			=> this.normalizer = normalizer;
 
 		/// <inheritdoc />
