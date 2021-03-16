@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using SearchSystem.Infrastructure.Documents;
 using SearchSystem.Infrastructure.Extensions;
@@ -45,8 +46,12 @@ namespace SearchSystem.Indexing.Index
 		/// Represent itself as <see cref="IDocument"/> instance. 
 		/// </summary>
 		public IDocument AsDocument()
-			=> JsonSerializer
-				.Serialize(termsToDocuments)
+			=> new JsonSerializerOptions
+				{
+					WriteIndented = true,
+					Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+				}
+				.To(options => JsonSerializer.Serialize(termsToDocuments, options))
 				.To(serialized => new Document(string.Empty, "terms-index.json", new [] {serialized}));
 
 		/// <summary>
