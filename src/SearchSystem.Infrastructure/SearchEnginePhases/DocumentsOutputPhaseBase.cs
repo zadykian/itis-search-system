@@ -22,7 +22,7 @@ namespace SearchSystem.Infrastructure.SearchEnginePhases
 		protected IDocumentStorage DocumentStorage { get; }
 
 		/// <inheritdoc />
-		protected sealed override async Task<Docs> LoadPreviousResults()
+		protected sealed override async Task<Docs> LoadPreviousResultsAsync()
 			=> await DocumentStorage
 				.LoadFromSubsection(ComponentName)
 				.ToArrayAsync();

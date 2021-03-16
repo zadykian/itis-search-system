@@ -23,7 +23,7 @@ namespace SearchSystem.Indexing.Phase
 			=> this.documentStorage = documentStorage;
 
 		/// <inheritdoc />
-		protected override async Task<IDocumentsIndex> CreateNewData(Docs inputData)
+		protected override async Task<IDocumentsIndex> ExecuteAnewAsync(Docs inputData)
 		{
 			var documentsIndex = new DocumentsIndex(inputData);
 
@@ -42,7 +42,7 @@ namespace SearchSystem.Indexing.Phase
 		}
 
 		/// <inheritdoc />
-		protected override async Task<IDocumentsIndex> LoadPreviousResults()
+		protected override async Task<IDocumentsIndex> LoadPreviousResultsAsync()
 		{
 			var document = await documentStorage.LoadAsync(new DocumentLink(string.Empty, "terms-index.json"));
 			return new DocumentsIndex(document);

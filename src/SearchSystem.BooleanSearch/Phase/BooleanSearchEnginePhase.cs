@@ -14,9 +14,9 @@ namespace SearchSystem.BooleanSearch.Phase
 		}
 
 		/// <inheritdoc />
-		protected override Task<Unit> CreateNewData(IDocumentsIndex inputData) => throw new System.NotImplementedException();
+		protected override Task<Unit> ExecuteAnewAsync(IDocumentsIndex inputData) => throw new System.NotImplementedException();
 
 		/// <inheritdoc />
-		protected override Task<Unit> LoadPreviousResults() => Task.FromResult(Unit.Instance);
+		protected override Task<Unit> LoadPreviousResultsAsync() => Task.FromResult(Unit.Instance);
 	}
 }

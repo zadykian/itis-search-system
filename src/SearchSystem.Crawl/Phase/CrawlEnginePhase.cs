@@ -23,7 +23,7 @@ namespace SearchSystem.Crawl.Phase
 			=> this.webCrawler = webCrawler;
 
 		/// <inheritdoc />
-		protected override async Task<IReadOnlyCollection<IDocument>> CreateNewData(Unit _)
+		protected override async Task<IReadOnlyCollection<IDocument>> ExecuteAnewAsync(Unit _)
 			=> await webCrawler
 				.CrawlThroughPages()
 				.Zip(AsyncEnumerable.Range(start: 0, int.MaxValue))

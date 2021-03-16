@@ -28,8 +28,8 @@ namespace SearchSystem.Infrastructure.SearchEnginePhases
 			try
 			{
 				output = Environment.Configuration.UsePreviousResultsFor(ComponentName)
-					? await LoadPreviousResults()
-					: await CreateNewData(inputData);
+					? await LoadPreviousResultsAsync()
+					: await ExecuteAnewAsync(inputData);
 			}
 			catch (Exception exception)
 			{
@@ -44,11 +44,11 @@ namespace SearchSystem.Infrastructure.SearchEnginePhases
 		/// <summary>
 		/// Perform new execution.
 		/// </summary>
-		protected abstract Task<TOut> CreateNewData(TIn inputData);
+		protected abstract Task<TOut> ExecuteAnewAsync(TIn inputData);
 
 		/// <summary>
 		/// Load results retrieved during previous execution.
 		/// </summary>
-		protected abstract Task<TOut> LoadPreviousResults();
+		protected abstract Task<TOut> LoadPreviousResultsAsync();
 	}
 }

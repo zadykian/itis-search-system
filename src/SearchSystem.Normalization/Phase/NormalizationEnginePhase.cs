@@ -24,7 +24,7 @@ namespace SearchSystem.Normalization.Phase
 			=> this.normalizer = normalizer;
 
 		/// <inheritdoc />
-		protected override async Task<Docs> CreateNewData(Docs inputData)
+		protected override async Task<Docs> ExecuteAnewAsync(Docs inputData)
 			=> await inputData
 				.Select(NormalizeDocument)
 				.ToAsyncEnumerable()
