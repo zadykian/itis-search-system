@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
+using SearchSystem.BooleanSearch;
 using SearchSystem.Crawl;
 using SearchSystem.Indexing;
 using SearchSystem.Infrastructure;
@@ -29,6 +30,7 @@ namespace SearchSystem.AppHost
 					.AddComponent<CrawlAppComponent>()
 					.AddComponent<NormalizationAppComponent>()
 					.AddComponent<IndexingAppComponent>()
+					.AddComponent<BooleanSearchAppComponent>()
 					.AddComponent<AppHostAppComponent>())
 				.Build()
 				.RunAsync();
