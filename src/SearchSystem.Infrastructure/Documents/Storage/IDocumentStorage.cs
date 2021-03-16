@@ -14,6 +14,11 @@ namespace SearchSystem.Infrastructure.Documents.Storage
 		Task SaveOrAppendAsync(IDocument document);
 
 		/// <summary>
+		/// Load single document by its link. 
+		/// </summary>
+		Task<IDocument> LoadAsync(IDocumentLink documentLink);
+
+		/// <summary>
 		/// Load documents from subsection named <paramref name="subsectionName"/>. 
 		/// </summary>
 		IAsyncEnumerable<IDocument> LoadFromSubsection(string subsectionName);

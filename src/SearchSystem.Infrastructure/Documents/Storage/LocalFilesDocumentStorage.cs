@@ -14,14 +14,10 @@ namespace SearchSystem.Infrastructure.Documents.Storage
 	/// </remarks>
 	internal class LocalFilesDocumentStorage : IDocumentStorage
 	{
-		private static string AppDataRootDirectory => Path.Combine(Environment.CurrentDirectory, "results");
-
-		private static string CurrentDirectoryPath => GetDestinationDirectory();
-
 		/// <inheritdoc />
 		async Task IDocumentStorage.SaveOrAppendAsync(IDocument document)
 		{
-			var subsectionDirectory = Path.Combine(CurrentDirectoryPath, document.SubsectionName);
+			var subsectionDirectory = Path.Combine(CurrentDirectoryPath(), document.SubsectionName);
 			Directory.CreateDirectory(subsectionDirectory);
 
 			var currentFilePath = Path.Combine(subsectionDirectory, document.Name);
@@ -29,11 +25,18 @@ namespace SearchSystem.Infrastructure.Documents.Storage
 		}
 
 		/// <inheritdoc />
+		async Task<IDocument> IDocumentStorage.LoadAsync(IDocumentLink documentLink)
+		{
+			var documentLines = await Path
+				.Combine(MostRecentDirectoryPath(), documentLink.RelativePath())
+				.To(fileFullPath => File.ReadAllLinesAsync(fileFullPath));
+
+			return new Document(documentLink.SubsectionName, documentLink.Name, documentLines);
+		}
+
+		/// <inheritdoc />
 		IAsyncEnumerable<IDocument> IDocumentStorage.LoadFromSubsection(string subsectionName)
-			=> Directory
-				.EnumerateDirectories(AppDataRootDirectory)
-				.OrderByDescending(Path.GetFileName)
-				.First()
+			=> MostRecentDirectoryPath()
 				.To(mostResentDirectory => Path.Combine(mostResentDirectory, subsectionName))
 				.To(Directory.EnumerateFiles)
 				.OrderBy(Path.GetFileName)
@@ -46,15 +49,31 @@ namespace SearchSystem.Infrastructure.Documents.Storage
 				});
 
 		/// <summary>
-		/// Get full path to destination directory. 
+		/// Get full path to most recently created subdirectory in <see cref="AppDataRootDirectoryPath"/> directory.
 		/// </summary>
-		private static string GetDestinationDirectory()
+		private static string MostRecentDirectoryPath()
+			=> AppDataRootDirectoryPath()
+				.To(fullPath => new DirectoryInfo(fullPath))
+				.GetDirectories()
+				.OrderByDescending(directory => directory.CreationTime)
+				.First()
+				.FullName;
+
+		/// <summary>
+		/// Get full path to destination directory for current application session.
+		/// </summary>
+		private static string CurrentDirectoryPath()
 			=> Process
 				.GetCurrentProcess()
 				.StartTime
 				.ToString("yyyy-MM-dd_HH-mm-ss-fff")
-				.To(currentDirectory => Path.Combine(AppDataRootDirectory, currentDirectory))
+				.To(currentDirectory => Path.Combine(AppDataRootDirectoryPath(), currentDirectory))
 				.To(Directory.CreateDirectory)
 				.FullName;
+
+		/// <summary>
+		/// Get full path to main results directory.
+		/// </summary>
+		private static string AppDataRootDirectoryPath() => Path.Combine(Environment.CurrentDirectory, "Results");
 	}
 }

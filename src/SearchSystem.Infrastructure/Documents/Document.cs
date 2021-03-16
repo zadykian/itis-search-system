@@ -6,5 +6,5 @@ namespace SearchSystem.Infrastructure.Documents
 	public record Document(
 		string SubsectionName,
 		string Name,
-		IReadOnlyCollection<string> Lines) : IDocument;
+		IReadOnlyCollection<string> Lines) : DocumentLink(SubsectionName, Name), IDocument;
 }
