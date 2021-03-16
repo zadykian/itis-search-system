@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SearchSystem.Infrastructure.AppEnvironment;
 
-namespace SearchSystem.Infrastructure.EnginePhases
+namespace SearchSystem.Infrastructure.SearchEnginePhases
 {
 	/// <inheritdoc />
 	public abstract class EnginePhaseBase<TIn, TOut> : ISearchEnginePhase<TIn, TOut>

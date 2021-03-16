@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using SearchSystem.Indexing.Index;
 using SearchSystem.Infrastructure.AppEnvironment;
-using SearchSystem.Infrastructure.EnginePhases;
+using SearchSystem.Infrastructure.SearchEnginePhases;
 
 namespace SearchSystem.BooleanSearch.Phase
 {

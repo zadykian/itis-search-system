@@ -1,4 +1,4 @@
-namespace SearchSystem.Infrastructure.EnginePhases
+namespace SearchSystem.Infrastructure.SearchEnginePhases
 {
 	/// <summary>
 	/// Type which represents empty input or output.

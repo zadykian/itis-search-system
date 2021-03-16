@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using SearchSystem.Crawl.Phase;
 using SearchSystem.Indexing.Phase;
-using SearchSystem.Infrastructure.EnginePhases;
+using SearchSystem.Infrastructure.SearchEnginePhases;
 using SearchSystem.Normalization.Phase;
 
 using Docs = System.Collections.Generic.IReadOnlyCollection<SearchSystem.Infrastructure.Documents.IDocument>;

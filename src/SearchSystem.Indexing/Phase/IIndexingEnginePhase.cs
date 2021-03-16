@@ -1,5 +1,5 @@
 using SearchSystem.Indexing.Index;
-using SearchSystem.Infrastructure.EnginePhases;
+using SearchSystem.Infrastructure.SearchEnginePhases;
 
 using Docs = System.Collections.Generic.IReadOnlyCollection<SearchSystem.Infrastructure.Documents.IDocument>;
 

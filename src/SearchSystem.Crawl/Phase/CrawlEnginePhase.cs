@@ -7,7 +7,7 @@ using SearchSystem.Crawl.Pages;
 using SearchSystem.Infrastructure.AppEnvironment;
 using SearchSystem.Infrastructure.Documents;
 using SearchSystem.Infrastructure.Documents.Storage;
-using SearchSystem.Infrastructure.EnginePhases;
+using SearchSystem.Infrastructure.SearchEnginePhases;
 
 namespace SearchSystem.Crawl.Phase
 {

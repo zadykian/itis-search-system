@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using SearchSystem.Infrastructure.Documents;
-using SearchSystem.Infrastructure.EnginePhases;
+using SearchSystem.Infrastructure.SearchEnginePhases;
 
 namespace SearchSystem.Crawl.Phase
 {

@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace SearchSystem.Infrastructure.EnginePhases
+namespace SearchSystem.Infrastructure.SearchEnginePhases
 {
 	/// <summary>
 	/// Methods for function composition.

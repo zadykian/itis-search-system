@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 using SearchSystem.Infrastructure.AppEnvironment;
 using SearchSystem.Infrastructure.Documents;
 using SearchSystem.Infrastructure.Documents.Storage;
-using SearchSystem.Infrastructure.EnginePhases;
 using SearchSystem.Infrastructure.Extensions;
+using SearchSystem.Infrastructure.SearchEnginePhases;
 using SearchSystem.Normalization.Normalizer;
 
 using Docs = System.Collections.Generic.IReadOnlyCollection<SearchSystem.Infrastructure.Documents.IDocument>;

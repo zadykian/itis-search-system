@@ -5,7 +5,7 @@ using SearchSystem.Infrastructure.Documents.Storage;
 
 using Docs = System.Collections.Generic.IReadOnlyCollection<SearchSystem.Infrastructure.Documents.IDocument>;
 
-namespace SearchSystem.Infrastructure.EnginePhases
+namespace SearchSystem.Infrastructure.SearchEnginePhases
 {
 	/// <inheritdoc />
 	/// <remarks>

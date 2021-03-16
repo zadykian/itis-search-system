@@ -5,8 +5,8 @@ using SearchSystem.Indexing.Index;
 using SearchSystem.Infrastructure.AppEnvironment;
 using SearchSystem.Infrastructure.Documents;
 using SearchSystem.Infrastructure.Documents.Storage;
-using SearchSystem.Infrastructure.EnginePhases;
 using SearchSystem.Infrastructure.Extensions;
+using SearchSystem.Infrastructure.SearchEnginePhases;
 
 using Docs = System.Collections.Generic.IReadOnlyCollection<SearchSystem.Infrastructure.Documents.IDocument>;
 
