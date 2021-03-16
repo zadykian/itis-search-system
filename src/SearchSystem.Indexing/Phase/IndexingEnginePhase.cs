@@ -45,7 +45,7 @@ namespace SearchSystem.Indexing.Phase
 		protected override async Task<IDocumentsIndex> LoadPreviousResults()
 		{
 			var document = await documentStorage.LoadAsync(new DocumentLink(string.Empty, "terms-index.json"));
-			return DocumentsIndex.FromDocument(document);
+			return new DocumentsIndex(document);
 		}
 	}
 }
