@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SearchSystem.Infrastructure.AppEnvironment;
@@ -23,9 +24,18 @@ namespace SearchSystem.Infrastructure.EnginePhases
 		{
 			Environment.Logger.LogInformation($"Phase '{ComponentName}' is started.");
 
-			var output = Environment.Configuration.UsePreviousResultsFor(ComponentName)
-				? await LoadPreviousResults()
-				: await CreateNewData(inputData);
+			TOut output;
+			try
+			{
+				output = Environment.Configuration.UsePreviousResultsFor(ComponentName)
+					? await LoadPreviousResults()
+					: await CreateNewData(inputData);
+			}
+			catch (Exception exception)
+			{
+				Environment.Logger.LogError("Error occured during search phase execution.", exception);
+				throw;
+			}
 
 			Environment.Logger.LogInformation($"Phase '{ComponentName}' is finished successfully.");
 			return output;

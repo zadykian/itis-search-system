@@ -1,4 +1,3 @@
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -16,7 +15,7 @@ namespace SearchSystem.Indexing.Index
 	/// <inheritdoc />
 	internal class DocumentsIndex : IDocumentsIndex
 	{
-		private readonly ConcurrentDictionary<Term, DocumentsSet> termsToDocuments;
+		private readonly IReadOnlyDictionary<Term, DocumentsSet> termsToDocuments;
 
 		/// <param name="allDocuments">
 		/// Documents to be indexed.
@@ -57,7 +56,7 @@ namespace SearchSystem.Indexing.Index
 		/// <summary>
 		/// Perform indexation of documents <paramref name="allDocuments"/>. 
 		/// </summary>
-		private static ConcurrentDictionary<Term, DocumentsSet> PerformIndexation(IEnumerable<IDocument> allDocuments)
+		private static IReadOnlyDictionary<Term, DocumentsSet> PerformIndexation(IEnumerable<IDocument> allDocuments)
 			=> allDocuments
 				.SelectMany(document => document
 					.Lines
@@ -69,14 +68,14 @@ namespace SearchSystem.Indexing.Index
 					DocsSet: group
 						.Select(tuple => new DocumentLink(tuple.Document.SubsectionName, tuple.Document.Name))
 						.Cast<IDocumentLink>()
-						.ToImmutableHashSet()))
+						.ToImmutableSortedSet()))
 				.Select(tuple => new KeyValuePair<Term, DocumentsSet>(tuple.Term, tuple.DocsSet))
-				.To(keyValuePairs => new ConcurrentDictionary<Term, DocumentsSet>(keyValuePairs));
+				.To(keyValuePairs => new Dictionary<Term, DocumentsSet>(keyValuePairs));
 
 		/// <summary>
 		/// Deserialize document <paramref name="indexDocument"/> to <see cref="termsToDocuments"/> dictionary.
 		/// </summary>
-		private static ConcurrentDictionary<Term, DocumentsSet> FromDocument(IDocument indexDocument)
+		private static IReadOnlyDictionary<Term, DocumentsSet> FromDocument(IDocument indexDocument)
 			=> indexDocument
 				.Lines
 				.Single()
@@ -87,7 +86,8 @@ namespace SearchSystem.Indexing.Index
 						.Value
 						.Cast<IDocumentLink>()
 						.ToImmutableHashSet()))
+				.OrderBy(tuple => tuple.Term)
 				.Select(tuple => new KeyValuePair<Term, DocumentsSet>(tuple.Term, tuple.DocsSet))
-				.To(keyValuePairs => new ConcurrentDictionary<Term, DocumentsSet>(keyValuePairs));
+				.To(keyValuePairs => new Dictionary<Term, DocumentsSet>(keyValuePairs));
 	}
 }
