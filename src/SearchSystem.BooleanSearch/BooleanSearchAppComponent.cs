@@ -1,7 +1,10 @@
+using System.Runtime.CompilerServices;
 using Microsoft.Extensions.DependencyInjection;
 using SearchSystem.BooleanSearch.Parsing;
 using SearchSystem.BooleanSearch.Phase;
 using SearchSystem.Infrastructure.AppComponents;
+
+[assembly: InternalsVisibleTo("SearchSystem.Tests")]
 
 namespace SearchSystem.BooleanSearch
 {
