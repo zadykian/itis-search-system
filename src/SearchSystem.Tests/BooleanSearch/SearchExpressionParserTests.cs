@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using SearchSystem.BooleanSearch;
 using SearchSystem.BooleanSearch.Parsing;
@@ -15,7 +16,7 @@ namespace SearchSystem.Tests.BooleanSearch
 		/// Parse raw input and return parsing result. 
 		/// </summary>
 		[Test]
-		[TestCaseSource(nameof(ParsingTestCases))]
+		[TestCaseSource(nameof(AllTestCases))]
 		public void ParseExpressionTest(TestCase testCase)
 		{
 			var parser = GetService<ISearchExpressionParser>();
@@ -29,12 +30,25 @@ namespace SearchSystem.Tests.BooleanSearch
 		}
 
 		/// <summary>
-		/// Get test cases for parsing test <see cref="ParseExpressionTest"/>. 
+		/// Get all test cases for parsing test <see cref="ParseExpressionTest"/>. 
 		/// </summary>
-		private static IEnumerable<TestCase> ParsingTestCases()
+		private static IEnumerable<TestCase> AllTestCases() => ValidParsingTestCases().Concat(InvalidParsingTestCases());
+
+		/// <summary>
+		/// Get successful test cases for parsing test <see cref="ParseExpressionTest"/>. 
+		/// </summary>
+		private static IEnumerable<TestCase> ValidParsingTestCases()
 		{
 			yield return new("lemma", new INode.Word("lemma"));
-			yield return new("(");
+
+			yield return new("! some-string",
+				new INode.Not(
+					new INode.Word("some-string")));
+
+			yield return new("!!string",
+				new INode.Not(
+					new INode.Not(
+						new INode.Word("string"))));
 
 			yield return new("elephant | hippo",
 				new INode.Or(
@@ -73,6 +87,18 @@ namespace SearchSystem.Tests.BooleanSearch
 					new INode.Or(
 						new INode.Word("functor"),
 						new INode.Word("monoid"))));
+		}
+
+		/// <summary>
+		/// Get unsuccessful test cases for parsing test <see cref="ParseExpressionTest"/>. 
+		/// </summary>
+		private static IEnumerable<TestCase> InvalidParsingTestCases()
+		{
+			yield return new("");
+
+			yield return new("(");
+
+			yield return new("!()");
 		}
 	}
 }
