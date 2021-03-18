@@ -39,49 +39,51 @@ namespace SearchSystem.Tests.BooleanSearch
 		/// </summary>
 		private static IEnumerable<TestCase> ValidParsingTestCases()
 		{
-			yield return new("lemma", new INode.Word("lemma"));
+			yield return new("'lemma'", new INode.Word("lemma"));
 
-			yield return new("! some-string",
+			yield return new("('str')", new INode.Word("str"));
+
+			yield return new("! 'some-string'",
 				new INode.Not(
 					new INode.Word("some-string")));
 
-			yield return new("!!string",
+			yield return new("!!'string'",
 				new INode.Not(
 					new INode.Not(
 						new INode.Word("string"))));
 
-			yield return new("elephant | hippo",
+			yield return new("'elephant' | 'hippo'",
 				new INode.Or(
 					new INode.Word("elephant"),
 					new INode.Word("hippo")));
 
-			yield return new("keyboard & trackball",
+			yield return new("'keyboard' & 'trackball'",
 				new INode.And(
 					new INode.Word("keyboard"),
 					new INode.Word("trackball")));
 
-			yield return new("applicative & functor | monoid",
+			yield return new("'applicative' & 'functor' | 'monoid'",
 				new INode.Or(
 					new INode.And(
 						new INode.Word("applicative"),
 						new INode.Word("functor")),
 					new INode.Word("monoid")));
 
-			yield return new("str0 | str1 | str2",
+			yield return new("'str0' | 'str1' | 'str2'",
 				new INode.Or(
 					new INode.Word("str0"),
 					new INode.Or(
 						new INode.Word("str1"),
 						new INode.Word("str2"))));
 
-			yield return new("str0 & str1 & str2",
+			yield return new("'str0' & 'str1' & 'str2'",
 				new INode.And(
 					new INode.Word("str0"),
 					new INode.And(
 						new INode.Word("str1"),
 						new INode.Word("str2"))));
 
-			yield return new("hammer & (functor | monoid)",
+			yield return new("'hammer' & ('functor' | 'monoid')",
 				new INode.And(
 					new INode.Word("hammer"),
 					new INode.Or(
