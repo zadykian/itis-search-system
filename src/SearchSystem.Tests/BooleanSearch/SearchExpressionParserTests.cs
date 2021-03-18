@@ -33,7 +33,7 @@ namespace SearchSystem.Tests.BooleanSearch
 		/// </summary>
 		private static IEnumerable<TestCase> ParsingTestCases()
 		{
-			yield return new("lemma", new LemmaNode("lemma"));
+			yield return new("lemma", new INode.Lemma("lemma"));
 			yield return new("(");
 		}
 	}
