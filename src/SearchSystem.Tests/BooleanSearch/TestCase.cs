@@ -35,5 +35,8 @@ namespace SearchSystem.Tests.BooleanSearch
 		/// Parsing result.
 		/// </summary>
 		public IParseResult Result { get; }
+
+		/// <inheritdoc />
+		public override string ToString() => Input;
 	}
 }
