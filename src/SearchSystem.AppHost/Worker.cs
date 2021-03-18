@@ -1,6 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
+using SearchSystem.BooleanSearch.Phase;
 using SearchSystem.Crawl.Phase;
 using SearchSystem.Indexing.Phase;
 using SearchSystem.Infrastructure.SearchEnginePhases;
@@ -16,15 +17,18 @@ namespace SearchSystem.AppHost
 		private readonly ICrawlEnginePhase crawlEnginePhase;
 		private readonly INormalizationEnginePhase normalizationEnginePhase;
 		private readonly IIndexingEnginePhase indexingEnginePhase;
+		private readonly IBooleanSearchEnginePhase booleanSearchEnginePhase;
 
 		public Worker(
 			ICrawlEnginePhase crawlEnginePhase,
 			INormalizationEnginePhase normalizationEnginePhase,
-			IIndexingEnginePhase indexingEnginePhase)
+			IIndexingEnginePhase indexingEnginePhase,
+			IBooleanSearchEnginePhase booleanSearchEnginePhase)
 		{
 			this.crawlEnginePhase = crawlEnginePhase;
 			this.normalizationEnginePhase = normalizationEnginePhase;
 			this.indexingEnginePhase = indexingEnginePhase;
+			this.booleanSearchEnginePhase = booleanSearchEnginePhase;
 		}
 
 		/// <inheritdoc />
@@ -33,6 +37,7 @@ namespace SearchSystem.AppHost
 				.Add<Unit, Task<Docs>>(crawlEnginePhase.ExecuteAsync)
 				.Add(normalizationEnginePhase.ExecuteAsync)
 				.Add(indexingEnginePhase.ExecuteAsync)
+				.Add(booleanSearchEnginePhase.ExecuteAsync)
 				.Invoke(Unit.Instance);
 	}
 }

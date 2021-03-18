@@ -6,9 +6,9 @@ namespace SearchSystem.BooleanSearch
 	internal interface INode
 	{
 		/// <summary>
-		/// Search expression node which contains word's lemma.
+		/// Search expression node which contains word as logical operator's operand.
 		/// </summary>
-		record Lemma(string Value) : INode;
+		record Word(string Value) : INode;
 
 		/// <summary>
 		/// Search expression node which represents negation operator '!'.
