@@ -13,16 +13,16 @@ namespace SearchSystem.BooleanSearch
 		/// <summary>
 		/// Search expression node which represents negation operator '!'.
 		/// </summary>
-		public record Negation(INode Node) : INode;
+		public record Not(INode Node) : INode;
 
 		/// <summary>
 		/// Search expression node which represents disjunction binary operator '|'.
 		/// </summary>
-		public record Disjunction(INode Left, INode Right) : INode;
+		public record Or(INode Left, INode Right) : INode;
 
 		/// <summary>
 		/// Search expression node which represents conjunction binary operator '&'.
 		/// </summary>
-		public record Conjunction(INode Left, INode Right) : INode;
+		public record And(INode Left, INode Right) : INode;
 	}
 }
