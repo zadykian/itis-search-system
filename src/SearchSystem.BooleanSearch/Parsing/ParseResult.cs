@@ -8,11 +8,11 @@ namespace SearchSystem.BooleanSearch.Parsing
 		/// <summary>
 		/// Successful parsing result.
 		/// </summary>
-		public record Success(INode SearchExpression) : IParseResult;
+		record Success(INode SearchExpression) : IParseResult;
 
 		/// <summary>
 		/// Unsuccessful parsing result. 
 		/// </summary>
-		public record Failure(string ErrorText) : IParseResult;
+		record Failure(string ErrorText) : IParseResult;
 	}
 }

@@ -8,21 +8,21 @@ namespace SearchSystem.BooleanSearch
 		/// <summary>
 		/// Search expression node which contains word's lemma.
 		/// </summary>
-		public record Lemma(string Value) : INode;
+		record Lemma(string Value) : INode;
 
 		/// <summary>
 		/// Search expression node which represents negation operator '!'.
 		/// </summary>
-		public record Not(INode Node) : INode;
+		record Not(INode Node) : INode;
 
 		/// <summary>
 		/// Search expression node which represents disjunction binary operator '|'.
 		/// </summary>
-		public record Or(INode Left, INode Right) : INode;
+		record Or(INode Left, INode Right) : INode;
 
 		/// <summary>
 		/// Search expression node which represents conjunction binary operator '&'.
 		/// </summary>
-		public record And(INode Left, INode Right) : INode;
+		record And(INode Left, INode Right) : INode;
 	}
 }
