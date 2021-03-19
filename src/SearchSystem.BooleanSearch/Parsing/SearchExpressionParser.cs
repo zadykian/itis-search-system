@@ -29,12 +29,15 @@ namespace SearchSystem.BooleanSearch.Parsing
 			/// <summary>
 			/// General search expression parser.
 			/// </summary>
-			public static Parser<INode> ExpressionParser => Word.Or<INode>(Not);
+			public static Parser<INode> ExpressionParser
+				=> And
+					.Or(Not)
+					.Or(Word);
 
 			/// <summary>
 			/// Parser of <see cref="INode.Word"/> sub-expressions. 
 			/// </summary>
-			private static Parser<INode.Word> Word =>
+			private static Parser<INode> Word =>
 				from openQuote  in Parse.Char(c: '\'').Token()
 				from value      in Parse.CharExcept(c: '\'').Many().Text()
 				from closeQuote in Parse.Char(c: '\'').Token()
@@ -43,10 +46,19 @@ namespace SearchSystem.BooleanSearch.Parsing
 			/// <summary>
 			/// Parser of <see cref="INode.Not"/> sub-expressions. 
 			/// </summary>
-			private static Parser<INode.Not> Not =>
+			private static Parser<INode> Not =>
 				from negationOperator  in Parse.Char(c: '!').Token()
 				from operandExpression in ExpressionParser.Token()
 				select new INode.Not(operandExpression);
+
+			/// <summary>
+			/// Parser of <see cref="INode.And"/> sub-expressions. 
+			/// </summary>
+			private static Parser<INode> And =>
+				from leftOperand  in ExpressionParser
+				from andOperator  in Parse.Char(c: '&')
+				from rightOperand in ExpressionParser
+				select new INode.And(leftOperand, rightOperand);
 		}
 	}
 }
