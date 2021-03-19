@@ -1,3 +1,4 @@
+using SearchSystem.Infrastructure.Extensions;
 using Sprache;
 
 namespace SearchSystem.BooleanSearch.Parsing
@@ -7,14 +8,28 @@ namespace SearchSystem.BooleanSearch.Parsing
 	{
 		/// <inheritdoc />
 		IParseResult ISearchExpressionParser.Parse(string booleanSearchRequest)
-			=> throw new System.NotImplementedException();
+			=> Grammar
+				.ExpressionParser
+				.TryParse(booleanSearchRequest)
+				.To(ToParseResult);
+
+		/// <summary>
+		/// Convert <paramref name="parserResult"/> to <see cref="IParseResult"/> instance. 
+		/// </summary>
+		private static IParseResult ToParseResult(IResult<INode> parserResult)
+			=> parserResult.WasSuccessful
+				? new IParseResult.Success(parserResult.Value)
+				: new IParseResult.Failure(parserResult.Message);
 
 		/// <summary>
 		/// Definition of search expression grammar.
 		/// </summary>
-		private static class SearchExpressionGrammar
+		private static class Grammar
 		{
-			private static Parser<INode> ExpressionParser => Parse.Return(new INode.Word(""));
+			/// <summary>
+			/// General search expression parser.
+			/// </summary>
+			public static Parser<INode> ExpressionParser => Word.Or<INode>(Not);
 
 			/// <summary>
 			/// Parser of <see cref="INode.Word"/> sub-expressions. 
