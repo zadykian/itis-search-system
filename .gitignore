@@ -1,6 +1,6 @@
 .idea/
 bin/
 obj/
-results/
+Results/
 *.user
 appsettings.local.json
