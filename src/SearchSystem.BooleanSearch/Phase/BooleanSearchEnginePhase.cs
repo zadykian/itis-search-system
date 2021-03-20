@@ -5,6 +5,8 @@ using SearchSystem.Infrastructure.SearchEnginePhases;
 
 namespace SearchSystem.BooleanSearch.Phase
 {
+	// todo: implement
+	
 	/// <inheritdoc cref="IBooleanSearchEnginePhase" />
 	internal class BooleanSearchEnginePhase : EnginePhaseBase<IDocumentsIndex, Unit>, IBooleanSearchEnginePhase
 	{
@@ -14,7 +16,7 @@ namespace SearchSystem.BooleanSearch.Phase
 		}
 
 		/// <inheritdoc />
-		protected override Task<Unit> ExecuteAnewAsync(IDocumentsIndex inputData) => throw new System.NotImplementedException();
+		protected override Task<Unit> ExecuteAnewAsync(IDocumentsIndex inputData) => Task.FromResult(Unit.Instance);
 
 		/// <inheritdoc />
 		protected override Task<Unit> LoadPreviousResultsAsync() => Task.FromResult(Unit.Instance);
