@@ -69,9 +69,7 @@ namespace SearchSystem.Indexing.Index
 						.Select(tuple => new DocumentLink(tuple.Document.SubsectionName, tuple.Document.Name))
 						.Cast<IDocumentLink>()
 						.ToImmutableSortedSet()))
-				.OrderBy(tuple => tuple.Term)
-				.Select(tuple => new KeyValuePair<Term, DocumentsSet>(tuple.Term, tuple.DocsSet))
-				.To(keyValuePairs => new Dictionary<Term, DocumentsSet>(keyValuePairs));
+				.To(AsOrderedDictionary);
 
 		/// <summary>
 		/// Deserialize document <paramref name="indexDocument"/> to <see cref="termsToDocuments"/> dictionary.
@@ -87,6 +85,14 @@ namespace SearchSystem.Indexing.Index
 						.Value
 						.Cast<IDocumentLink>()
 						.ToImmutableSortedSet()))
+				.To(AsOrderedDictionary);
+
+		/// <summary>
+		/// Convert sequence of tuples to ordered read-only dictionary. 
+		/// </summary>
+		private static IReadOnlyDictionary<Term, DocumentsSet> AsOrderedDictionary(
+			IEnumerable<(Term Term, ImmutableSortedSet<IDocumentLink> DocsSet)> enumerable)
+			=> enumerable
 				.OrderBy(tuple => tuple.Term)
 				.Select(tuple => new KeyValuePair<Term, DocumentsSet>(tuple.Term, tuple.DocsSet))
 				.To(keyValuePairs => new Dictionary<Term, DocumentsSet>(keyValuePairs));
