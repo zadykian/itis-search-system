@@ -15,7 +15,7 @@ namespace SearchSystem.BooleanSearch.Parsing
 				.To(ToParseResult);
 
 		/// <summary>
-		/// Convert <paramref name="parserResult"/> to <see cref="IParseResult"/> instance. 
+		/// Convert <paramref name="parserResult"/> to <see cref="IParseResult"/> instance.
 		/// </summary>
 		private static IParseResult ToParseResult(IResult<INode> parserResult)
 			=> parserResult.WasSuccessful
@@ -30,25 +30,29 @@ namespace SearchSystem.BooleanSearch.Parsing
 			/// <summary>
 			/// General search expression parser.
 			/// </summary>
-			public static Parser<INode> ExpressionParser => Or;
+			/// <remarks>
+			/// Disjunction operator has lowest priority, so
+			/// node <see cref="INode.Or"/> always must be the root of search expression tree.
+			/// </remarks>
+			public static Parser<INode> ExpressionParser => Or.End();
 
 			/// <summary>
-			/// Parser of <see cref="INode.Or"/> sub-expressions. 
+			/// Parser of <see cref="INode.Or"/> sub-expressions.
 			/// </summary>
 			private static Parser<INode> Or
 				=> Parse
-					.Char(c: '|')
+					.Char('|')
 					.To(operatorParser => Parse.ChainOperator(
 						operatorParser,
 						And.Or(Basis),
 						(_, left, right) => new INode.Or(left, right)));
 
 			/// <summary>
-			/// Parser of <see cref="INode.And"/> sub-expressions. 
+			/// Parser of <see cref="INode.And"/> sub-expressions.
 			/// </summary>
 			private static Parser<INode> And
 				=> Parse
-					.Char(c: '&')
+					.Char('&')
 					.To(operatorParser => Parse.ChainOperator(
 						operatorParser,
 						Basis,
@@ -60,29 +64,29 @@ namespace SearchSystem.BooleanSearch.Parsing
 					.Or(Parentheses);
 
 			/// <summary>
-			/// Parser of <see cref="INode.Word"/> sub-expressions. 
+			/// Parser of <see cref="INode.Word"/> sub-expressions.
 			/// </summary>
 			private static Parser<INode> Word =>
-				from openQuote  in Parse.Char(c: '\'')
-				from value      in Parse.CharExcept(c: '\'').Many().Text()
-				from closeQuote in Parse.Char(c: '\'')
+				from openQuote  in Parse.Char('\'')
+				from value      in Parse.CharExcept('\'').AtLeastOnce().Text()
+				from closeQuote in Parse.Char('\'')
 				select new INode.Word(value);
 
 			/// <summary>
-			/// Parser of <see cref="INode.Not"/> sub-expressions. 
+			/// Parser of <see cref="INode.Not"/> sub-expressions.
 			/// </summary>
 			private static Parser<INode> Not =>
-				from negationOperator  in Parse.Char(c: '!')
+				from negationOperator  in Parse.Char('!')
 				from operandExpression in ExpressionParser
 				select new INode.Not(operandExpression);
 
 			/// <summary>
-			/// Parser of bracketed sub-expressions. 
+			/// Parser of bracketed sub-expressions.
 			/// </summary>
 			private static Parser<INode> Parentheses =>
-				from leftParenthesis  in Parse.Char(c: '(')
+				from leftParenthesis  in Parse.Char('(')
 				from subExpression    in ExpressionParser
-				from rightParenthesis in Parse.Char(c: ')')
+				from rightParenthesis in Parse.Char(')')
 				select subExpression;
 		}
 	}
