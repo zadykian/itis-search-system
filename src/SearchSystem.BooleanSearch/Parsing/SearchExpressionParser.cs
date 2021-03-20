@@ -30,21 +30,22 @@ namespace SearchSystem.BooleanSearch.Parsing
 			/// <summary>
 			/// General search expression parser.
 			/// </summary>
-			/// <remarks>
-			/// Disjunction operator has lowest priority, so
-			/// node <see cref="INode.Or"/> always must be the root of search expression tree.
-			/// </remarks>
-			public static Parser<INode> ExpressionParser => Or.End();
+			public static Parser<INode> ExpressionParser => Or;
 
 			/// <summary>
 			/// Parser of <see cref="INode.Or"/> sub-expressions.
 			/// </summary>
+			/// <remarks>
+			/// Disjunction operator has lowest priority, so
+			/// node <see cref="INode.Or"/> always must be the root of search expression tree,
+			/// except cases with parentheses.
+			/// </remarks>
 			private static Parser<INode> Or
 				=> Parse
 					.Char('|')
 					.To(operatorParser => Parse.ChainOperator(
 						operatorParser,
-						And.Or(Basis),
+						And,
 						(_, left, right) => new INode.Or(left, right)));
 
 			/// <summary>
@@ -55,10 +56,24 @@ namespace SearchSystem.BooleanSearch.Parsing
 					.Char('&')
 					.To(operatorParser => Parse.ChainOperator(
 						operatorParser,
-						Basis,
+						ConjunctionOperand,
 						(_, left, right) => new INode.And(left, right)));
 
-			private static Parser<INode> Basis
+			/// <summary>
+			/// <para>
+			/// Parser of sub-expressions which can be '&' operator's operand.
+			/// </para>
+			/// <para>
+			/// But it can also be operand of '|' because conjunction expression
+			/// is valid as disjunction operand.
+			/// And expression with zero '&' operators is also valid <see cref="And"/> sub-expression.
+			/// </para>
+			/// <para>
+			/// And it also is valid as stand-alone expression
+			/// because expression with zero '|' is also valid <see cref="Or"/> expression.
+			/// </para>
+			/// </summary>
+			private static Parser<INode> ConjunctionOperand
 				=> Word
 					.Or(Not)
 					.Or(Parentheses);
@@ -75,6 +90,10 @@ namespace SearchSystem.BooleanSearch.Parsing
 			/// <summary>
 			/// Parser of <see cref="INode.Not"/> sub-expressions.
 			/// </summary>
+			/// <remarks>
+			/// Any valid expression can be negation operator's operand,
+			/// including other negation expression.
+			/// </remarks>
 			private static Parser<INode> Not =>
 				from negationOperator  in Parse.Char('!')
 				from operandExpression in ExpressionParser
@@ -83,6 +102,10 @@ namespace SearchSystem.BooleanSearch.Parsing
 			/// <summary>
 			/// Parser of bracketed sub-expressions.
 			/// </summary>
+			/// <remarks>
+			/// Parentheses can contain any valid expression, including
+			/// other parentheses.
+			/// </remarks>
 			private static Parser<INode> Parentheses =>
 				from leftParenthesis  in Parse.Char('(')
 				from subExpression    in ExpressionParser

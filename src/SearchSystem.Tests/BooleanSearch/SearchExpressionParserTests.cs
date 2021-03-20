@@ -55,43 +55,47 @@ namespace SearchSystem.Tests.BooleanSearch
 					new INode.Word("keyboard"),
 					new INode.Word("trackball")));
 
-			// yield return new("('str')", new INode.Word("str"));
-			//
-			//
-			// yield return new("'elephant' | 'hippo'",
-			// 	new INode.Or(
-			// 		new INode.Word("elephant"),
-			// 		new INode.Word("hippo")));
-			//
+			yield return new("('str')", new INode.Word("str"));
 
-			//
-			// yield return new("'applicative' & 'functor' | 'monoid'",
-			// 	new INode.Or(
-			// 		new INode.And(
-			// 			new INode.Word("applicative"),
-			// 			new INode.Word("functor")),
-			// 		new INode.Word("monoid")));
-			//
-			// yield return new("'str0' | 'str1' | 'str2'",
-			// 	new INode.Or(
-			// 		new INode.Word("str0"),
-			// 		new INode.Or(
-			// 			new INode.Word("str1"),
-			// 			new INode.Word("str2"))));
-			//
-			// yield return new("'str0' & 'str1' & 'str2'",
-			// 	new INode.And(
-			// 		new INode.Word("str0"),
-			// 		new INode.And(
-			// 			new INode.Word("str1"),
-			// 			new INode.Word("str2"))));
-			//
-			// yield return new("'hammer' & ('functor' | 'monoid')",
-			// 	new INode.And(
-			// 		new INode.Word("hammer"),
-			// 		new INode.Or(
-			// 			new INode.Word("functor"),
-			// 			new INode.Word("monoid"))));
+			yield return new("'elephant' | 'hippo'",
+				new INode.Or(
+					new INode.Word("elephant"),
+					new INode.Word("hippo")));
+
+			yield return new("'applicative' & 'functor' | 'monoid'",
+				new INode.Or(
+					new INode.And(
+						new INode.Word("applicative"),
+						new INode.Word("functor")),
+					new INode.Word("monoid")));
+
+			yield return new("'str0' | 'str1' & 'str2'",
+				new INode.Or(
+					new INode.Word("str0"),
+					new INode.And(
+						new INode.Word("str1"),
+						new INode.Word("str2"))));
+
+			yield return new("'str0' | 'str1' | 'str2'",
+				new INode.Or(
+					new INode.Or(
+						new INode.Word("str0"),
+						new INode.Word("str1")),
+					new INode.Word("str2")));
+
+			yield return new("'str0' & 'str1' & 'str2'",
+				new INode.And(
+					new INode.And(
+						new INode.Word("str0"),
+						new INode.Word("str1")),
+					new INode.Word("str2")));
+
+			yield return new("'str0' & ('str1' | 'str2')",
+				new INode.And(
+					new INode.Word("str0"),
+					new INode.Or(
+						new INode.Word("str1"),
+						new INode.Word("str2"))));
 		}
 
 		/// <summary>
@@ -99,13 +103,13 @@ namespace SearchSystem.Tests.BooleanSearch
 		/// </summary>
 		private static IEnumerable<TestCase> InvalidParsingTestCases()
 		{
-			yield break;
-			
-			// yield return new("");
-			//
-			// yield return new("(");
-			//
-			// yield return new("!()");
+			yield return new("");
+
+			yield return new("''");
+
+			yield return new("(");
+
+			yield return new("!()");
 		}
 	}
 }
