@@ -45,6 +45,7 @@ namespace SearchSystem.Normalization.Phase
 					.Words()
 					.Select(normalizer.Normalize)
 					.JoinBy(" "))
+				.Where(documentLine => !string.IsNullOrWhiteSpace(documentLine))
 				.ToImmutableArray()
 				.To(normalizedLines => new Document(ComponentName, document.Name, normalizedLines));
 	}
