@@ -34,6 +34,20 @@ namespace SearchSystem.BooleanSearch.Parsing
 					.Or(Not)
 					.Or(Word);
 
+			private static Parser<INode> Basis => Not.Or(Word);
+
+			/// <summary>
+			/// Parser of <see cref="INode.Or"/> sub-expressions. 
+			/// </summary>
+			private static Parser<INode> Or =>
+				Parse
+					.Char(c: '|')
+					.Token()
+					.To(operatorParser => Parse.ChainOperator(
+						operatorParser,
+						Basis.Or(And),
+						(_, left, right) => new INode.Or(left, right)));
+
 			/// <summary>
 			/// Parser of <see cref="INode.Word"/> sub-expressions. 
 			/// </summary>
