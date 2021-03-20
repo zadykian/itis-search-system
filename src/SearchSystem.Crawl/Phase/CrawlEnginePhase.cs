@@ -7,7 +7,7 @@ using SearchSystem.Crawl.Pages;
 using SearchSystem.Infrastructure.AppEnvironment;
 using SearchSystem.Infrastructure.Documents;
 using SearchSystem.Infrastructure.Documents.Storage;
-using SearchSystem.Infrastructure.EnginePhases;
+using SearchSystem.Infrastructure.SearchEnginePhases;
 
 namespace SearchSystem.Crawl.Phase
 {
@@ -23,7 +23,7 @@ namespace SearchSystem.Crawl.Phase
 			=> this.webCrawler = webCrawler;
 
 		/// <inheritdoc />
-		protected override async Task<IReadOnlyCollection<IDocument>> CreateNewData(Unit _)
+		protected override async Task<IReadOnlyCollection<IDocument>> ExecuteAnewAsync(Unit _)
 			=> await webCrawler
 				.CrawlThroughPages()
 				.Zip(AsyncEnumerable.Range(start: 0, int.MaxValue))

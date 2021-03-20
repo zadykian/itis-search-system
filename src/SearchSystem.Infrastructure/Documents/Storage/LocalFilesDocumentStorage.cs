@@ -74,6 +74,6 @@ namespace SearchSystem.Infrastructure.Documents.Storage
 		/// <summary>
 		/// Get full path to main results directory.
 		/// </summary>
-		private static string AppDataRootDirectoryPath() => Path.Combine(Environment.CurrentDirectory, "Results");
+		private static string AppDataRootDirectoryPath() => Path.Combine(Environment.CurrentDirectory, "results");
 	}
 }

@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 using SearchSystem.Infrastructure.AppEnvironment;
 using SearchSystem.Infrastructure.Documents;
 using SearchSystem.Infrastructure.Documents.Storage;
-using SearchSystem.Infrastructure.EnginePhases;
 using SearchSystem.Infrastructure.Extensions;
+using SearchSystem.Infrastructure.SearchEnginePhases;
 using SearchSystem.Normalization.Normalizer;
 
 using Docs = System.Collections.Generic.IReadOnlyCollection<SearchSystem.Infrastructure.Documents.IDocument>;
@@ -24,7 +24,7 @@ namespace SearchSystem.Normalization.Phase
 			=> this.normalizer = normalizer;
 
 		/// <inheritdoc />
-		protected override async Task<Docs> CreateNewData(Docs inputData)
+		protected override async Task<Docs> ExecuteAnewAsync(Docs inputData)
 			=> await inputData
 				.Select(NormalizeDocument)
 				.ToAsyncEnumerable()
@@ -45,6 +45,7 @@ namespace SearchSystem.Normalization.Phase
 					.Words()
 					.Select(normalizer.Normalize)
 					.JoinBy(" "))
+				.Where(documentLine => !string.IsNullOrWhiteSpace(documentLine))
 				.ToImmutableArray()
 				.To(normalizedLines => new Document(ComponentName, document.Name, normalizedLines));
 	}

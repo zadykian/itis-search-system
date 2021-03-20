@@ -5,7 +5,7 @@ using SearchSystem.Infrastructure.Documents.Storage;
 
 using Docs = System.Collections.Generic.IReadOnlyCollection<SearchSystem.Infrastructure.Documents.IDocument>;
 
-namespace SearchSystem.Infrastructure.EnginePhases
+namespace SearchSystem.Infrastructure.SearchEnginePhases
 {
 	/// <inheritdoc />
 	/// <remarks>
@@ -22,7 +22,7 @@ namespace SearchSystem.Infrastructure.EnginePhases
 		protected IDocumentStorage DocumentStorage { get; }
 
 		/// <inheritdoc />
-		protected sealed override async Task<Docs> LoadPreviousResults()
+		protected sealed override async Task<Docs> LoadPreviousResultsAsync()
 			=> await DocumentStorage
 				.LoadFromSubsection(ComponentName)
 				.ToArrayAsync();
