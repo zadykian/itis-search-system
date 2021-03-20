@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using SearchSystem.Infrastructure.Extensions;
 using Sprache;
 
@@ -8,9 +9,9 @@ namespace SearchSystem.BooleanSearch.Parsing
 	{
 		/// <inheritdoc />
 		IParseResult ISearchExpressionParser.Parse(string booleanSearchRequest)
-			=> Grammar
-				.ExpressionParser
-				.TryParse(booleanSearchRequest)
+			=> Regex
+				.Replace(booleanSearchRequest, @"\s+", string.Empty)
+				.To(Grammar.ExpressionParser.TryParse)
 				.To(ToParseResult);
 
 		/// <summary>
@@ -29,50 +30,60 @@ namespace SearchSystem.BooleanSearch.Parsing
 			/// <summary>
 			/// General search expression parser.
 			/// </summary>
-			public static Parser<INode> ExpressionParser
-				=> And
-					.Or(Not)
-					.Or(Word);
-
-			private static Parser<INode> Basis => Not.Or(Word);
+			public static Parser<INode> ExpressionParser => Or;
 
 			/// <summary>
 			/// Parser of <see cref="INode.Or"/> sub-expressions. 
 			/// </summary>
-			private static Parser<INode> Or =>
-				Parse
+			private static Parser<INode> Or
+				=> Parse
 					.Char(c: '|')
-					.Token()
 					.To(operatorParser => Parse.ChainOperator(
 						operatorParser,
-						Basis.Or(And),
+						And.Or(Basis),
 						(_, left, right) => new INode.Or(left, right)));
+
+			/// <summary>
+			/// Parser of <see cref="INode.And"/> sub-expressions. 
+			/// </summary>
+			private static Parser<INode> And
+				=> Parse
+					.Char(c: '&')
+					.To(operatorParser => Parse.ChainOperator(
+						operatorParser,
+						Basis,
+						(_, left, right) => new INode.And(left, right)));
+
+			private static Parser<INode> Basis
+				=> Word
+					.Or(Not)
+					.Or(Parentheses);
 
 			/// <summary>
 			/// Parser of <see cref="INode.Word"/> sub-expressions. 
 			/// </summary>
 			private static Parser<INode> Word =>
-				from openQuote  in Parse.Char(c: '\'').Token()
+				from openQuote  in Parse.Char(c: '\'')
 				from value      in Parse.CharExcept(c: '\'').Many().Text()
-				from closeQuote in Parse.Char(c: '\'').Token()
+				from closeQuote in Parse.Char(c: '\'')
 				select new INode.Word(value);
 
 			/// <summary>
 			/// Parser of <see cref="INode.Not"/> sub-expressions. 
 			/// </summary>
 			private static Parser<INode> Not =>
-				from negationOperator  in Parse.Char(c: '!').Token()
-				from operandExpression in ExpressionParser.Token()
+				from negationOperator  in Parse.Char(c: '!')
+				from operandExpression in ExpressionParser
 				select new INode.Not(operandExpression);
 
 			/// <summary>
-			/// Parser of <see cref="INode.And"/> sub-expressions. 
+			/// Parser of bracketed sub-expressions. 
 			/// </summary>
-			private static Parser<INode> And =>
-				from leftOperand  in ExpressionParser
-				from andOperator  in Parse.Char(c: '&')
-				from rightOperand in ExpressionParser
-				select new INode.And(leftOperand, rightOperand);
+			private static Parser<INode> Parentheses =>
+				from leftParenthesis  in Parse.Char(c: '(')
+				from subExpression    in ExpressionParser
+				from rightParenthesis in Parse.Char(c: ')')
+				select subExpression;
 		}
 	}
 }
