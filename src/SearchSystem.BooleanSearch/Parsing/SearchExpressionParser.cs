@@ -56,24 +56,20 @@ namespace SearchSystem.BooleanSearch.Parsing
 					.Char('&')
 					.To(operatorParser => Parse.ChainOperator(
 						operatorParser,
-						ConjunctionOperand,
+						HighestPriority,
 						(_, left, right) => new INode.And(left, right)));
 
 			/// <summary>
 			/// <para>
-			/// Parser of sub-expressions which can be '&' operator's operand.
+			/// Parser of sub-expressions with highest priority:
 			/// </para>
 			/// <para>
-			/// But it can also be operand of '|' because conjunction expression
-			/// is valid as disjunction operand.
-			/// And expression with zero '&' operators is also valid <see cref="And"/> sub-expression.
-			/// </para>
-			/// <para>
-			/// And it also is valid as stand-alone expression
-			/// because expression with zero '|' is also valid <see cref="Or"/> expression.
+			/// 1. Terminals <see cref="INode.Word"/>;
+			/// 2. Negation operators <see cref="INode.Not"/>;
+			/// 3. Sub-expressions in parentheses.
 			/// </para>
 			/// </summary>
-			private static Parser<INode> ConjunctionOperand
+			private static Parser<INode> HighestPriority
 				=> Word
 					.Or(Not)
 					.Or(Parentheses);
@@ -91,12 +87,12 @@ namespace SearchSystem.BooleanSearch.Parsing
 			/// Parser of <see cref="INode.Not"/> sub-expressions.
 			/// </summary>
 			/// <remarks>
-			/// Any valid expression can be negation operator's operand,
-			/// including other negation expression.
+			/// Any valid expression with equal or higher priority
+			/// can be negation operator's operand, including other negation expression.
 			/// </remarks>
 			private static Parser<INode> Not =>
 				from negationOperator  in Parse.Char('!')
-				from operandExpression in ExpressionParser
+				from operandExpression in HighestPriority
 				select new INode.Not(operandExpression);
 
 			/// <summary>

@@ -96,6 +96,29 @@ namespace SearchSystem.Tests.BooleanSearch
 					new INode.Or(
 						new INode.Word("str1"),
 						new INode.Word("str2"))));
+
+			yield return new("'str0' & !'str1'",
+				new INode.And(
+					new INode.Word("str0"),
+					new INode.Not(new INode.Word("str1"))));
+
+			yield return new("!'str0' & 'str1'",
+				new INode.And(
+					new INode.Not(new INode.Word("str0")),
+					new INode.Word("str1")));
+
+			yield return new("!('str0' & 'str1')",
+				new INode.Not(
+					new INode.And(
+						new INode.Word("str0"),
+						new INode.Word("str1"))));
+
+			yield return new("( (('str0')) & ! 'str1' | ('str2') )",
+				new INode.Or(
+					new INode.And(
+						new INode.Word("str0"),
+						new INode.Not(new INode.Word("str1"))),
+					new INode.Word("str2")));
 		}
 
 		/// <summary>
@@ -108,6 +131,8 @@ namespace SearchSystem.Tests.BooleanSearch
 			yield return new("''");
 
 			yield return new("(");
+
+			yield return new("('str0'");
 
 			yield return new("!()");
 		}
