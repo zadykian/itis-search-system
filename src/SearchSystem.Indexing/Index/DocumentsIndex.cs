@@ -109,9 +109,9 @@ namespace SearchSystem.Indexing.Index
 		/// </summary>
 		private sealed class LinkConverter : JsonConverter<IDocumentLink>
 		{
-			/// <summary>
+			/// <remarks>
 			/// Index is always being created based on normalized documents.
-			/// </summary>
+			/// </remarks>
 			private const string subsectionName = "Normalization";
 
 			/// <inheritdoc />
