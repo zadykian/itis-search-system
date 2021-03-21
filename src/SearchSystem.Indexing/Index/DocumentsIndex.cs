@@ -1,21 +1,23 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using SearchSystem.Infrastructure.Documents;
 using SearchSystem.Infrastructure.Extensions;
 
 // ReSharper disable BuiltInTypeReferenceStyle
 using Term = System.String;
-using DocumentsSet = System.Collections.Immutable.IImmutableSet<SearchSystem.Infrastructure.Documents.IDocumentLink>;
+using DocLinks = System.Collections.Immutable.IImmutableSet<SearchSystem.Infrastructure.Documents.IDocumentLink>;
 
 namespace SearchSystem.Indexing.Index
 {
 	/// <inheritdoc />
 	internal class DocumentsIndex : IDocumentsIndex
 	{
-		private readonly IReadOnlyDictionary<Term, DocumentsSet> termsToDocuments;
+		private readonly IReadOnlyDictionary<Term, DocLinks> termsToDocuments;
 
 		/// <param name="allDocuments">
 		/// Documents to be indexed.
@@ -30,13 +32,13 @@ namespace SearchSystem.Indexing.Index
 			=> termsToDocuments = FromDocument(indexDocument);
 
 		/// <inheritdoc />
-		DocumentsSet IDocumentsIndex.AllWhichContains(Term term)
+		DocLinks IDocumentsIndex.AllWhichContains(Term term)
 			=> termsToDocuments.TryGetValue(term, out var documentsSet)
 				? documentsSet
 				: ImmutableHashSet<IDocumentLink>.Empty;
 
 		/// <inheritdoc />
-		DocumentsSet IDocumentsIndex.AllDocuments()
+		DocLinks IDocumentsIndex.AllDocuments()
 			=> termsToDocuments
 				.Values
 				.Aggregate(ImmutableHashSet<IDocumentLink>.Empty, (firstSet, secondSet) => firstSet.Union(secondSet));
@@ -45,18 +47,14 @@ namespace SearchSystem.Indexing.Index
 		/// Represent itself as <see cref="IDocument"/> instance. 
 		/// </summary>
 		public IDocument AsDocument()
-			=> new JsonSerializerOptions
-				{
-					WriteIndented = true,
-					Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
-				}
-				.To(options => JsonSerializer.Serialize(termsToDocuments, options))
+			=> JsonSerializer
+				.Serialize(termsToDocuments, JsonOptions)
 				.To(serialized => new Document(string.Empty, "terms-index.json", new [] {serialized}));
 
 		/// <summary>
 		/// Perform indexation of documents <paramref name="allDocuments"/>. 
 		/// </summary>
-		private static IReadOnlyDictionary<Term, DocumentsSet> PerformIndexation(IEnumerable<IDocument> allDocuments)
+		private static IReadOnlyDictionary<Term, DocLinks> PerformIndexation(IEnumerable<IDocument> allDocuments)
 			=> allDocuments
 				.SelectMany(document => document
 					.Lines
@@ -74,27 +72,59 @@ namespace SearchSystem.Indexing.Index
 		/// <summary>
 		/// Deserialize document <paramref name="indexDocument"/> to <see cref="termsToDocuments"/> dictionary.
 		/// </summary>
-		private static IReadOnlyDictionary<Term, DocumentsSet> FromDocument(IDocument indexDocument)
+		private static IReadOnlyDictionary<Term, DocLinks> FromDocument(IDocument indexDocument)
 			=> indexDocument
 				.Lines
-				.Single()
-				.To(serialized => JsonSerializer.Deserialize<Dictionary<Term, IImmutableSet<DocumentLink>>>(serialized)!)
+				.JoinBy(Environment.NewLine)
+				.To(serialized => JsonSerializer
+					.Deserialize<Dictionary<Term, ImmutableSortedSet<IDocumentLink>>>(serialized, JsonOptions)!)
 				.Select(pair => (
 					Term: pair.Key,
-					DocsSet: pair
-						.Value
-						.Cast<IDocumentLink>()
-						.ToImmutableSortedSet()))
+					DocsSet: pair.Value))
 				.To(AsOrderedDictionary);
 
 		/// <summary>
 		/// Convert sequence of tuples to ordered read-only dictionary. 
 		/// </summary>
-		private static IReadOnlyDictionary<Term, DocumentsSet> AsOrderedDictionary(
+		private static IReadOnlyDictionary<Term, DocLinks> AsOrderedDictionary(
 			IEnumerable<(Term Term, ImmutableSortedSet<IDocumentLink> DocsSet)> enumerable)
 			=> enumerable
 				.OrderBy(tuple => tuple.Term)
-				.Select(tuple => new KeyValuePair<Term, DocumentsSet>(tuple.Term, tuple.DocsSet))
-				.To(keyValuePairs => new Dictionary<Term, DocumentsSet>(keyValuePairs));
+				.Select(tuple => new KeyValuePair<Term, DocLinks>(tuple.Term, tuple.DocsSet))
+				.To(keyValuePairs => new Dictionary<Term, DocLinks>(keyValuePairs));
+
+		/// <summary>
+		/// Options for index serialization and deserialization.
+		/// </summary>
+		private static JsonSerializerOptions JsonOptions
+			=> new()
+			{
+				WriteIndented = true,
+				Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+				Converters = { new LinkConverter() }
+			};
+
+		/// <summary>
+		/// Json converter for <see cref="DocumentLink"/> type.
+		/// </summary>
+		private sealed class LinkConverter : JsonConverter<IDocumentLink>
+		{
+			/// <remarks>
+			/// Index is always being created based on normalized documents.
+			/// </remarks>
+			private const string subsectionName = "Normalization";
+
+			/// <inheritdoc />
+			public override IDocumentLink Read(
+				ref Utf8JsonReader reader,
+				Type typeToConvert,
+				JsonSerializerOptions options) => new DocumentLink(subsectionName, reader.GetString()!);
+
+			/// <inheritdoc />
+			public override void Write(
+				Utf8JsonWriter writer,
+				IDocumentLink value,
+				JsonSerializerOptions options) => writer.WriteStringValue(value.Name);
+		}
 	}
 }

@@ -6,9 +6,9 @@ namespace SearchSystem.BooleanSearch
 	internal interface INode
 	{
 		/// <summary>
-		/// Search expression node which contains word as logical operator's operand.
+		/// Search expression node which represents terminal symbol - single word.
 		/// </summary>
-		record Word(string Value) : INode;
+		record Term(string Value) : INode;
 
 		/// <summary>
 		/// Search expression node which represents negation operator '!'.

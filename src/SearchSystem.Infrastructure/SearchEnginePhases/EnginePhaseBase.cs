@@ -33,7 +33,7 @@ namespace SearchSystem.Infrastructure.SearchEnginePhases
 			}
 			catch (Exception exception)
 			{
-				Environment.Logger.LogError("Error occured during search phase execution.", exception);
+				Environment.Logger.LogError(exception, "Error occured during search phase execution.");
 				throw;
 			}
 

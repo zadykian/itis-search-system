@@ -64,24 +64,24 @@ namespace SearchSystem.BooleanSearch.Parsing
 			/// Parser of sub-expressions with highest priority:
 			/// </para>
 			/// <para>
-			/// 1. Terminals <see cref="INode.Word"/>;
+			/// 1. Terminals <see cref="INode.Term"/>;
 			/// 2. Negation operators <see cref="INode.Not"/>;
 			/// 3. Sub-expressions in parentheses.
 			/// </para>
 			/// </summary>
 			private static Parser<INode> HighestPriority
-				=> Word
+				=> Term
 					.Or(Not)
 					.Or(Parentheses);
 
 			/// <summary>
-			/// Parser of <see cref="INode.Word"/> sub-expressions.
+			/// Parser of <see cref="INode.Term"/> sub-expressions.
 			/// </summary>
-			private static Parser<INode> Word =>
+			private static Parser<INode> Term =>
 				from openQuote  in Parse.Char('\'')
 				from value      in Parse.CharExcept('\'').AtLeastOnce().Text()
 				from closeQuote in Parse.Char('\'')
-				select new INode.Word(value);
+				select new INode.Term(value);
 
 			/// <summary>
 			/// Parser of <see cref="INode.Not"/> sub-expressions.
