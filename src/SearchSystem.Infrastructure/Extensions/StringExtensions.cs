@@ -15,7 +15,7 @@ namespace SearchSystem.Infrastructure.Extensions
 			=> textLine
 				.Split(' ', '\t', '\n')
 				.Select(word => word
-					.Where(character => char.IsLetter(character) || character == '-')
+					.Where(character => char.IsLetterOrDigit(character) || character == '-')
 					.Select(char.ToLower)
 					.ToArray()
 					.To(chars => new string(chars)))
