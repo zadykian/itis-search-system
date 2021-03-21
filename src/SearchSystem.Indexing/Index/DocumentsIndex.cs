@@ -8,14 +8,14 @@ using SearchSystem.Infrastructure.Extensions;
 
 // ReSharper disable BuiltInTypeReferenceStyle
 using Term = System.String;
-using DocumentsSet = System.Collections.Immutable.IImmutableSet<SearchSystem.Infrastructure.Documents.IDocumentLink>;
+using DocLinks = System.Collections.Immutable.IImmutableSet<SearchSystem.Infrastructure.Documents.IDocumentLink>;
 
 namespace SearchSystem.Indexing.Index
 {
 	/// <inheritdoc />
 	internal class DocumentsIndex : IDocumentsIndex
 	{
-		private readonly IReadOnlyDictionary<Term, DocumentsSet> termsToDocuments;
+		private readonly IReadOnlyDictionary<Term, DocLinks> termsToDocuments;
 
 		/// <param name="allDocuments">
 		/// Documents to be indexed.
@@ -30,13 +30,13 @@ namespace SearchSystem.Indexing.Index
 			=> termsToDocuments = FromDocument(indexDocument);
 
 		/// <inheritdoc />
-		DocumentsSet IDocumentsIndex.AllWhichContains(Term term)
+		DocLinks IDocumentsIndex.AllWhichContains(Term term)
 			=> termsToDocuments.TryGetValue(term, out var documentsSet)
 				? documentsSet
 				: ImmutableHashSet<IDocumentLink>.Empty;
 
 		/// <inheritdoc />
-		DocumentsSet IDocumentsIndex.AllDocuments()
+		DocLinks IDocumentsIndex.AllDocuments()
 			=> termsToDocuments
 				.Values
 				.Aggregate(ImmutableHashSet<IDocumentLink>.Empty, (firstSet, secondSet) => firstSet.Union(secondSet));
@@ -56,7 +56,7 @@ namespace SearchSystem.Indexing.Index
 		/// <summary>
 		/// Perform indexation of documents <paramref name="allDocuments"/>. 
 		/// </summary>
-		private static IReadOnlyDictionary<Term, DocumentsSet> PerformIndexation(IEnumerable<IDocument> allDocuments)
+		private static IReadOnlyDictionary<Term, DocLinks> PerformIndexation(IEnumerable<IDocument> allDocuments)
 			=> allDocuments
 				.SelectMany(document => document
 					.Lines
@@ -74,7 +74,7 @@ namespace SearchSystem.Indexing.Index
 		/// <summary>
 		/// Deserialize document <paramref name="indexDocument"/> to <see cref="termsToDocuments"/> dictionary.
 		/// </summary>
-		private static IReadOnlyDictionary<Term, DocumentsSet> FromDocument(IDocument indexDocument)
+		private static IReadOnlyDictionary<Term, DocLinks> FromDocument(IDocument indexDocument)
 			=> indexDocument
 				.Lines
 				.Single()
@@ -90,11 +90,11 @@ namespace SearchSystem.Indexing.Index
 		/// <summary>
 		/// Convert sequence of tuples to ordered read-only dictionary. 
 		/// </summary>
-		private static IReadOnlyDictionary<Term, DocumentsSet> AsOrderedDictionary(
+		private static IReadOnlyDictionary<Term, DocLinks> AsOrderedDictionary(
 			IEnumerable<(Term Term, ImmutableSortedSet<IDocumentLink> DocsSet)> enumerable)
 			=> enumerable
 				.OrderBy(tuple => tuple.Term)
-				.Select(tuple => new KeyValuePair<Term, DocumentsSet>(tuple.Term, tuple.DocsSet))
-				.To(keyValuePairs => new Dictionary<Term, DocumentsSet>(keyValuePairs));
+				.Select(tuple => new KeyValuePair<Term, DocLinks>(tuple.Term, tuple.DocsSet))
+				.To(keyValuePairs => new Dictionary<Term, DocLinks>(keyValuePairs));
 	}
 }

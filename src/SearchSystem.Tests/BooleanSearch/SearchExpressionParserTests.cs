@@ -39,86 +39,86 @@ namespace SearchSystem.Tests.BooleanSearch
 		/// </summary>
 		private static IEnumerable<TestCase> ValidParsingTestCases()
 		{
-			yield return new("'lemma'", new INode.Word("lemma"));
+			yield return new("'lemma'", new INode.Term("lemma"));
 
 			yield return new("! 'some-string'",
 				new INode.Not(
-					new INode.Word("some-string")));
+					new INode.Term("some-string")));
 
 			yield return new("!!'string'",
 				new INode.Not(
 					new INode.Not(
-						new INode.Word("string"))));
+						new INode.Term("string"))));
 
 			yield return new("'keyboard' & 'trackball'",
 				new INode.And(
-					new INode.Word("keyboard"),
-					new INode.Word("trackball")));
+					new INode.Term("keyboard"),
+					new INode.Term("trackball")));
 
-			yield return new("('str')", new INode.Word("str"));
+			yield return new("('str')", new INode.Term("str"));
 
 			yield return new("'elephant' | 'hippo'",
 				new INode.Or(
-					new INode.Word("elephant"),
-					new INode.Word("hippo")));
+					new INode.Term("elephant"),
+					new INode.Term("hippo")));
 
 			yield return new("'applicative' & 'functor' | 'monoid'",
 				new INode.Or(
 					new INode.And(
-						new INode.Word("applicative"),
-						new INode.Word("functor")),
-					new INode.Word("monoid")));
+						new INode.Term("applicative"),
+						new INode.Term("functor")),
+					new INode.Term("monoid")));
 
 			yield return new("'str0' | 'str1' & 'str2'",
 				new INode.Or(
-					new INode.Word("str0"),
+					new INode.Term("str0"),
 					new INode.And(
-						new INode.Word("str1"),
-						new INode.Word("str2"))));
+						new INode.Term("str1"),
+						new INode.Term("str2"))));
 
 			yield return new("'str0' | 'str1' | 'str2'",
 				new INode.Or(
 					new INode.Or(
-						new INode.Word("str0"),
-						new INode.Word("str1")),
-					new INode.Word("str2")));
+						new INode.Term("str0"),
+						new INode.Term("str1")),
+					new INode.Term("str2")));
 
 			yield return new("'str0' & 'str1' & 'str2'",
 				new INode.And(
 					new INode.And(
-						new INode.Word("str0"),
-						new INode.Word("str1")),
-					new INode.Word("str2")));
+						new INode.Term("str0"),
+						new INode.Term("str1")),
+					new INode.Term("str2")));
 
 			yield return new("'str0' & ('str1' | 'str2')",
 				new INode.And(
-					new INode.Word("str0"),
+					new INode.Term("str0"),
 					new INode.Or(
-						new INode.Word("str1"),
-						new INode.Word("str2"))));
+						new INode.Term("str1"),
+						new INode.Term("str2"))));
 
 			yield return new("'str0' & !'str1'",
 				new INode.And(
-					new INode.Word("str0"),
-					new INode.Not(new INode.Word("str1"))));
+					new INode.Term("str0"),
+					new INode.Not(new INode.Term("str1"))));
 
 			yield return new("!'str0' & 'str1'",
 				new INode.And(
-					new INode.Not(new INode.Word("str0")),
-					new INode.Word("str1")));
+					new INode.Not(new INode.Term("str0")),
+					new INode.Term("str1")));
 
 			yield return new("!('str0' & 'str1')",
 				new INode.Not(
 					new INode.And(
-						new INode.Word("str0"),
-						new INode.Word("str1"))));
+						new INode.Term("str0"),
+						new INode.Term("str1"))));
 
 			yield return new("( (('str0')) & ! 'str1' | ('str2') )",
 				new INode.Or(
 					new INode.And(
-						new INode.Word("str0"),
-						new INode.Not(new INode.Word("str1"))),
-					new INode.Word("str2")));
+						new INode.Term("str0"),
+						new INode.Not(new INode.Term("str1"))),
+					new INode.Term("str2")));
 		}
 
 		/// <summary>

@@ -1,6 +1,6 @@
+using System.Collections.Generic;
 using SearchSystem.Indexing.Index;
-
-using Docs = System.Collections.Generic.IReadOnlyCollection<SearchSystem.Infrastructure.Documents.IDocument>;
+using SearchSystem.Infrastructure.Documents;
 
 namespace SearchSystem.BooleanSearch.Scan
 {
@@ -12,6 +12,6 @@ namespace SearchSystem.BooleanSearch.Scan
 		/// <summary>
 		/// Perform scanning of <paramref name="index"/> based on <paramref name="searchExpression"/>. 
 		/// </summary>
-		Docs Execute(IDocumentsIndex index, INode searchExpression);
+		IReadOnlyCollection<IDocumentLink> Execute(IDocumentsIndex index, INode searchExpression);
 	}
 }

@@ -14,14 +14,14 @@ namespace SearchSystem.Tests.BooleanSearch
 	internal class IndexScanTests : SingleComponentTestFixtureBase<BooleanSearchAppComponent>
 	{
 		/// <summary>
-		/// Scan index based on single word search expression.
+		/// Scan index based on single term search expression.
 		/// </summary>
 		[Test]
-		public void ScanBasedOnWordTest()
+		public void ScanBasedOnSingleTermTest()
 		{
 			var document = FromLines("str0", "str1", "str2");
 			var index = new DocumentsIndex(new[] {document});
-			var searchExpression = new INode.Word("str1");
+			var searchExpression = new INode.Term("str1");
 
 			var indexScan = GetService<IIndexScan>();
 			var foundDocs = indexScan.Execute(index, searchExpression);
