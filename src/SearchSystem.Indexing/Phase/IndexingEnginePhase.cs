@@ -35,7 +35,7 @@ namespace SearchSystem.Indexing.Phase
 			}
 			catch (Exception exception)
 			{
-				Environment.Logger.LogError("Failed to save created index to documents storage.", exception);
+				Environment.Logger.LogError(exception, "Failed to save created index to documents storage.");
 			}
 
 			return documentsIndex;

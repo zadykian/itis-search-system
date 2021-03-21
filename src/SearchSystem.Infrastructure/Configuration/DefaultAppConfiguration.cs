@@ -38,7 +38,7 @@ namespace SearchSystem.Infrastructure.Configuration
 			=> configuration
 				.GetSection($"{componentName}:UsePreviousResults")
 				.Value
-				.To(bool.Parse);
+				.To(str => !string.IsNullOrWhiteSpace(str) && bool.Parse(str));
 
 		/// <inheritdoc />
 		Language IAppConfiguration.DocumentsLanguage()

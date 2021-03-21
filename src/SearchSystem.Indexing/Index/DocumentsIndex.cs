@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using SearchSystem.Infrastructure.Documents;
 using SearchSystem.Infrastructure.Extensions;
 
@@ -45,12 +47,8 @@ namespace SearchSystem.Indexing.Index
 		/// Represent itself as <see cref="IDocument"/> instance. 
 		/// </summary>
 		public IDocument AsDocument()
-			=> new JsonSerializerOptions
-				{
-					WriteIndented = true,
-					Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
-				}
-				.To(options => JsonSerializer.Serialize(termsToDocuments, options))
+			=> JsonSerializer
+				.Serialize(termsToDocuments, JsonOptions)
 				.To(serialized => new Document(string.Empty, "terms-index.json", new [] {serialized}));
 
 		/// <summary>
@@ -77,14 +75,12 @@ namespace SearchSystem.Indexing.Index
 		private static IReadOnlyDictionary<Term, DocLinks> FromDocument(IDocument indexDocument)
 			=> indexDocument
 				.Lines
-				.Single()
-				.To(serialized => JsonSerializer.Deserialize<Dictionary<Term, IImmutableSet<DocumentLink>>>(serialized)!)
+				.JoinBy(Environment.NewLine)
+				.To(serialized => JsonSerializer
+					.Deserialize<Dictionary<Term, ImmutableSortedSet<IDocumentLink>>>(serialized, JsonOptions)!)
 				.Select(pair => (
 					Term: pair.Key,
-					DocsSet: pair
-						.Value
-						.Cast<IDocumentLink>()
-						.ToImmutableSortedSet()))
+					DocsSet: pair.Value))
 				.To(AsOrderedDictionary);
 
 		/// <summary>
@@ -96,5 +92,39 @@ namespace SearchSystem.Indexing.Index
 				.OrderBy(tuple => tuple.Term)
 				.Select(tuple => new KeyValuePair<Term, DocLinks>(tuple.Term, tuple.DocsSet))
 				.To(keyValuePairs => new Dictionary<Term, DocLinks>(keyValuePairs));
+
+		/// <summary>
+		/// Options for index serialization and deserialization.
+		/// </summary>
+		private static JsonSerializerOptions JsonOptions
+			=> new()
+			{
+				WriteIndented = true,
+				Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+				Converters = { new LinkConverter() }
+			};
+
+		/// <summary>
+		/// Json converter for <see cref="DocumentLink"/> type.
+		/// </summary>
+		private sealed class LinkConverter : JsonConverter<IDocumentLink>
+		{
+			/// <summary>
+			/// Index is always being created based on normalized documents.
+			/// </summary>
+			private const string subsectionName = "Normalization";
+
+			/// <inheritdoc />
+			public override IDocumentLink Read(
+				ref Utf8JsonReader reader,
+				Type typeToConvert,
+				JsonSerializerOptions options) => new DocumentLink(subsectionName, reader.GetString()!);
+
+			/// <inheritdoc />
+			public override void Write(
+				Utf8JsonWriter writer,
+				IDocumentLink value,
+				JsonSerializerOptions options) => writer.WriteStringValue(value.Name);
+		}
 	}
 }
