@@ -3,7 +3,7 @@ namespace SearchSystem.Normalization.Normalizer
 	/// <summary>
 	/// Word normalizer.
 	/// </summary>
-	internal interface INormalizer
+	public interface INormalizer
 	{
 		/// <summary>
 		/// Perform word normalization.
