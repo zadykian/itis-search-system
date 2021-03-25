@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using SearchSystem.Infrastructure.Configuration;
+using SearchSystem.Infrastructure.Documents.Storage;
 
 namespace SearchSystem.Infrastructure.AppEnvironment
 {
@@ -13,5 +14,8 @@ namespace SearchSystem.Infrastructure.AppEnvironment
 
 		/// <inheritdoc cref="ILogger{TCategoryName}"/>
 		ILogger<T> Logger { get; }
+
+		/// <inheritdoc cref="IDocumentStorage"/>
+		IDocumentStorage Storage { get; }
 	}
 }

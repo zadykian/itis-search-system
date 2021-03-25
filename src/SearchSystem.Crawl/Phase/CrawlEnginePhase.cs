@@ -6,7 +6,6 @@ using SearchSystem.Crawl.Crawler;
 using SearchSystem.Crawl.Pages;
 using SearchSystem.Infrastructure.AppEnvironment;
 using SearchSystem.Infrastructure.Documents;
-using SearchSystem.Infrastructure.Documents.Storage;
 using SearchSystem.Infrastructure.SearchEnginePhases;
 using SearchSystem.Infrastructure.WebPages;
 
@@ -22,8 +21,7 @@ namespace SearchSystem.Crawl.Phase
 
 		public CrawlEnginePhase(
 			IWebCrawler webCrawler,
-			IDocumentStorage documentStorage,
-			IAppEnvironment<CrawlEnginePhase> appEnvironment) : base(documentStorage, appEnvironment)
+			IAppEnvironment<CrawlEnginePhase> appEnvironment) : base(appEnvironment)
 			=> this.webCrawler = webCrawler;
 
 		/// <inheritdoc />
@@ -42,11 +40,11 @@ namespace SearchSystem.Crawl.Phase
 		private async Task<Document> SaveWebPageAsDocument(IWebPage webPage, PageId pageId)
 		{
 			var document = new Document(ComponentName, $"{pageId}.txt", webPage.AllVisibleLines());
-			await DocumentStorage.SaveOrAppendAsync(document);
+			await AppEnvironment.Storage.SaveOrAppendAsync(document);
 
 			var webPagesIndex = new WebPagesIndex(pageId, webPage.Url);
-			var indexDocument = webPagesIndex.AsDocument(DocumentStorage.Conventions.WebPagesIndex);
-			await DocumentStorage.SaveOrAppendAsync(indexDocument);
+			var indexDocument = webPagesIndex.AsDocument(AppEnvironment.Storage.Conventions.WebPagesIndex);
+			await AppEnvironment.Storage.SaveOrAppendAsync(indexDocument);
 
 			AppEnvironment.Logger.LogInformation($"Document '{document.Name}' ({webPage.Url}) is saved.");
 			return document;

@@ -9,7 +9,6 @@ using SearchSystem.BooleanSearch.Scan;
 using SearchSystem.BooleanSearch.UserInterface;
 using SearchSystem.Indexing.Index;
 using SearchSystem.Infrastructure.AppEnvironment;
-using SearchSystem.Infrastructure.Documents.Storage;
 using SearchSystem.Infrastructure.Extensions;
 using SearchSystem.Infrastructure.SearchEnginePhases;
 using SearchSystem.Infrastructure.WebPages;
@@ -28,21 +27,18 @@ namespace SearchSystem.BooleanSearch.Phase
 		private readonly ISearchExpressionParser expressionParser;
 		private readonly INormalizer normalizer;
 		private readonly IIndexScan indexScan;
-		private readonly IDocumentStorage documentStorage;
 
 		public BooleanSearchEnginePhase(
 			IUserInterface userInterface,
 			ISearchExpressionParser expressionParser,
 			INormalizer normalizer,
 			IIndexScan indexScan,
-			IDocumentStorage documentStorage,
 			IAppEnvironment<EnginePhaseBase<ITermsIndex, Unit>> appEnvironment) : base(appEnvironment)
 		{
 			this.userInterface = userInterface;
 			this.expressionParser = expressionParser;
 			this.normalizer = normalizer;
 			this.indexScan = indexScan;
-			this.documentStorage = documentStorage;
 		}
 
 		/// <inheritdoc />
@@ -82,7 +78,7 @@ namespace SearchSystem.BooleanSearch.Phase
 		/// </summary>
 		private async Task<string> StringRepresentation(DocLinks foundDocs, TimeSpan elapsed)
 		{
-			var webPagesDocument = await documentStorage.LoadAsync(documentStorage.Conventions.WebPagesIndex);
+			var webPagesDocument = await AppEnvironment.Storage.LoadAsync(AppEnvironment.Storage.Conventions.WebPagesIndex);
 
 			var foundPageIds = foundDocs
 				.Select(link => Path.GetFileNameWithoutExtension(link.Name))

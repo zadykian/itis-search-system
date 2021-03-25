@@ -3,11 +3,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using SearchSystem.Infrastructure.AppEnvironment;
 using SearchSystem.Infrastructure.Documents;
-using SearchSystem.Infrastructure.Documents.Storage;
 using SearchSystem.Infrastructure.Extensions;
 using SearchSystem.Infrastructure.SearchEnginePhases;
 using SearchSystem.Normalization.Normalizer;
-
 using Docs = System.Collections.Generic.IReadOnlyCollection<SearchSystem.Infrastructure.Documents.IDocument>;
 
 namespace SearchSystem.Normalization.Phase
@@ -19,8 +17,7 @@ namespace SearchSystem.Normalization.Phase
 
 		public NormalizationEnginePhase(
 			INormalizer normalizer,
-			IDocumentStorage documentStorage,
-			IAppEnvironment<NormalizationEnginePhase> appEnvironment) : base(documentStorage, appEnvironment)
+			IAppEnvironment<NormalizationEnginePhase> appEnvironment) : base(appEnvironment)
 			=> this.normalizer = normalizer;
 
 		/// <inheritdoc />
@@ -30,7 +27,7 @@ namespace SearchSystem.Normalization.Phase
 				.ToAsyncEnumerable()
 				.SelectAwait(async normalizedDocument =>
 				{
-					await DocumentStorage.SaveOrAppendAsync(normalizedDocument);
+					await AppEnvironment.Storage.SaveOrAppendAsync(normalizedDocument);
 					return normalizedDocument;
 				})
 				.ToArrayAsync();
