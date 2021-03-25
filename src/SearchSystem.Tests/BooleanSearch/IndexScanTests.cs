@@ -20,7 +20,7 @@ namespace SearchSystem.Tests.BooleanSearch
 		public void ScanBasedOnSingleTermTest()
 		{
 			var document = FromLines(0, "str0", "str1", "str2");
-			var index = new DocumentsIndex(new[] {document});
+			var index = new TermsIndex(new[] {document});
 			var searchExpression = new INode.Term("str1");
 
 			var indexScan = GetService<IIndexScan>();
@@ -38,7 +38,7 @@ namespace SearchSystem.Tests.BooleanSearch
 		{
 			var whichSatisfies = FromLines(1, "str1", "str2");
 			
-			var index = new DocumentsIndex(new[]
+			var index = new TermsIndex(new[]
 			{
 				FromLines(0, "str0", "str1"),
 				whichSatisfies,

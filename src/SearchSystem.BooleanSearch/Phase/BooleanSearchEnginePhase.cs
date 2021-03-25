@@ -11,10 +11,12 @@ using SearchSystem.Infrastructure.Extensions;
 using SearchSystem.Infrastructure.SearchEnginePhases;
 using SearchSystem.Normalization.Normalizer;
 
+using DocLinks = System.Collections.Generic.IReadOnlyCollection<SearchSystem.Infrastructure.Documents.IDocumentLink>;
+
 namespace SearchSystem.BooleanSearch.Phase
 {
 	/// <inheritdoc cref="IBooleanSearchEnginePhase" />
-	internal class BooleanSearchEnginePhase : EnginePhaseBase<IDocumentsIndex, Unit>, IBooleanSearchEnginePhase
+	internal class BooleanSearchEnginePhase : EnginePhaseBase<ITermsIndex, Unit>, IBooleanSearchEnginePhase
 	{
 		private readonly IUserInterface userInterface;
 		private readonly ISearchExpressionParser expressionParser;
@@ -28,7 +30,7 @@ namespace SearchSystem.BooleanSearch.Phase
 			INormalizer normalizer,
 			IIndexScan indexScan,
 			IDocumentStorage documentStorage,
-			IAppEnvironment<EnginePhaseBase<IDocumentsIndex, Unit>> appEnvironment) : base(appEnvironment)
+			IAppEnvironment<EnginePhaseBase<ITermsIndex, Unit>> appEnvironment) : base(appEnvironment)
 		{
 			this.userInterface = userInterface;
 			this.expressionParser = expressionParser;
@@ -38,28 +40,27 @@ namespace SearchSystem.BooleanSearch.Phase
 		}
 
 		/// <inheritdoc />
-		protected override async Task<Unit> ExecuteAnewAsync(IDocumentsIndex inputData)
+		protected override async Task<Unit> ExecuteAnewAsync(ITermsIndex inputData)
 		{
 			userInterface.ShowMessage("enter search expression:");
 			var searchRequest = await userInterface.ConsumeInputAsync();
 
-			// todo
-			var resultText = "";
-			// var resultText = expressionParser.Parse(searchRequest) switch
-			// {
-			// 	IParseResult.Success success => success
-			// 		.SearchExpression
-			// 		.MapTerms(term => term with { Value = normalizer.Normalize(term.Value)})
-			// 		.To(normalized =>
-			// 		{
-			// 			var stopwatch = Stopwatch.StartNew();
-			// 			var result = indexScan.Execute(inputData, normalized);
-			// 			return (FoundDocs: result, stopwatch.Elapsed);
-			// 		}),
-			//
-			// 	IParseResult.Failure failure => failure.ErrorText,
-			// 	_ => throw new ArgumentOutOfRangeException(nameof(IParseResult))
-			// };
+			var resultText = expressionParser.Parse(searchRequest) switch
+			{
+				IParseResult.Success success => await success
+					.SearchExpression
+					.MapTerms(term => term with { Value = normalizer.Normalize(term.Value)})
+					.To(normalized =>
+					{
+						var stopwatch = Stopwatch.StartNew();
+						var result = indexScan.Execute(inputData, normalized);
+						return (FoundDocs: result, stopwatch.Elapsed);
+					})
+					.To(tuple => StringRepresentation(tuple.FoundDocs, tuple.Elapsed)),
+
+				IParseResult.Failure failure => failure.ErrorText,
+				_ => throw new ArgumentOutOfRangeException(nameof(IParseResult))
+			};
 
 			userInterface.ShowMessage(resultText);
 
@@ -69,6 +70,11 @@ namespace SearchSystem.BooleanSearch.Phase
 			return string.Equals(input, "yes", StringComparison.InvariantCultureIgnoreCase)
 				? Unit.Instance
 				: await ExecuteAnewAsync(inputData);
+		}
+
+		private async Task<string> StringRepresentation(DocLinks foundDocs, TimeSpan elapsed)
+		{
+			var webPagesDocument = await documentStorage.LoadAsync(documentStorage.Conventions.WebPagesIndex);
 		}
 
 		/// <inheritdoc />

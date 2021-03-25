@@ -15,30 +15,30 @@ using DocLinks = System.Collections.Immutable.IImmutableSet<SearchSystem.Infrast
 namespace SearchSystem.Indexing.Index
 {
 	/// <inheritdoc />
-	internal class DocumentsIndex : IDocumentsIndex
+	internal class TermsIndex : ITermsIndex
 	{
-		private readonly IReadOnlyDictionary<Term, DocLinks> termsToDocuments;
+		protected readonly IReadOnlyDictionary<Term, DocLinks> termsToDocuments;
 
 		/// <param name="allDocuments">
 		/// Documents to be indexed.
 		/// </param>
-		public DocumentsIndex(IEnumerable<IDocument> allDocuments)
+		public TermsIndex(IEnumerable<IDocument> allDocuments)
 			=> termsToDocuments = PerformIndexation(allDocuments);
 
 		/// <param name="indexDocument">
 		/// Document which represents serialized index.
 		/// </param>
-		public DocumentsIndex(IDocument indexDocument)
+		public TermsIndex(IDocument indexDocument)
 			=> termsToDocuments = FromDocument(indexDocument);
 
 		/// <inheritdoc />
-		DocLinks IDocumentsIndex.AllWhichContains(Term term)
+		DocLinks ITermsIndex.AllWhichContains(Term term)
 			=> termsToDocuments.TryGetValue(term, out var documentsSet)
 				? documentsSet
 				: ImmutableHashSet<IDocumentLink>.Empty;
 
 		/// <inheritdoc />
-		DocLinks IDocumentsIndex.AllDocuments()
+		DocLinks ITermsIndex.AllDocuments()
 			=> termsToDocuments
 				.Values
 				.Aggregate(ImmutableHashSet<IDocumentLink>.Empty, (firstSet, secondSet) => firstSet.Union(secondSet));
@@ -46,10 +46,10 @@ namespace SearchSystem.Indexing.Index
 		/// <summary>
 		/// Represent itself as <see cref="IDocument"/> instance. 
 		/// </summary>
-		public IDocument AsDocument()
+		public IDocument AsDocument(IDocumentLink documentLink)
 			=> JsonSerializer
 				.Serialize(termsToDocuments, JsonOptions)
-				.To(serialized => new Document(string.Empty, "terms-index.json", new [] {serialized}));
+				.To(serialized => documentLink.ToDocument(serialized));
 
 		/// <summary>
 		/// Perform indexation of documents <paramref name="allDocuments"/>. 

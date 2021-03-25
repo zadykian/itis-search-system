@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using SearchSystem.Infrastructure.Documents.Conventions;
 using SearchSystem.Infrastructure.Extensions;
 
 namespace SearchSystem.Infrastructure.Documents.Storage
@@ -14,6 +15,11 @@ namespace SearchSystem.Infrastructure.Documents.Storage
 	/// </remarks>
 	internal class LocalFilesDocumentStorage : IDocumentStorage
 	{
+		public LocalFilesDocumentStorage(IStorageConventions conventions) => Conventions = conventions;
+
+		/// <inheritdoc />
+		public IStorageConventions Conventions { get; }
+
 		/// <inheritdoc />
 		async Task IDocumentStorage.SaveOrAppendAsync(IDocument document)
 		{

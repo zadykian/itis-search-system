@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using SearchSystem.Infrastructure.Documents.Conventions;
 
 namespace SearchSystem.Infrastructure.Documents.Storage
 {
@@ -8,6 +9,9 @@ namespace SearchSystem.Infrastructure.Documents.Storage
 	/// </summary>
 	public interface IDocumentStorage
 	{
+		/// <inheritdoc cref="IStorageConventions"/>
+		IStorageConventions Conventions { get; }
+
 		/// <summary>
 		/// Save document or append <see cref="IDocument.Lines"/> to existing one.
 		/// </summary>

@@ -10,7 +10,7 @@ namespace SearchSystem.BooleanSearch.Scan
 	internal class IndexScan : IIndexScan
 	{
 		/// <inheritdoc />
-		IReadOnlyCollection<IDocumentLink> IIndexScan.Execute(IDocumentsIndex index, INode searchExpression)
+		IReadOnlyCollection<IDocumentLink> IIndexScan.Execute(ITermsIndex index, INode searchExpression)
 			=> RetrieveDocLinks(index, searchExpression);
 
 		/// <summary>
@@ -18,7 +18,7 @@ namespace SearchSystem.BooleanSearch.Scan
 		/// satisfy expression <paramref name="searchExpression"/>. 
 		/// </summary>
 		private static IImmutableSet<IDocumentLink> RetrieveDocLinks(
-			IDocumentsIndex index,
+			ITermsIndex index,
 			INode searchExpression)
 			=> searchExpression switch
 			{
