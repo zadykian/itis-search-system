@@ -3,6 +3,7 @@
 	<Import Project="$(MsBuildThisFileDirectory)\..\common.props" />
 
 	<ItemGroup>
+		<PackageReference Include="Sprache" Version="2.3.1" />
 		<PackageReference Include="System.Linq.Async" Version="5.0.0" />
 	</ItemGroup>
 

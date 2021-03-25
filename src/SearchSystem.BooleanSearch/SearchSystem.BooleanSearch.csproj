@@ -8,8 +8,4 @@
 		<ProjectReference Include="..\SearchSystem.Normalization\SearchSystem.Normalization.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Sprache" Version="2.3.1" />
-	</ItemGroup>
-
 </Project>

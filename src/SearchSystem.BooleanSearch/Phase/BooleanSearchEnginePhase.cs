@@ -63,7 +63,6 @@ namespace SearchSystem.BooleanSearch.Phase
 			};
 
 			userInterface.ShowMessage(resultText);
-
 			userInterface.ShowMessage("exit?");
 			var input = await userInterface.ConsumeInputAsync();
 

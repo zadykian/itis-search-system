@@ -14,11 +14,6 @@ namespace SearchSystem.Infrastructure.WebPages
 		/// <summary>
 		/// Pages being saved during crawl phase.
 		/// </summary>
-		IReadOnlyDictionary<PageId, Uri> SavedPages();
-	}
-
-	public class WebPagesIndex
-	{
-		
+		IReadOnlyDictionary<PageId, Uri> SavedPages { get; }
 	}
 }

@@ -10,6 +10,9 @@ using SearchSystem.Infrastructure.Documents.Conventions;
 using SearchSystem.Infrastructure.Documents.Storage;
 using SearchSystem.Infrastructure.SearchEnginePhases;
 
+// ReSharper disable BuiltInTypeReferenceStyle
+using PageId = System.UInt32;
+
 namespace SearchSystem.Crawl.Phase
 {
 	/// <inheritdoc cref="ICrawlEnginePhase"/>
@@ -32,19 +35,21 @@ namespace SearchSystem.Crawl.Phase
 		protected override async Task<IReadOnlyCollection<IDocument>> ExecuteAnewAsync(Unit _)
 			=> await webCrawler
 				.CrawlThroughPages()
-				.Zip(AsyncEnumerable.Range(start: 0, int.MaxValue))
+				.Zip(AsyncEnumerable
+					.Range(start: 0, int.MaxValue)
+					.Select(intValue => (PageId) intValue))
 				.SelectAwait(async tuple => await SaveWebPageAsDocument(tuple.First, tuple.Second))
 				.ToArrayAsync();
 
 		/// <summary>
 		/// Save web page to document storage and return saved <see cref="IDocument"/>. 
 		/// </summary>
-		private async Task<Document> SaveWebPageAsDocument(IWebPage webPage, int pageIndex)
+		private async Task<Document> SaveWebPageAsDocument(IWebPage webPage, PageId pageId)
 		{
-			var document = new Document(ComponentName, $"{pageIndex}.txt", webPage.AllVisibleLines());
+			var document = new Document(ComponentName, $"{pageId}.txt", webPage.AllVisibleLines());
 			await DocumentStorage.SaveOrAppendAsync(document);
 
-			var indexDocument = storageConventions.WebPagesIndex.ToDocument($"{pageIndex}. {webPage.Url}");
+			var indexDocument = storageConventions.WebPagesIndex.ToDocument($"{pageId}. {webPage.Url}");
 			await DocumentStorage.SaveOrAppendAsync(indexDocument);
 
 			Environment.Logger.LogInformation($"Document '{document.Name}' ({webPage.Url}) is saved.");
