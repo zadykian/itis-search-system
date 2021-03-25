@@ -43,21 +43,23 @@ namespace SearchSystem.BooleanSearch.Phase
 			userInterface.ShowMessage("enter search expression:");
 			var searchRequest = await userInterface.ConsumeInputAsync();
 
-			var resultText = expressionParser.Parse(searchRequest) switch
-			{
-				IParseResult.Success success => success
-					.SearchExpression
-					.MapTerms(term => term with { Value = normalizer.Normalize(term.Value)})
-					.To(normalized =>
-					{
-						var stopwatch = Stopwatch.StartNew();
-						var result = indexScan.Execute(inputData, normalized);
-						return (FoundDocs: result, stopwatch.Elapsed);
-					}) /* todo */,
-
-				IParseResult.Failure failure => failure.ErrorText,
-				_ => throw new ArgumentOutOfRangeException(nameof(IParseResult))
-			};
+			// todo
+			var resultText = "";
+			// var resultText = expressionParser.Parse(searchRequest) switch
+			// {
+			// 	IParseResult.Success success => success
+			// 		.SearchExpression
+			// 		.MapTerms(term => term with { Value = normalizer.Normalize(term.Value)})
+			// 		.To(normalized =>
+			// 		{
+			// 			var stopwatch = Stopwatch.StartNew();
+			// 			var result = indexScan.Execute(inputData, normalized);
+			// 			return (FoundDocs: result, stopwatch.Elapsed);
+			// 		}),
+			//
+			// 	IParseResult.Failure failure => failure.ErrorText,
+			// 	_ => throw new ArgumentOutOfRangeException(nameof(IParseResult))
+			// };
 
 			userInterface.ShowMessage(resultText);
 
