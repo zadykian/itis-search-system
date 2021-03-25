@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using SearchSystem.Infrastructure.Documents;
 using SearchSystem.Infrastructure.Extensions;
@@ -10,27 +11,31 @@ using PageId = System.UInt32;
 
 namespace SearchSystem.Infrastructure.WebPages
 {
-	/// <inheritdoc />
-	public class WebPagesIndex : IWebPagesIndex
+	/// <summary>
+	/// Web pages index.
+	/// </summary>
+	public class WebPagesIndex
 	{
 		public WebPagesIndex(PageId pageId, Uri pageUri)
-			=> SavedPages = new Dictionary<PageId, Uri> {{pageId, pageUri}};
+			=> SavedPages = new[] {(pageId, pageUri)};
 
 		public WebPagesIndex(IDocument document)
 			=> SavedPages = document
 				.Lines
 				.Select(Grammar.Line.Parse)
-				.ToDictionary(tuple => tuple.PageId, tuple => tuple.PageUri);
+				.ToImmutableArray();
 
-		/// <inheritdoc />
-		public IReadOnlyDictionary<uint, Uri> SavedPages { get; }
+		/// <summary>
+		/// Pages being saved during crawl phase.
+		/// </summary>
+		public IReadOnlyCollection<(PageId PageId, Uri PageUri)> SavedPages { get; }
 
 		/// <summary>
 		/// Represent itself as <see cref="IDocument"/> instance. 
 		/// </summary>
 		public IDocument AsDocument(IDocumentLink documentLink)
 			=> SavedPages
-				.Select(pair => $"{pair.Key}. {pair.Value}")
+				.Select(pair => $"{pair.PageId}. {pair.PageUri}")
 				.ToArray()
 				.To(documentLink.ToDocument);
 

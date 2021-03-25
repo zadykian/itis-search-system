@@ -6,9 +6,9 @@ using SearchSystem.Crawl.Crawler;
 using SearchSystem.Crawl.Pages;
 using SearchSystem.Infrastructure.AppEnvironment;
 using SearchSystem.Infrastructure.Documents;
-using SearchSystem.Infrastructure.Documents.Conventions;
 using SearchSystem.Infrastructure.Documents.Storage;
 using SearchSystem.Infrastructure.SearchEnginePhases;
+using SearchSystem.Infrastructure.WebPages;
 
 // ReSharper disable BuiltInTypeReferenceStyle
 using PageId = System.UInt32;
@@ -19,17 +19,12 @@ namespace SearchSystem.Crawl.Phase
 	internal class CrawlEnginePhase : DocumentsOutputPhaseBase<Unit>, ICrawlEnginePhase
 	{
 		private readonly IWebCrawler webCrawler;
-		private readonly IStorageConventions storageConventions;
 
 		public CrawlEnginePhase(
 			IWebCrawler webCrawler,
 			IDocumentStorage documentStorage,
-			IStorageConventions storageConventions,
 			IAppEnvironment<CrawlEnginePhase> appEnvironment) : base(documentStorage, appEnvironment)
-		{
-			this.webCrawler = webCrawler;
-			this.storageConventions = storageConventions;
-		}
+			=> this.webCrawler = webCrawler;
 
 		/// <inheritdoc />
 		protected override async Task<IReadOnlyCollection<IDocument>> ExecuteAnewAsync(Unit _)
@@ -49,10 +44,11 @@ namespace SearchSystem.Crawl.Phase
 			var document = new Document(ComponentName, $"{pageId}.txt", webPage.AllVisibleLines());
 			await DocumentStorage.SaveOrAppendAsync(document);
 
-			var indexDocument = storageConventions.WebPagesIndex.ToDocument($"{pageId}. {webPage.Url}");
+			var webPagesIndex = new WebPagesIndex(pageId, webPage.Url);
+			var indexDocument = webPagesIndex.AsDocument(DocumentStorage.Conventions.WebPagesIndex);
 			await DocumentStorage.SaveOrAppendAsync(indexDocument);
 
-			Environment.Logger.LogInformation($"Document '{document.Name}' ({webPage.Url}) is saved.");
+			AppEnvironment.Logger.LogInformation($"Document '{document.Name}' ({webPage.Url}) is saved.");
 			return document;
 		}
 	}

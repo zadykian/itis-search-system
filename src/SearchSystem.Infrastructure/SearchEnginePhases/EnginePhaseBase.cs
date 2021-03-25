@@ -9,10 +9,10 @@ namespace SearchSystem.Infrastructure.SearchEnginePhases
 	public abstract class EnginePhaseBase<TIn, TOut> : ISearchEnginePhase<TIn, TOut>
 	{
 		protected EnginePhaseBase(IAppEnvironment<EnginePhaseBase<TIn, TOut>> appEnvironment)
-			=> Environment = appEnvironment;
+			=> AppEnvironment = appEnvironment;
 
 		/// <inheritdoc cref="IAppEnvironment{T}"/>>
-		protected IAppEnvironment<EnginePhaseBase<TIn, TOut>> Environment { get; }
+		protected IAppEnvironment<EnginePhaseBase<TIn, TOut>> AppEnvironment { get; }
 
 		/// <summary>
 		/// Name of component which this phase belongs to.
@@ -22,22 +22,22 @@ namespace SearchSystem.Infrastructure.SearchEnginePhases
 		/// <inheritdoc />
 		async Task<TOut> ISearchEnginePhase<TIn, TOut>.ExecuteAsync(TIn inputData)
 		{
-			Environment.Logger.LogInformation($"Phase '{ComponentName}' is started.");
+			AppEnvironment.Logger.LogInformation($"Phase '{ComponentName}' is started.");
 
 			TOut output;
 			try
 			{
-				output = Environment.Configuration.UsePreviousResultsFor(ComponentName)
+				output = AppEnvironment.Configuration.UsePreviousResultsFor(ComponentName)
 					? await LoadPreviousResultsAsync()
 					: await ExecuteAnewAsync(inputData);
 			}
 			catch (Exception exception)
 			{
-				Environment.Logger.LogError(exception, "Error occured during search phase execution.");
+				AppEnvironment.Logger.LogError(exception, "Error occured during search phase execution.");
 				throw;
 			}
 
-			Environment.Logger.LogInformation($"Phase '{ComponentName}' is finished successfully.");
+			AppEnvironment.Logger.LogInformation($"Phase '{ComponentName}' is finished successfully.");
 			return output;
 		}
 

@@ -1,5 +1,8 @@
 using System;
+using System.Collections.Immutable;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using SearchSystem.BooleanSearch.Parsing;
 using SearchSystem.BooleanSearch.Scan;
@@ -9,8 +12,11 @@ using SearchSystem.Infrastructure.AppEnvironment;
 using SearchSystem.Infrastructure.Documents.Storage;
 using SearchSystem.Infrastructure.Extensions;
 using SearchSystem.Infrastructure.SearchEnginePhases;
+using SearchSystem.Infrastructure.WebPages;
 using SearchSystem.Normalization.Normalizer;
 
+// ReSharper disable BuiltInTypeReferenceStyle
+using PageId = System.UInt32;
 using DocLinks = System.Collections.Generic.IReadOnlyCollection<SearchSystem.Infrastructure.Documents.IDocumentLink>;
 
 namespace SearchSystem.BooleanSearch.Phase
@@ -71,9 +77,25 @@ namespace SearchSystem.BooleanSearch.Phase
 				: await ExecuteAnewAsync(inputData);
 		}
 
+		/// <summary>
+		/// Get string representation of found docs list. 
+		/// </summary>
 		private async Task<string> StringRepresentation(DocLinks foundDocs, TimeSpan elapsed)
 		{
 			var webPagesDocument = await documentStorage.LoadAsync(documentStorage.Conventions.WebPagesIndex);
+
+			var foundPageIds = foundDocs
+				.Select(link => Path.GetFileNameWithoutExtension(link.Name))
+				.Select(PageId.Parse)
+				.ToImmutableArray();
+
+			return new WebPagesIndex(webPagesDocument)
+				.SavedPages
+				.Where(tuple => foundPageIds.Contains(tuple.PageId))
+				.OrderBy(tuple => tuple.PageId)
+				.Select(tuple => $"{tuple.PageId}. {tuple.PageUri}")
+				.BeginWith($"Found {foundDocs.Count} page(s). Elapsed {elapsed:s.fff}s")
+				.JoinBy(Environment.NewLine);
 		}
 
 		/// <inheritdoc />
