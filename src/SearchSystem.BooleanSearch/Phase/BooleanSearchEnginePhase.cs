@@ -12,7 +12,6 @@ using SearchSystem.Infrastructure.AppEnvironment;
 using SearchSystem.Infrastructure.Extensions;
 using SearchSystem.Infrastructure.SearchEnginePhases;
 using SearchSystem.Infrastructure.WebPages;
-using SearchSystem.Normalization.Normalizer;
 
 // ReSharper disable BuiltInTypeReferenceStyle
 using PageId = System.UInt32;
@@ -25,19 +24,16 @@ namespace SearchSystem.BooleanSearch.Phase
 	{
 		private readonly IUserInterface userInterface;
 		private readonly ISearchExpressionParser expressionParser;
-		private readonly INormalizer normalizer;
 		private readonly IIndexScan indexScan;
 
 		public BooleanSearchEnginePhase(
 			IUserInterface userInterface,
 			ISearchExpressionParser expressionParser,
-			INormalizer normalizer,
 			IIndexScan indexScan,
 			IAppEnvironment<EnginePhaseBase<ITermsIndex, Unit>> appEnvironment) : base(appEnvironment)
 		{
 			this.userInterface = userInterface;
 			this.expressionParser = expressionParser;
-			this.normalizer = normalizer;
 			this.indexScan = indexScan;
 		}
 
@@ -51,11 +47,10 @@ namespace SearchSystem.BooleanSearch.Phase
 			{
 				IParseResult.Success success => await success
 					.SearchExpression
-					.MapTerms(term => term with { Value = normalizer.Normalize(term.Value)})
-					.To(normalized =>
+					.To(expression =>
 					{
 						var stopwatch = Stopwatch.StartNew();
-						var result = indexScan.Execute(inputData, normalized);
+						var result = indexScan.Execute(inputData, expression);
 						return (FoundDocs: result, stopwatch.Elapsed);
 					})
 					.To(tuple => StringRepresentation(tuple.FoundDocs, tuple.Elapsed)),
