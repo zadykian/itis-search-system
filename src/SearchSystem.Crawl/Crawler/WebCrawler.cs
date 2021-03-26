@@ -27,23 +27,28 @@ namespace SearchSystem.Crawl.Crawler
 			=> appConfiguration
 				.RootPageUri()
 				.To(WebPages.Download)
-				.Where(page =>
-				{
-					var wordsCount = page
-						.AllVisibleLines()
-						.SelectMany(line => line.Words())
-						.Count();
-
-					if (wordsCount < appConfiguration.WordsPerPage())
-					{
-						logger.LogTrace($"Page '{page.Url}' is skipped (contains {wordsCount} words).");
-						return false;
-					}
-
-					return true;
-				})
+				.Where(WebPagePredicate)
 				.Distinct()
 				.Take((int) appConfiguration.TotalPages());
+
+		/// <summary>
+		/// Predicate for filtering pages by <see cref="IAppConfiguration.WordsPerPage"/> config value. 
+		/// </summary>
+		private bool WebPagePredicate(IWebPage page)
+		{
+			var wordsCount = page
+				.AllVisibleLines()
+				.SelectMany(line => line.Words())
+				.Count();
+
+			if (wordsCount >= appConfiguration.WordsPerPage())
+			{
+				return true;
+			}
+
+			logger.LogTrace($"Page '{page.Url}' is skipped (contains {wordsCount} words).");
+			return false;
+		}
 
 		/// <summary>
 		/// Representation of multiple web pages.
