@@ -3,7 +3,9 @@ using Microsoft.Extensions.DependencyInjection;
 using SearchSystem.BooleanSearch.Parsing;
 using SearchSystem.BooleanSearch.Phase;
 using SearchSystem.BooleanSearch.Scan;
+using SearchSystem.BooleanSearch.UserInterface;
 using SearchSystem.Infrastructure.AppComponents;
+using SearchSystem.Normalization.Normalizer;
 
 [assembly: InternalsVisibleTo("SearchSystem.Tests")]
 
@@ -15,8 +17,14 @@ namespace SearchSystem.BooleanSearch
 		/// <inheritdoc />
 		void IAppComponent.RegisterServices(IServiceCollection serviceCollection)
 			=> serviceCollection
+				.AddSingleton<IUserInterface, ConsoleUserInterface>()
 				.AddSingleton<ISearchExpressionParser, SearchExpressionParser>()
-				.AddSingleton<IIndexScan, IndexScan>()
+				.AddSingleton<IIndexScan>(provider =>
+				{
+					var underlyingIndexScan = new IndexScan();
+					var normalizer = provider.GetRequiredService<INormalizer>();
+					return new NormalizedIndexScan(underlyingIndexScan, normalizer);
+				})
 				.AddSingleton<IBooleanSearchEnginePhase, BooleanSearchEnginePhase>();
 	}
 }

@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using SearchSystem.Infrastructure.AppComponents;
 using SearchSystem.Infrastructure.AppEnvironment;
 using SearchSystem.Infrastructure.Configuration;
+using SearchSystem.Infrastructure.Documents.Conventions;
 using SearchSystem.Infrastructure.Documents.Storage;
 
 [assembly: InternalsVisibleTo("SearchSystem.Tests")]
@@ -17,6 +18,7 @@ namespace SearchSystem.Infrastructure
 			=> serviceCollection
 				.AddSingleton<IAppConfiguration, DefaultAppConfiguration>()
 				.AddSingleton(typeof(IAppEnvironment<>), typeof(DefaultAppEnvironment<>))
+				.AddSingleton<IStorageConventions, DefaultStorageConventions>()
 				.AddSingleton<IDocumentStorage, LocalFilesDocumentStorage>();
 	}
 }

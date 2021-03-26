@@ -12,6 +12,6 @@ namespace SearchSystem.BooleanSearch.Scan
 		/// <summary>
 		/// Perform scanning of <paramref name="index"/> based on <paramref name="searchExpression"/>. 
 		/// </summary>
-		IReadOnlyCollection<IDocumentLink> Execute(IDocumentsIndex index, INode searchExpression);
+		IReadOnlyCollection<IDocumentLink> Execute(ITermsIndex index, INode searchExpression);
 	}
 }

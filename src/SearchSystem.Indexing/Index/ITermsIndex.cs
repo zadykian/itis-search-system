@@ -7,7 +7,7 @@ namespace SearchSystem.Indexing.Index
 	/// <summary>
 	/// Index of normalized documents.
 	/// </summary>
-	public interface IDocumentsIndex
+	public interface ITermsIndex
 	{
 		/// <summary>
 		/// Get set of document links which all contain term <paramref name="term"/>. 

@@ -12,5 +12,18 @@ namespace SearchSystem.Infrastructure.Extensions
 		/// </summary>
 		public static string JoinBy(this IEnumerable<string> stringValues, string separator)
 			=> string.Join(separator, stringValues);
+
+		/// <summary>
+		/// Add item <paramref name="newItem"/> at the beginning of <paramref name="enumerable"/>. 
+		/// </summary>
+		public static IEnumerable<T> BeginWith<T>(this IEnumerable<T> enumerable, T newItem)
+		{
+			yield return newItem;
+
+			foreach (var item in enumerable)
+			{
+				yield return item;
+			}
+		}
 	}
 }

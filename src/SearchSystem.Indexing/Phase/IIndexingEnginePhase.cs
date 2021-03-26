@@ -9,7 +9,7 @@ namespace SearchSystem.Indexing.Phase
 	/// <remarks>
 	/// This phase performs indexing of normalized documents.
 	/// </remarks>
-	public interface IIndexingEnginePhase : ISearchEnginePhase<Docs, IDocumentsIndex>
+	public interface IIndexingEnginePhase : ISearchEnginePhase<Docs, ITermsIndex>
 	{
 	}
 }

@@ -1,7 +1,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using SearchSystem.Infrastructure.AppEnvironment;
-using SearchSystem.Infrastructure.Documents.Storage;
 
 using Docs = System.Collections.Generic.IReadOnlyCollection<SearchSystem.Infrastructure.Documents.IDocument>;
 
@@ -14,16 +13,14 @@ namespace SearchSystem.Infrastructure.SearchEnginePhases
 	public abstract class DocumentsOutputPhaseBase<TIn> : EnginePhaseBase<TIn, Docs>
 	{
 		protected DocumentsOutputPhaseBase(
-			IDocumentStorage documentStorage,
 			IAppEnvironment<DocumentsOutputPhaseBase<TIn>> appEnvironment) : base(appEnvironment)
-			=> DocumentStorage = documentStorage;
-
-		/// <inheritdoc cref="IDocumentStorage"/>
-		protected IDocumentStorage DocumentStorage { get; }
+		{
+		}
 
 		/// <inheritdoc />
 		protected sealed override async Task<Docs> LoadPreviousResultsAsync()
-			=> await DocumentStorage
+			=> await AppEnvironment
+				.Storage
 				.LoadFromSubsection(ComponentName)
 				.ToArrayAsync();
 	}

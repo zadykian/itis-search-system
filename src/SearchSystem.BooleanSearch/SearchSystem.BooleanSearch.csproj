@@ -1,17 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<TargetFramework>net5.0</TargetFramework>
-	</PropertyGroup>
+	<Import Project="$(MsBuildThisFileDirectory)\..\common.props" />
 
 	<ItemGroup>
 		<ProjectReference Include="..\SearchSystem.Indexing\SearchSystem.Indexing.csproj" />
 		<ProjectReference Include="..\SearchSystem.Infrastructure\SearchSystem.Infrastructure.csproj" />
 		<ProjectReference Include="..\SearchSystem.Normalization\SearchSystem.Normalization.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="Sprache" Version="2.3.1" />
 	</ItemGroup>
 
 </Project>
