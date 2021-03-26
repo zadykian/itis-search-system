@@ -33,7 +33,7 @@ namespace SearchSystem.Crawl.Pages
 				.Select(element => element.Href)
 				.Where(uriString =>
 					Uri.TryCreate(uriString, UriKind.Absolute, out var uri)
-					&& !Path.HasExtension(uriString)
+					&& (!Path.HasExtension(uriString) || Path.GetExtension(uriString).ToLower() == "html")
 					&& uri != Url
 					&& (uri.Scheme == "http" || uri.Scheme == "https"))
 				.Distinct()
@@ -53,6 +53,7 @@ namespace SearchSystem.Crawl.Pages
 				.Select(element => element.TextContent)
 				.Select(text => Regex.Replace(text, @"\n+", "\n"))
 				.Select(text => Regex.Replace(text, "( |\t)+", " "))
+				.Select(text => text.Trim())
 				.ToImmutableArray();
 
 		/// <summary>
@@ -60,14 +61,14 @@ namespace SearchSystem.Crawl.Pages
 		/// </summary>
 		private static bool ElementPredicate(IElement element)
 			=> element is not (
-					IHtmlScriptElement
-					or IHtmlHtmlElement
-					or IHtmlHeadElement
-					or IHtmlBodyElement
-					or IHtmlStyleElement
-					or IHtmlDivElement)
-				&& element.GetType().Name != "HtmlSemanticElement"
-				&& element.HasZeroOrOneChild();
+				   IHtmlScriptElement
+				   or IHtmlHtmlElement
+				   or IHtmlHeadElement
+				   or IHtmlBodyElement
+				   or IHtmlStyleElement
+				   or IHtmlDivElement)
+			   && element.GetType().Name != "HtmlSemanticElement"
+			   && element.HasZeroOrOneChild();
 
 		/// <inheritdoc />
 		public bool Equals(WebPage? other)
