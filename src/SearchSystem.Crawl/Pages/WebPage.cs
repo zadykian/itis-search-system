@@ -66,7 +66,8 @@ namespace SearchSystem.Crawl.Pages
 				   or IHtmlHeadElement
 				   or IHtmlBodyElement
 				   or IHtmlStyleElement
-				   or IHtmlDivElement)
+				   //or IHtmlDivElement
+				   )
 			   && element.GetType().Name != "HtmlSemanticElement"
 			   && element.HasZeroOrOneChild();
 
