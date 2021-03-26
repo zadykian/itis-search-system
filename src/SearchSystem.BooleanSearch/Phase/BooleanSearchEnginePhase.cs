@@ -44,7 +44,7 @@ namespace SearchSystem.BooleanSearch.Phase
 		/// <inheritdoc />
 		protected override async Task<Unit> ExecuteAnewAsync(ITermsIndex inputData)
 		{
-			userInterface.ShowMessage("enter search expression:");
+			userInterface.ShowMessage($"{Environment.NewLine}enter search expression:");
 			var searchRequest = await userInterface.ConsumeInputAsync();
 
 			var resultText = expressionParser.Parse(searchRequest) switch
@@ -65,7 +65,7 @@ namespace SearchSystem.BooleanSearch.Phase
 			};
 
 			userInterface.ShowMessage(resultText);
-			userInterface.ShowMessage("exit?");
+			userInterface.ShowMessage($"{Environment.NewLine}exit? [yes/no]");
 			var input = await userInterface.ConsumeInputAsync();
 
 			return string.Equals(input, "yes", StringComparison.InvariantCultureIgnoreCase)
@@ -90,7 +90,7 @@ namespace SearchSystem.BooleanSearch.Phase
 				.Where(tuple => foundPageIds.Contains(tuple.PageId))
 				.OrderBy(tuple => tuple.PageId)
 				.Select(tuple => $"{tuple.PageId}. {tuple.PageUri}")
-				.BeginWith($"Found {foundDocs.Count} page(s). Elapsed {elapsed:s.fff}s")
+				.BeginWith($@"Found {foundDocs.Count} page(s). Elapsed {elapsed:s\.fff}s")
 				.JoinBy(Environment.NewLine);
 		}
 
