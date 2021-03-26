@@ -25,6 +25,9 @@ namespace SearchSystem.Normalization.Normalizer
 				.To(languagePrebuilt => new LemmatizerPrebuiltFull(languagePrebuilt));
 
 		/// <inheritdoc />
-		string INormalizer.Normalize(string word) => internalLemmatizer.Lemmatize(word);
+		string INormalizer.Normalize(string word)
+			=> internalLemmatizer
+				.Lemmatize(word)
+				.ToLower();
 	}
 }
