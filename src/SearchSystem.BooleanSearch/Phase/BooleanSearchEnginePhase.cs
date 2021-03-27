@@ -30,7 +30,7 @@ namespace SearchSystem.BooleanSearch.Phase
 			IUserInterface userInterface,
 			ISearchExpressionParser expressionParser,
 			IIndexScan indexScan,
-			IAppEnvironment<EnginePhaseBase<ITermsIndex, Unit>> appEnvironment) : base(appEnvironment)
+			IAppEnvironment<BooleanSearchEnginePhase> appEnvironment) : base(appEnvironment)
 		{
 			this.userInterface = userInterface;
 			this.expressionParser = expressionParser;
