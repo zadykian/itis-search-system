@@ -19,11 +19,10 @@ namespace SearchSystem.Tests.Normalization
 		[TestCaseSource(nameof(TestCases))]
 		public void SplitStringTest(TestCase testCase)
 		{
-			var (input, result) = testCase;
-			var words = input.Words().ToImmutableArray();
+			var words = testCase.Input.Words().ToImmutableArray();
 
 			Assert.IsTrue(
-				words.SequenceEqual(result),
+				words.SequenceEqual(testCase.Result),
 				$"expected: [{testCase.Result.JoinBy(", ")}], but was: [{words.JoinBy(",")}]");
 		}
 
@@ -32,12 +31,29 @@ namespace SearchSystem.Tests.Normalization
 		/// </summary>
 		private static IEnumerable<TestCase> TestCases()
 		{
-			yield break;
+			yield return new("this is a very simple sentence.", "this", "is", "a", "very", "simple", "sentence");
 		}
 
 		/// <summary>
 		/// Line splitting test case.
 		/// </summary>
-		public record TestCase(string Input, IReadOnlyCollection<string> Result);
+		public readonly struct TestCase
+		{
+			public TestCase(string input, params string[] words)
+			{
+				Input = input;
+				Result = words;
+			}
+
+			/// <summary>
+			/// Test input.
+			/// </summary>
+			public string Input { get; }
+
+			/// <summary>
+			/// Test expected result.
+			/// </summary>
+			public IReadOnlyCollection<string> Result { get; }
+		}
 	}
 }
