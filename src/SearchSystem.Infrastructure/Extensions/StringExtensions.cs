@@ -16,7 +16,22 @@ namespace SearchSystem.Infrastructure.Extensions
 		public static IEnumerable<string> Words(this string textLine)
 			=> textLine
 				.To(line => Regex.Split(line, @"[^\p{L}]*\p{Z}[^\p{L}]*"))
-				.Where(word => !string.IsNullOrWhiteSpace(word))
+				.Where(word => !string.IsNullOrWhiteSpace(word) && word.All(c => char.IsLetterOrDigit(c) || char.IsPunctuation(c)))
 				.ToImmutableArray();
+
+		// /// <summary>
+		// /// Split <paramref name="textLine"/> to words. 
+		// /// </summary>
+		// public static IEnumerable<string> Words(this string textLine)
+		// 	=> textLine
+		// 		.Split(' ', '\t', '\n')
+		// 		.Select(word => word
+		// 			.Where(character => char.IsLetterOrDigit(character) || character == '-')
+		// 			.Select(char.ToLower)
+		// 			.ToArray()
+		// 			.To(chars => new string(chars))
+		// 			.To(str => Regex.Replace(str, "(-)+", "-")))
+		// 		.Where(word => !string.IsNullOrWhiteSpace(word) && word != "-")
+		// 		.ToImmutableArray();
 	}
 }
