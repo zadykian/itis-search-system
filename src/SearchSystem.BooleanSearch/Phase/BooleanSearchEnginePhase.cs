@@ -20,7 +20,7 @@ using DocLinks = System.Collections.Generic.IReadOnlyCollection<SearchSystem.Inf
 
 namespace SearchSystem.BooleanSearch.Phase
 {
-	/// <inheritdoc cref="IBooleanSearchEnginePhase" />
+	/// <inheritdoc cref="ISearchAlgorithmEnginePhase" />
 	internal class BooleanSearchEnginePhase : EnginePhaseBase<ITermsIndex, Unit>, ISearchAlgorithmEnginePhase
 	{
 		private readonly IUserInterface userInterface;
