@@ -1,9 +1,12 @@
+using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SearchSystem.BooleanSearch;
 using SearchSystem.Crawl;
 using SearchSystem.Indexing;
 using SearchSystem.Infrastructure;
+using SearchSystem.Infrastructure.Configuration;
 using SearchSystem.Infrastructure.Extensions;
 using SearchSystem.Normalization;
 using SearchSystem.VectorSearch;
@@ -31,10 +34,25 @@ namespace SearchSystem.AppHost
 					.AddComponent<CrawlAppComponent>()
 					.AddComponent<NormalizationAppComponent>()
 					.AddComponent<IndexingAppComponent>()
-					.AddComponent<BooleanSearchAppComponent>()
-					.AddComponent<VectorSearchAppComponent>()
+					.To(AddSearchAlgorithmComponent)
 					.AddComponent<AppHostAppComponent>())
 				.Build()
 				.RunAsync();
+
+		/// <summary>
+		/// Add suitable search algorithm component
+		/// based on <see cref="IAppConfiguration.SearchMode"/> configuration parameter. 
+		/// </summary>
+		private static IServiceCollection AddSearchAlgorithmComponent(IServiceCollection serviceCollection)
+			=> serviceCollection
+				.BuildServiceProvider()
+				.GetRequiredService<IAppConfiguration>()
+				.SearchMode()
+				.To(searchMode => searchMode switch
+				{
+					SearchMode.Boolean => serviceCollection.AddComponent<BooleanSearchAppComponent>(),
+					SearchMode.Vector  => serviceCollection.AddComponent<VectorSearchAppComponent>(),
+					_ => throw new ArgumentOutOfRangeException(nameof(searchMode))
+				});
 	}
 }
