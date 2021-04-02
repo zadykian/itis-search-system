@@ -1,6 +1,6 @@
-// ReSharper disable BuiltInTypeReferenceStyle
-
 using System.Collections.Generic;
+
+// ReSharper disable BuiltInTypeReferenceStyle
 using Term = System.String;
 using DocLinks = System.Collections.Immutable.IImmutableSet<SearchSystem.Infrastructure.Documents.IDocumentLink>;
 
