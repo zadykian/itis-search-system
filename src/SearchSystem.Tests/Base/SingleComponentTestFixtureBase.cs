@@ -40,7 +40,7 @@ namespace SearchSystem.Tests.Base
 		/// <summary>
 		/// Perform additional services configuration. 
 		/// </summary>
-		private static void ConfigureServices(IServiceCollection serviceCollection)
+		protected virtual void ConfigureServices(IServiceCollection serviceCollection)
 			=> serviceCollection
 				.AddLogging()
 				.AddSingleton<IConfiguration>(_
