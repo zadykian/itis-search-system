@@ -1,14 +1,14 @@
 using SearchSystem.Indexing.Index;
 using SearchSystem.Infrastructure.SearchEnginePhases;
 
-namespace SearchSystem.BooleanSearch.Phase
+namespace SearchSystem.Indexing.Phase.External
 {
 	/// <inheritdoc/>
 	/// <remarks>
-	/// This phase provides functionality of boolean search
+	/// This phase provides functionality of search
 	/// based on prebuilt index <see cref="ITermsIndex"/>.
 	/// </remarks>
-	public interface IBooleanSearchEnginePhase : ISearchEnginePhase<ITermsIndex, Unit>
+	public interface ISearchAlgorithmEnginePhase : ISearchEnginePhase<ITermsIndex, Unit>
 	{
 	}
 }

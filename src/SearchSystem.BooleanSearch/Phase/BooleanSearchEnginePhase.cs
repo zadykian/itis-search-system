@@ -8,6 +8,7 @@ using SearchSystem.BooleanSearch.Parsing;
 using SearchSystem.BooleanSearch.Scan;
 using SearchSystem.BooleanSearch.UserInterface;
 using SearchSystem.Indexing.Index;
+using SearchSystem.Indexing.Phase.External;
 using SearchSystem.Infrastructure.AppEnvironment;
 using SearchSystem.Infrastructure.Extensions;
 using SearchSystem.Infrastructure.SearchEnginePhases;
@@ -20,7 +21,7 @@ using DocLinks = System.Collections.Generic.IReadOnlyCollection<SearchSystem.Inf
 namespace SearchSystem.BooleanSearch.Phase
 {
 	/// <inheritdoc cref="IBooleanSearchEnginePhase" />
-	internal class BooleanSearchEnginePhase : EnginePhaseBase<ITermsIndex, Unit>, IBooleanSearchEnginePhase
+	internal class BooleanSearchEnginePhase : EnginePhaseBase<ITermsIndex, Unit>, ISearchAlgorithmEnginePhase
 	{
 		private readonly IUserInterface userInterface;
 		private readonly ISearchExpressionParser expressionParser;

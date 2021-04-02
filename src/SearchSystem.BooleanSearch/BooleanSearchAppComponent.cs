@@ -4,6 +4,7 @@ using SearchSystem.BooleanSearch.Parsing;
 using SearchSystem.BooleanSearch.Phase;
 using SearchSystem.BooleanSearch.Scan;
 using SearchSystem.BooleanSearch.UserInterface;
+using SearchSystem.Indexing.Phase.External;
 using SearchSystem.Infrastructure.AppComponents;
 using SearchSystem.Normalization.Normalizer;
 
@@ -25,6 +26,6 @@ namespace SearchSystem.BooleanSearch
 					var normalizer = provider.GetRequiredService<INormalizer>();
 					return new NormalizedIndexScan(underlyingIndexScan, normalizer);
 				})
-				.AddSingleton<IBooleanSearchEnginePhase, BooleanSearchEnginePhase>();
+				.AddSingleton<ISearchAlgorithmEnginePhase, BooleanSearchEnginePhase>();
 	}
 }
