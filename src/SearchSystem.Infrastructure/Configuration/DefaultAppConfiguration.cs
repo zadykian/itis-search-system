@@ -46,7 +46,7 @@ namespace SearchSystem.Infrastructure.Configuration
 				.GetSection("Phases:Normalization:DocumentsLanguage")
 				.Value
 				.To(stringValue => (Language) typeof(Language)
-						.GetField(stringValue, BindingFlags.Public | BindingFlags.Static)!
+					.GetField(stringValue, BindingFlags.Public | BindingFlags.Static)!
 					.GetValue(obj: null)!);
 	}
 }
