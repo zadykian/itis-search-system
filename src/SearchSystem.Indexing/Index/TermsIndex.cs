@@ -65,7 +65,7 @@ namespace SearchSystem.Indexing.Index
 			IWordExtractor wordExtractor)
 			=> allDocuments
 				.SelectMany(document => document
-					.Lines 
+					.Lines
 					.SelectMany(wordExtractor.Parse)
 					.Select(term => (Term: term, Document: document)))
 				.GroupBy(tuple => tuple.Term)
