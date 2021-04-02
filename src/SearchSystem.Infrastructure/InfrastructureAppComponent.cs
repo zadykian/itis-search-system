@@ -6,6 +6,7 @@ using SearchSystem.Infrastructure.Configuration;
 using SearchSystem.Infrastructure.Documents.Conventions;
 using SearchSystem.Infrastructure.Documents.Storage;
 using SearchSystem.Infrastructure.Extensions;
+using SearchSystem.Infrastructure.Words;
 
 [assembly: InternalsVisibleTo("SearchSystem.Tests")]
 

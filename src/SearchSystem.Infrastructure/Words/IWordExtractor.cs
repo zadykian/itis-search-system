@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace SearchSystem.Infrastructure.Extensions
+namespace SearchSystem.Infrastructure.Words
 {
 	/// <summary>
 	/// Words extractor.

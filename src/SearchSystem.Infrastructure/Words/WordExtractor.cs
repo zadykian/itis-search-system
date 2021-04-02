@@ -4,8 +4,9 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Text.RegularExpressions;
 using SearchSystem.Infrastructure.Configuration;
+using SearchSystem.Infrastructure.Extensions;
 
-namespace SearchSystem.Infrastructure.Extensions
+namespace SearchSystem.Infrastructure.Words
 {
 	/// <inheritdoc />
 	internal class WordExtractor : IWordExtractor

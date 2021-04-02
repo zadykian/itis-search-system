@@ -57,8 +57,9 @@ namespace SearchSystem.Indexing.Index
 		private static IReadOnlyDictionary<Term, DocLinks> PerformIndexation(IEnumerable<IDocument> allDocuments)
 			=> allDocuments
 				.SelectMany(document => document
-					.Lines
-					.SelectMany(line => line.Words())
+					.Lines 
+					// todo
+					.SelectMany(line => new[] {line})
 					.Select(term => (Term: term, Document: document)))
 				.GroupBy(tuple => tuple.Term)
 				.Select(group => (

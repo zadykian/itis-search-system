@@ -5,6 +5,7 @@ using System.Linq;
 using NUnit.Framework;
 using SearchSystem.Infrastructure;
 using SearchSystem.Infrastructure.Extensions;
+using SearchSystem.Infrastructure.Words;
 using SearchSystem.Tests.Base;
 
 namespace SearchSystem.Tests.Normalization
