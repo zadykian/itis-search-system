@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<Import Project="$(MsBuildThisFileDirectory)\..\common.props"/>
+
+	<ItemGroup>
+		<ProjectReference Include="..\SearchSystem.Indexing\SearchSystem.Indexing.csproj"/>
+		<ProjectReference Include="..\SearchSystem.Infrastructure\SearchSystem.Infrastructure.csproj"/>
+		<ProjectReference Include="..\SearchSystem.Normalization\SearchSystem.Normalization.csproj"/>
+	</ItemGroup>
+
+</Project>

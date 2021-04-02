@@ -3,7 +3,7 @@ using SearchSystem.Infrastructure.SearchEnginePhases;
 
 namespace SearchSystem.BooleanSearch.Phase
 {
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	/// <remarks>
 	/// This phase provides functionality of boolean search
 	/// based on prebuilt index <see cref="ITermsIndex"/>.
