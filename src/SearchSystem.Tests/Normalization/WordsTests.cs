@@ -23,7 +23,7 @@ namespace SearchSystem.Tests.Normalization
 
 			Assert.IsTrue(
 				words.SequenceEqual(testCase.Result),
-				$"expected: [{testCase.Result.JoinBy(", ")}], but was: [{words.JoinBy(",")}]");
+				$"expected: [{testCase.Result.JoinBy(", ")}], but was: [{words.JoinBy(", ")}]");
 		}
 
 		/// <summary>
@@ -31,7 +31,17 @@ namespace SearchSystem.Tests.Normalization
 		/// </summary>
 		private static IEnumerable<TestCase> TestCases()
 		{
-			yield return new("this is a very simple sentence.", "this", "is", "a", "very", "simple", "sentence");
+			yield return new(
+				"this is a very simple sentence.",
+				"this", "is", "a", "very", "simple", "sentence");
+
+			yield return new(
+				"to-do: correctly parse sequence of chars!",
+				"to-do", "correctly", "parse", "sequence", "of", "chars");
+
+			yield return new(
+				"All digits should 2 be ignored1",
+				"All", "digits", "should", "be", "ignored");
 		}
 
 		/// <summary>
