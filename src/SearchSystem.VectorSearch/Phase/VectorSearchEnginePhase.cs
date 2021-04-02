@@ -39,7 +39,7 @@ namespace SearchSystem.VectorSearch.Phase
 						.Select(doc =>
 						{
 							var allTerms = doc.Lines.SelectMany(wordExtractor.Parse).ToImmutableArray();
-							var termFrequency = allTerms.Count(term => term == currentTerm) / allTerms.Length;
+							var termFrequency = allTerms.Count(term => term == currentTerm) / (double) allTerms.Length;
 							return (
 								Term:  currentTerm,
 								Stats: new TermStatsEntry(doc, termFrequency, inverseTermFrequency));
@@ -49,8 +49,7 @@ namespace SearchSystem.VectorSearch.Phase
 				})
 				.OrderBy(tuple => tuple.Term)
 				.ThenBy(tuple => tuple.Stats.DocumentLink)
-				// todo
-				.Select(tuple => "")
+				.Select(tuple => $"{tuple.Term,24} {tuple.Stats.DocumentLink.Name,8} {tuple.Stats.TermFrequency,12} {tuple.Stats.InverseDocumentFrequency,12} {tuple.Stats.TfIdf,12}")
 				.ToArrayAsync();
 
 			var document = new Document(string.Empty, "term-stats.txt", stats);
