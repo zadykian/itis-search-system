@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
@@ -6,6 +7,7 @@ using SearchSystem.BooleanSearch.Scan;
 using SearchSystem.Indexing.Index;
 using SearchSystem.Infrastructure.AppComponents;
 using SearchSystem.Infrastructure.Documents;
+using SearchSystem.Infrastructure.Words;
 using SearchSystem.Normalization;
 using SearchSystem.Tests.Base;
 
@@ -30,7 +32,7 @@ namespace SearchSystem.Tests.BooleanSearch
 		public void ScanBasedOnSingleTermTest()
 		{
 			var document = FromLines(0, "first-string", "second-string", "third-string");
-			var index = new TermsIndex(new[] {document});
+			var index = new TermsIndex(new[] {document}, new SimpleWordExtractor());
 			var searchExpression = new INode.Term("second-string");
 
 			var indexScan = GetService<IIndexScan>();
@@ -53,7 +55,7 @@ namespace SearchSystem.Tests.BooleanSearch
 				FromLines(0, "first-string", "second-string"),
 				whichSatisfies,
 				FromLines(2, "second-string", "third-string", "forth-string")
-			});
+			}, new SimpleWordExtractor());
 
 			var searchExpression = new INode.And(
 				new INode.And(
@@ -73,5 +75,12 @@ namespace SearchSystem.Tests.BooleanSearch
 		/// Create document from array of lines. 
 		/// </summary>
 		private static IDocument FromLines(int index, params string[] lines) => new Document(string.Empty, $"test-{index}", lines);
+
+		/// <inheritdoc />
+		private sealed class SimpleWordExtractor : IWordExtractor
+		{
+			/// <inheritdoc />
+			IEnumerable<string> IWordExtractor.Parse(string textLine) => textLine.Split(' ');
+		}
 	}
 }

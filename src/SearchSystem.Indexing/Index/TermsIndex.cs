@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using SearchSystem.Infrastructure.Documents;
 using SearchSystem.Infrastructure.Extensions;
+using SearchSystem.Infrastructure.Words;
 
 // ReSharper disable BuiltInTypeReferenceStyle
 using Term = System.String;
@@ -17,13 +18,18 @@ namespace SearchSystem.Indexing.Index
 	/// <inheritdoc />
 	internal class TermsIndex : ITermsIndex
 	{
-		protected readonly IReadOnlyDictionary<Term, DocLinks> termsToDocuments;
+		private readonly IReadOnlyDictionary<Term, DocLinks> termsToDocuments;
 
 		/// <param name="allDocuments">
 		/// Documents to be indexed.
 		/// </param>
-		public TermsIndex(IEnumerable<IDocument> allDocuments)
-			=> termsToDocuments = PerformIndexation(allDocuments);
+		/// <param name="wordExtractor">
+		/// Word extractor.
+		/// </param>
+		public TermsIndex(
+			IEnumerable<IDocument> allDocuments,
+			IWordExtractor wordExtractor)
+			=> termsToDocuments = PerformIndexation(allDocuments, wordExtractor);
 
 		/// <param name="indexDocument">
 		/// Document which represents serialized index.
@@ -54,11 +60,13 @@ namespace SearchSystem.Indexing.Index
 		/// <summary>
 		/// Perform indexation of documents <paramref name="allDocuments"/>. 
 		/// </summary>
-		private static IReadOnlyDictionary<Term, DocLinks> PerformIndexation(IEnumerable<IDocument> allDocuments)
+		private static IReadOnlyDictionary<Term, DocLinks> PerformIndexation(
+			IEnumerable<IDocument> allDocuments,
+			IWordExtractor wordExtractor)
 			=> allDocuments
 				.SelectMany(document => document
 					.Lines
-					.SelectMany(line => line.Words())
+					.SelectMany(wordExtractor.Parse)
 					.Select(term => (Term: term, Document: document)))
 				.GroupBy(tuple => tuple.Term)
 				.Select(group => (

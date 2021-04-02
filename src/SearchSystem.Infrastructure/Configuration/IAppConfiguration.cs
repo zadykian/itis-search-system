@@ -31,5 +31,10 @@ namespace SearchSystem.Infrastructure.Configuration
 		/// Language of documents being normalized.
 		/// </summary>
 		Language DocumentsLanguage();
+
+		/// <summary>
+		/// System's search mode.
+		/// </summary>
+		SearchMode SearchMode();
 	}
 }

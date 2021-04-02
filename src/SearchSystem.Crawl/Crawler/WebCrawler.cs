@@ -5,31 +5,36 @@ using System.Threading.Tasks;
 using AngleSharp;
 using Microsoft.Extensions.Logging;
 using SearchSystem.Crawl.Pages;
+using SearchSystem.Infrastructure.AppEnvironment;
 using SearchSystem.Infrastructure.Configuration;
 using SearchSystem.Infrastructure.Extensions;
+using SearchSystem.Infrastructure.Words;
 
 namespace SearchSystem.Crawl.Crawler
 {
 	/// <inheritdoc />
 	internal class WebCrawler : IWebCrawler
 	{
-		private readonly IAppConfiguration appConfiguration;
-		private readonly ILogger<WebCrawler> logger;
+		private readonly IAppEnvironment<WebCrawler> appEnvironment;
+		private readonly IWordExtractor wordExtractor;
 
-		public WebCrawler(IAppConfiguration appConfiguration, ILogger<WebCrawler> logger)
+		public WebCrawler(
+			IAppEnvironment<WebCrawler> appEnvironment,
+			IWordExtractor wordExtractor)
 		{
-			this.appConfiguration = appConfiguration;
-			this.logger = logger;
+			this.appEnvironment = appEnvironment;
+			this.wordExtractor = wordExtractor;
 		}
 
 		/// <inheritdoc />
 		IAsyncEnumerable<IWebPage> IWebCrawler.CrawlThroughPages()
-			=> appConfiguration
+			=> appEnvironment
+				.Configuration
 				.RootPageUri()
 				.To(WebPages.Download)
 				.Where(WebPagePredicate)
 				.Distinct()
-				.Take((int) appConfiguration.TotalPages());
+				.Take((int) appEnvironment.Configuration.TotalPages());
 
 		/// <summary>
 		/// Predicate for filtering pages by <see cref="IAppConfiguration.WordsPerPage"/> config value. 
@@ -38,15 +43,15 @@ namespace SearchSystem.Crawl.Crawler
 		{
 			var wordsCount = page
 				.AllVisibleLines()
-				.SelectMany(line => line.Words())
+				.SelectMany(line => wordExtractor.Parse(line))
 				.Count();
 
-			if (wordsCount >= appConfiguration.WordsPerPage())
+			if (wordsCount >= appEnvironment.Configuration.WordsPerPage())
 			{
 				return true;
 			}
 
-			logger.LogTrace($"Page '{page.Url}' is skipped (contains {wordsCount} words).");
+			appEnvironment.Logger.LogTrace($"Page '{page.Url}' is skipped (contains {wordsCount} words).");
 			return false;
 		}
 

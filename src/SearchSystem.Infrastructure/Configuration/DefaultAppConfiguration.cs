@@ -1,5 +1,4 @@
 using System;
-using System.Reflection;
 using Microsoft.Extensions.Configuration;
 using SearchSystem.Infrastructure.Extensions;
 
@@ -45,8 +44,13 @@ namespace SearchSystem.Infrastructure.Configuration
 			=> configuration
 				.GetSection("Phases:Normalization:DocumentsLanguage")
 				.Value
-				.To(stringValue => (Language) typeof(Language)
-					.GetField(stringValue, BindingFlags.Public | BindingFlags.Static)!
-					.GetValue(obj: null)!);
+				.To(Enum.Parse<Language>);
+
+		/// <inheritdoc />
+		SearchMode IAppConfiguration.SearchMode()
+			=> configuration
+				.GetSection("SearchMode")
+				.Value
+				.To(Enum.Parse<SearchMode>);
 	}
 }
