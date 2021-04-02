@@ -29,7 +29,8 @@ namespace SearchSystem.Tests.Normalization
 		private static IEnumerable<(string, string)> EnglishWordsTestCases()
 			=> new[]
 			{
-				("houses", "house")
+				("houses", "house"),
+				("Capital", "capital")
 			};
 	}
 }
