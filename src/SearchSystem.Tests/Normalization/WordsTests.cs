@@ -42,6 +42,10 @@ namespace SearchSystem.Tests.Normalization
 			yield return new(
 				"All digits should 2 be ignored1",
 				"All", "digits", "should", "be", "ignored");
+
+			yield return new(
+				"ignore-- repeating --- dashes",
+				"ignore", "repeating", "dashes");
 		}
 
 		/// <summary>
