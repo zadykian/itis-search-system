@@ -5,6 +5,8 @@ using SearchSystem.Indexing.Index;
 using SearchSystem.Infrastructure.AppEnvironment;
 using SearchSystem.Infrastructure.Extensions;
 using SearchSystem.Infrastructure.SearchEnginePhases;
+using SearchSystem.Infrastructure.Words;
+
 using Docs = System.Collections.Generic.IReadOnlyCollection<SearchSystem.Infrastructure.Documents.IDocument>;
 
 namespace SearchSystem.Indexing.Phase
@@ -12,15 +14,17 @@ namespace SearchSystem.Indexing.Phase
 	/// <inheritdoc cref="IIndexingEnginePhase"/>
 	internal class IndexingEnginePhase : EnginePhaseBase<Docs, ITermsIndex>, IIndexingEnginePhase
 	{
+		private readonly IWordExtractor wordExtractor;
+
 		public IndexingEnginePhase(
+			IWordExtractor wordExtractor,
 			IAppEnvironment<IndexingEnginePhase> appEnvironment) : base(appEnvironment)
-		{
-		}
+			=> this.wordExtractor = wordExtractor;
 
 		/// <inheritdoc />
 		protected override async Task<ITermsIndex> ExecuteAnewAsync(Docs inputData)
 		{
-			var documentsIndex = new TermsIndex(inputData);
+			var documentsIndex = new TermsIndex(inputData, wordExtractor);
 
 			try
 			{
