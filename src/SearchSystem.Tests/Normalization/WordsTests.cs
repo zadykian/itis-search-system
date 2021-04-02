@@ -1,16 +1,18 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using NUnit.Framework;
+using SearchSystem.Infrastructure;
 using SearchSystem.Infrastructure.Extensions;
+using SearchSystem.Tests.Base;
 
 namespace SearchSystem.Tests.Normalization
 {
 	/// <summary>
 	/// Tests of splitting line into separate words.
 	/// </summary>
-	[TestFixture]
-	internal class WordsTests
+	internal class WordsTests : SingleComponentTestFixtureBase<InfrastructureAppComponent>
 	{
 		/// <summary>
 		/// Split string <see cref="TestCase.Input"/> into words <see cref="TestCase.Result"/>.
@@ -19,11 +21,18 @@ namespace SearchSystem.Tests.Normalization
 		[TestCaseSource(nameof(TestCases))]
 		public void SplitStringTest(TestCase testCase)
 		{
-			var words = testCase.Input.Words().ToImmutableArray();
+			var extractor = GetService<IWordExtractor>();
+			var words = extractor.Parse(testCase.Input).ToImmutableArray();
+
+			static string CommaSeparated(IEnumerable<string> strValues)
+				=> strValues
+					.Select(str => $"'{str}'")
+					.JoinBy(", ")
+					.To(withCommas => $"[{withCommas}]");
 
 			Assert.IsTrue(
 				words.SequenceEqual(testCase.Result),
-				$"expected: [{testCase.Result.JoinBy(", ")}], but was: [{words.JoinBy(", ")}]");
+				$"expected: {CommaSeparated(testCase.Result)}, but was: {CommaSeparated(words)}");
 		}
 
 		/// <summary>
@@ -46,6 +55,10 @@ namespace SearchSystem.Tests.Normalization
 			yield return new(
 				"ignore-- repeating --- dashes",
 				"ignore", "repeating", "dashes");
+
+			yield return new(
+				"",
+				Array.Empty<string>());
 		}
 
 		/// <summary>

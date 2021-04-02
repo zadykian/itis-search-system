@@ -21,6 +21,7 @@ namespace SearchSystem.Infrastructure.Extensions
 					.Where(c => char.IsLetter(c) || c == '-')
 					.To(chars => new string(chars.ToArray())))
 				.Select(word => word.Trim('-'))
+				.Where(word => !string.IsNullOrWhiteSpace(word))
 				.ToImmutableArray();
 	}
 }

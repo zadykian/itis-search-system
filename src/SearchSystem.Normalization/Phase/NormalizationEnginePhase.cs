@@ -14,11 +14,16 @@ namespace SearchSystem.Normalization.Phase
 	internal class NormalizationEnginePhase : DocumentsOutputPhaseBase<Docs>, INormalizationEnginePhase
 	{
 		private readonly INormalizer normalizer;
+		private readonly IWordExtractor wordExtractor;
 
 		public NormalizationEnginePhase(
 			INormalizer normalizer,
+			IWordExtractor wordExtractor,
 			IAppEnvironment<NormalizationEnginePhase> appEnvironment) : base(appEnvironment)
-			=> this.normalizer = normalizer;
+		{
+			this.normalizer = normalizer;
+			this.wordExtractor = wordExtractor;
+		}
 
 		/// <inheritdoc />
 		protected override async Task<Docs> ExecuteAnewAsync(Docs inputData)
@@ -38,8 +43,8 @@ namespace SearchSystem.Normalization.Phase
 		private IDocument NormalizeDocument(IDocument document)
 			=> document
 				.Lines
-				.Select(documentLine => documentLine
-					.Words()
+				.Select(documentLine => wordExtractor
+					.Parse(documentLine)
 					.Select(normalizer.Normalize)
 					.JoinBy(" "))
 				.Where(documentLine => !string.IsNullOrWhiteSpace(documentLine))
