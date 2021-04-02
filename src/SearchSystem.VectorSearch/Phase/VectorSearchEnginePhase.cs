@@ -1,28 +1,67 @@
 using System;
+using System.Collections.Immutable;
+using System.Linq;
 using System.Threading.Tasks;
 using SearchSystem.Indexing.Index;
 using SearchSystem.Indexing.Phase.External;
 using SearchSystem.Infrastructure.AppEnvironment;
 using SearchSystem.Infrastructure.Documents;
 using SearchSystem.Infrastructure.SearchEnginePhases;
+using SearchSystem.Infrastructure.Words;
 
 namespace SearchSystem.VectorSearch.Phase
 {
 	/// <inheritdoc cref="ISearchAlgorithmEnginePhase"/>
 	internal class VectorSearchEnginePhase : EnginePhaseBase<ITermsIndex, Unit>, ISearchAlgorithmEnginePhase
 	{
+		private readonly IWordExtractor wordExtractor;
+		
 		public VectorSearchEnginePhase(
+			IWordExtractor wordExtractor,
 			IAppEnvironment<VectorSearchEnginePhase> appEnvironment) : base(appEnvironment)
+			=> this.wordExtractor = wordExtractor;
+
+		/// <inheritdoc />
+		protected override async Task<Unit> ExecuteAnewAsync(ITermsIndex termsIndex)
 		{
+			var stats = await termsIndex
+				.ToAsyncEnumerable()
+				.SelectMany(pair =>
+				{
+					var (currentTerm, documentLinks) = pair;
+
+					var inverseTermFrequency = Math.Log10(
+						termsIndex.AllDocuments().Count / (double) documentLinks.Count);
+
+					var res = documentLinks
+						.ToAsyncEnumerable()
+						.SelectAwait(async link => await AppEnvironment.Storage.LoadAsync(link))
+						.Select(doc =>
+						{
+							var allTerms = doc.Lines.SelectMany(wordExtractor.Parse).ToImmutableArray();
+							var termFrequency = allTerms.Count(term => term == currentTerm) / allTerms.Length;
+							return (
+								Term:  currentTerm,
+								Stats: new TermStatsEntry(doc, termFrequency, inverseTermFrequency));
+						});
+
+					return res;
+				})
+				.OrderBy(tuple => tuple.Term)
+				.ThenBy(tuple => tuple.Stats.DocumentLink)
+				// todo
+				.Select(tuple => "")
+				.ToArrayAsync();
+
+			var document = new Document(string.Empty, "term-stats.txt", stats);
+			await AppEnvironment.Storage.SaveOrAppendAsync(document);
+
+			return Unit.Instance;
 		}
 
 		/// <inheritdoc />
-		protected override Task<Unit> ExecuteAnewAsync(ITermsIndex inputData)
-			=> throw new System.NotImplementedException();
-
-		/// <inheritdoc />
 		protected override Task<Unit> LoadPreviousResultsAsync()
-			=> throw new System.NotImplementedException();
+			=> throw new NotImplementedException();
 	}
 
 	internal readonly struct TermStatsEntry
