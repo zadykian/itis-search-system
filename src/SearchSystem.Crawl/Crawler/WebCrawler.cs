@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AngleSharp;
+using Microsoft.Extensions.Logging;
 using SearchSystem.Crawl.Pages;
 using SearchSystem.Infrastructure.Configuration;
 using SearchSystem.Infrastructure.Extensions;
@@ -13,20 +14,41 @@ namespace SearchSystem.Crawl.Crawler
 	internal class WebCrawler : IWebCrawler
 	{
 		private readonly IAppConfiguration appConfiguration;
+		private readonly ILogger<WebCrawler> logger;
 
-		public WebCrawler(IAppConfiguration appConfiguration) => this.appConfiguration = appConfiguration;
+		public WebCrawler(IAppConfiguration appConfiguration, ILogger<WebCrawler> logger)
+		{
+			this.appConfiguration = appConfiguration;
+			this.logger = logger;
+		}
 
 		/// <inheritdoc />
 		IAsyncEnumerable<IWebPage> IWebCrawler.CrawlThroughPages()
 			=> appConfiguration
 				.RootPageUri()
 				.To(WebPages.Download)
-				.Where(page => page
-					.AllVisibleLines()
-					.SelectMany(line => line.Words())
-					.Count() >= appConfiguration.WordsPerPage())
+				.Where(WebPagePredicate)
 				.Distinct()
 				.Take((int) appConfiguration.TotalPages());
+
+		/// <summary>
+		/// Predicate for filtering pages by <see cref="IAppConfiguration.WordsPerPage"/> config value. 
+		/// </summary>
+		private bool WebPagePredicate(IWebPage page)
+		{
+			var wordsCount = page
+				.AllVisibleLines()
+				.SelectMany(line => line.Words())
+				.Count();
+
+			if (wordsCount >= appConfiguration.WordsPerPage())
+			{
+				return true;
+			}
+
+			logger.LogTrace($"Page '{page.Url}' is skipped (contains {wordsCount} words).");
+			return false;
+		}
 
 		/// <summary>
 		/// Representation of multiple web pages.

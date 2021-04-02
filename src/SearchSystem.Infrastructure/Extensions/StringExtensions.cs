@@ -15,14 +15,12 @@ namespace SearchSystem.Infrastructure.Extensions
 		/// </summary>
 		public static IEnumerable<string> Words(this string textLine)
 			=> textLine
-				.Split(' ', '\t', '\n')
+				.To(line => Regex.Split(line, @"[^\p{L}]*\p{Z}[^\p{L}]*"))
+				.Select(word => Regex.Replace(word, "(-)+", "-"))
 				.Select(word => word
-					.Where(character => char.IsLetterOrDigit(character) || character == '-')
-					.Select(char.ToLower)
-					.ToArray()
-					.To(chars => new string(chars))
-					.To(str => Regex.Replace(str, "(-)+", "-")))
-				.Where(word => !string.IsNullOrWhiteSpace(word) && word != "-")
+					.Where(c => char.IsLetter(c) || c == '-')
+					.To(chars => new string(chars.ToArray())))
+				.Select(word => word.Trim('-'))
 				.ToImmutableArray();
 	}
 }
