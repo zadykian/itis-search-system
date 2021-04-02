@@ -6,6 +6,7 @@ using SearchSystem.Indexing;
 using SearchSystem.Infrastructure;
 using SearchSystem.Infrastructure.Extensions;
 using SearchSystem.Normalization;
+using SearchSystem.VectorSearch;
 
 namespace SearchSystem.AppHost
 {
@@ -31,6 +32,7 @@ namespace SearchSystem.AppHost
 					.AddComponent<NormalizationAppComponent>()
 					.AddComponent<IndexingAppComponent>()
 					.AddComponent<BooleanSearchAppComponent>()
+					.AddComponent<VectorSearchAppComponent>()
 					.AddComponent<AppHostAppComponent>())
 				.Build()
 				.RunAsync();
