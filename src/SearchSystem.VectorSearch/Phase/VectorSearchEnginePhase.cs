@@ -30,9 +30,13 @@ namespace SearchSystem.VectorSearch.Phase
 				.SelectAwait(async link => await AppEnvironment.Storage.LoadAsync(link))
 				.ToDictionaryAsync(
 					document => document.Name,
-					document => document);
+					document => (
+						Doc: document,
+						Words: document.Lines.SelectMany(wordExtractor.Parse).ToImmutableArray()));
 
 			var stats = termsIndex
+				.AsParallel()
+				.WithDegreeOfParallelism(4)
 				.SelectMany(pair =>
 				{
 					var (currentTerm, documentLinks) = pair;
@@ -41,17 +45,15 @@ namespace SearchSystem.VectorSearch.Phase
 
 					return documentLinks
 						.Select(link => documents[link.Name])
-						.Select(doc =>
+						.Select(tuple =>
 						{
-							var allTerms = doc.Lines.SelectMany(wordExtractor.Parse).ToImmutableArray();
-							var termFrequency = allTerms.Count(term => term == currentTerm) / (double) allTerms.Length;
+							var (document, words) = tuple;
+							var termFrequency = words.Count(term => term == currentTerm) / (double) words.Length;
 							return (
 								Term:  currentTerm,
-								Stats: new TermStatsEntry(doc, termFrequency, inverseTermFrequency));
+								Stats: new TermStatsEntry(document, termFrequency, inverseTermFrequency));
 						});
 				})
-				//.OrderBy(tuple => tuple.Term)
-				//.ThenBy(tuple => tuple.Stats.DocumentLink)
 				.Select(tuple =>
 					$"{tuple.Term,24} {tuple.Stats.DocumentLink.Name,8} {tuple.Stats.TermFrequency,12:F8} {tuple.Stats.InverseDocumentFrequency,12:F8} {tuple.Stats.TfIdf,12:F8}")
 				.ToArray();
