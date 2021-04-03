@@ -24,18 +24,23 @@ namespace SearchSystem.VectorSearch.Phase
 		/// <inheritdoc />
 		protected override async Task<Unit> ExecuteAnewAsync(ITermsIndex termsIndex)
 		{
-			var stats = await termsIndex
+			var documents = await termsIndex
+				.AllDocuments()
 				.ToAsyncEnumerable()
+				.SelectAwait(async link => await AppEnvironment.Storage.LoadAsync(link))
+				.ToDictionaryAsync(
+					document => document.Name,
+					document => document);
+
+			var stats = termsIndex
 				.SelectMany(pair =>
 				{
 					var (currentTerm, documentLinks) = pair;
 
-					var inverseTermFrequency = Math.Log10(
-						termsIndex.AllDocuments().Count / (double) documentLinks.Count);
+					var inverseTermFrequency = Math.Log10(documents.Count / (double) documentLinks.Count);
 
-					var res = documentLinks
-						.ToAsyncEnumerable()
-						.SelectAwait(async link => await AppEnvironment.Storage.LoadAsync(link))
+					return documentLinks
+						.Select(link => documents[link.Name])
 						.Select(doc =>
 						{
 							var allTerms = doc.Lines.SelectMany(wordExtractor.Parse).ToImmutableArray();
@@ -44,16 +49,15 @@ namespace SearchSystem.VectorSearch.Phase
 								Term:  currentTerm,
 								Stats: new TermStatsEntry(doc, termFrequency, inverseTermFrequency));
 						});
-
-					return res;
 				})
-				.OrderBy(tuple => tuple.Term)
-				.ThenBy(tuple => tuple.Stats.DocumentLink)
-				.Select(tuple => $"{tuple.Term,24} {tuple.Stats.DocumentLink.Name,8} {tuple.Stats.TermFrequency,12} {tuple.Stats.InverseDocumentFrequency,12} {tuple.Stats.TfIdf,12}")
-				.ToArrayAsync();
+				//.OrderBy(tuple => tuple.Term)
+				//.ThenBy(tuple => tuple.Stats.DocumentLink)
+				.Select(tuple =>
+					$"{tuple.Term,24} {tuple.Stats.DocumentLink.Name,8} {tuple.Stats.TermFrequency,12:F8} {tuple.Stats.InverseDocumentFrequency,12:F8} {tuple.Stats.TfIdf,12:F8}")
+				.ToArray();
 
-			var document = new Document(string.Empty, "term-stats.txt", stats);
-			await AppEnvironment.Storage.SaveOrAppendAsync(document);
+			var resultDocument = new Document(string.Empty, "term-stats.txt", stats);
+			await AppEnvironment.Storage.SaveOrAppendAsync(resultDocument);
 
 			return Unit.Instance;
 		}
