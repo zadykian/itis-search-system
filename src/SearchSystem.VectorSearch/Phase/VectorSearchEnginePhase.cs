@@ -9,13 +9,16 @@ using SearchSystem.Infrastructure.Documents;
 using SearchSystem.Infrastructure.SearchEnginePhases;
 using SearchSystem.Infrastructure.Words;
 
+// ReSharper disable BuiltInTypeReferenceStyle
+using Term = System.String;
+
 namespace SearchSystem.VectorSearch.Phase
 {
 	/// <inheritdoc cref="ISearchAlgorithmEnginePhase"/>
 	internal class VectorSearchEnginePhase : EnginePhaseBase<ITermsIndex, Unit>, ISearchAlgorithmEnginePhase
 	{
 		private readonly IWordExtractor wordExtractor;
-		
+
 		public VectorSearchEnginePhase(
 			IWordExtractor wordExtractor,
 			IAppEnvironment<VectorSearchEnginePhase> appEnvironment) : base(appEnvironment)
@@ -34,13 +37,10 @@ namespace SearchSystem.VectorSearch.Phase
 						Doc: document,
 						Words: document.Lines.SelectMany(wordExtractor.Parse).ToImmutableArray()));
 
-			var stats = termsIndex
-				.AsParallel()
-				.WithDegreeOfParallelism(4)
+			var termStatsEntries = termsIndex
 				.SelectMany(pair =>
 				{
 					var (currentTerm, documentLinks) = pair;
-
 					var inverseTermFrequency = Math.Log10(documents.Count / (double) documentLinks.Count);
 
 					return documentLinks
@@ -49,59 +49,86 @@ namespace SearchSystem.VectorSearch.Phase
 						{
 							var (document, words) = tuple;
 							var termFrequency = words.Count(term => term == currentTerm) / (double) words.Length;
-							return (
-								Term:  currentTerm,
-								Stats: new TermStatsEntry(document, termFrequency, inverseTermFrequency));
+							return new TermEntryStats(currentTerm, document, termFrequency, inverseTermFrequency);
 						});
 				})
-				.Select(tuple =>
-					$"{tuple.Term,24} {tuple.Stats.DocumentLink.Name,8} {tuple.Stats.TermFrequency,12:F8} {tuple.Stats.InverseDocumentFrequency,12:F8} {tuple.Stats.TfIdf,12:F8}")
+				.OrderBy(stats => stats.Term)
+				.ThenBy(stats => stats.DocumentLink)
+				.Select(tuple => tuple.ToString())
 				.ToArray();
 
-			var resultDocument = new Document(string.Empty, "term-stats.txt", stats);
+			var resultDocument = new Document(string.Empty, "term-stats.txt", termStatsEntries);
 			await AppEnvironment.Storage.SaveOrAppendAsync(resultDocument);
-
 			return Unit.Instance;
 		}
 
 		/// <inheritdoc />
 		protected override Task<Unit> LoadPreviousResultsAsync()
 			=> throw new NotImplementedException();
-	}
 
-	internal readonly struct TermStatsEntry
-	{
-		public TermStatsEntry(
-			IDocumentLink documentLink,
-			double termFrequency,
-			double inverseDocumentFrequency)
+		/// <summary>
+		/// Struct which contains statistics for term <see cref="TermEntryStats.Term"/>
+		/// in context of document <see cref="TermEntryStats.DocumentLink"/>.
+		/// </summary>
+		private readonly struct TermEntryStats
 		{
-			DocumentLink = documentLink;
-			TermFrequency = Round(termFrequency);
-			InverseDocumentFrequency = Round(inverseDocumentFrequency);
+			public TermEntryStats(
+				Term term,
+				IDocumentLink documentLink,
+				double termFrequency,
+				double inverseDocumentFrequency)
+			{
+				Term = term;
+				DocumentLink = documentLink;
+				TermFrequency = termFrequency;
+				InverseDocumentFrequency = inverseDocumentFrequency;
+			}
+
+			/// <summary>
+			/// Term.
+			/// </summary>
+			public Term Term { get; }
+
+			/// <summary>
+			/// Link to document.
+			/// </summary>
+			public IDocumentLink DocumentLink { get; }
+
+			/// <summary>
+			/// <para>
+			/// Term's frequency.
+			/// </para>
+			/// <para>
+			/// This value represents value ratio between count of entries <see cref="Term"/>
+			/// and total words count in document <see cref="DocumentLink"/>.
+			/// </para>
+			/// </summary>
+			private double TermFrequency { get; }
+
+			/// <summary>
+			/// <para>
+			/// Inverse document frequency.
+			/// </para>
+			/// <para>
+			/// This value represents logarithm of ratio between total documents count and count
+			/// of documents which contains term <see cref="Term"/>.
+			/// </para>
+			/// </summary>
+			private double InverseDocumentFrequency { get; }
+
+			/// <summary>
+			/// <para>
+			/// Term frequency — Inverse document frequency.
+			/// </para>
+			/// <para>
+			/// This value represents product of <see cref="TermFrequency"/> and <see cref="InverseDocumentFrequency"/>.
+			/// </para>
+			/// </summary>
+			private double TfIdf => TermFrequency * InverseDocumentFrequency;
+
+			/// <inheritdoc />
+			public override string ToString()
+				=> $"{Term,32} {DocumentLink.Name,8} {TermFrequency,12:F8} {InverseDocumentFrequency,12:F8} {TfIdf,12:F8}";
 		}
-
-		public IDocumentLink DocumentLink { get; }
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public double TermFrequency { get; }
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public double InverseDocumentFrequency { get; }
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public double TfIdf => Round(TermFrequency * InverseDocumentFrequency);
-
-		/// <summary>
-		/// Round <paramref name="coefficient"/> to suitable decimals count. 
-		/// </summary>
-		private static double Round(double coefficient)
-			=> Math.Round(coefficient, 8, MidpointRounding.AwayFromZero);
 	}
 }
