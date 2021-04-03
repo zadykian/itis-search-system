@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ using SearchSystem.Infrastructure.Words;
 
 // ReSharper disable BuiltInTypeReferenceStyle
 using Term = System.String;
+using DocName = System.String;
 
 namespace SearchSystem.VectorSearch.Phase
 {
@@ -27,15 +29,7 @@ namespace SearchSystem.VectorSearch.Phase
 		/// <inheritdoc />
 		protected override async Task<Unit> ExecuteAnewAsync(ITermsIndex termsIndex)
 		{
-			var documents = await termsIndex
-				.AllDocuments()
-				.ToAsyncEnumerable()
-				.SelectAwait(async link => await AppEnvironment.Storage.LoadAsync(link))
-				.ToDictionaryAsync(
-					document => document.Name,
-					document => (
-						Doc: document,
-						Words: document.Lines.SelectMany(wordExtractor.Parse).ToImmutableArray()));
+			var documents = await LoadAllDocumentsAsync(termsIndex);
 
 			var termStatsEntries = termsIndex
 				.SelectMany(pair =>
@@ -55,16 +49,35 @@ namespace SearchSystem.VectorSearch.Phase
 				.OrderBy(stats => stats.Term)
 				.ThenBy(stats => stats.DocumentLink)
 				.Select(tuple => tuple.ToString())
-				.ToArray();
+				.ToImmutableArray();
 
-			var resultDocument = new Document(string.Empty, "term-stats.txt", termStatsEntries);
-			await AppEnvironment.Storage.SaveOrAppendAsync(resultDocument);
+			var termStatsDocument = new Document(string.Empty, "term-stats.txt", termStatsEntries);
+			await AppEnvironment.Storage.SaveOrAppendAsync(termStatsDocument);
 			return Unit.Instance;
 		}
+
+		/// <summary>
+		/// Load all documents which are present in <paramref name="termsIndex"/> from documents storage.  
+		/// </summary>
+		private async Task<IReadOnlyDictionary<DocName, DocWithWords>> LoadAllDocumentsAsync(ITermsIndex termsIndex)
+			=> await termsIndex
+				.AllDocuments()
+				.ToAsyncEnumerable()
+				.SelectAwait(async link => await AppEnvironment.Storage.LoadAsync(link))
+				.ToDictionaryAsync(
+					document => document.Name,
+					document => new DocWithWords(
+						document,
+						document.Lines.SelectMany(wordExtractor.Parse).ToImmutableArray()));
 
 		/// <inheritdoc />
 		protected override Task<Unit> LoadPreviousResultsAsync()
 			=> throw new NotImplementedException();
+
+		/// <summary>
+		/// Document with pre-parsed words list.
+		/// </summary>
+		private sealed record DocWithWords(IDocument Doc, ImmutableArray<string> Words);
 
 		/// <summary>
 		/// Struct which contains statistics for term <see cref="TermEntryStats.Term"/>
