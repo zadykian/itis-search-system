@@ -16,12 +16,12 @@ namespace SearchSystem.VectorSearch
 			String term,
 			IDocumentLink documentLink,
 			double termFrequency,
-			double inverseDocumentFrequency)
+			double inverseDocFrequency)
 		{
 			Term = term;
 			DocumentLink = documentLink;
 			TermFrequency = termFrequency;
-			InverseDocumentFrequency = inverseDocumentFrequency;
+			InverseDocFrequency = inverseDocFrequency;
 		}
 
 		/// <summary>
@@ -36,7 +36,7 @@ namespace SearchSystem.VectorSearch
 
 		/// <summary>
 		/// <para>
-		/// Term's frequency.
+		/// TF - term frequency.
 		/// </para>
 		/// <para>
 		/// This value represents value ratio between count of entries <see cref="Term"/>
@@ -47,27 +47,27 @@ namespace SearchSystem.VectorSearch
 
 		/// <summary>
 		/// <para>
-		/// Inverse document frequency.
+		/// IDF - inverse document frequency.
 		/// </para>
 		/// <para>
 		/// This value represents logarithm of ratio between total documents count and count
 		/// of documents which contains term <see cref="Term"/>.
 		/// </para>
 		/// </summary>
-		private double InverseDocumentFrequency { get; }
+		private double InverseDocFrequency { get; }
 
 		/// <summary>
 		/// <para>
-		/// Term frequency — Inverse document frequency.
+		/// TF-IDF - Term frequency — Inverse document frequency.
 		/// </para>
 		/// <para>
-		/// This value represents product of <see cref="TermFrequency"/> and <see cref="InverseDocumentFrequency"/>.
+		/// This value represents product of <see cref="TermFrequency"/> and <see cref="InverseDocFrequency"/>.
 		/// </para>
 		/// </summary>
-		public double TfIdf => TermFrequency * InverseDocumentFrequency;
+		public double TfIdf => TermFrequency * InverseDocFrequency;
 
 		/// <inheritdoc />
 		public override string ToString()
-			=> $"{Term,32} {DocumentLink.Name,8} {TermFrequency,12:F8} {InverseDocumentFrequency,12:F8} {TfIdf,12:F8}";
+			=> $"{Term,32} {DocumentLink.Name,8} {TermFrequency,12:F8} {InverseDocFrequency,12:F8} {TfIdf,12:F8}";
 	}
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SearchSystem.Indexing.Index;
@@ -10,6 +11,7 @@ using SearchSystem.Infrastructure.Documents;
 using SearchSystem.Infrastructure.Extensions;
 using SearchSystem.Infrastructure.SearchEnginePhases;
 using SearchSystem.Infrastructure.Words;
+using Sprache;
 
 // ReSharper disable BuiltInTypeReferenceStyle
 using DocName = System.String;
@@ -51,6 +53,9 @@ namespace SearchSystem.VectorSearch.Phases
 			return termStatsEntries;
 		}
 
+		/// <summary>
+		/// Calculate statistic values for all terms in index <paramref name="termsIndex"/>. 
+		/// </summary>
 		private static IReadOnlyCollection<TermEntryStats> CalculateTermEntryStats(
 			ITermsIndex termsIndex,
 			IReadOnlyDictionary<DocName, DocWithWords> documents)
@@ -62,9 +67,9 @@ namespace SearchSystem.VectorSearch.Phases
 
 					return documentLinks
 						.Select(link => documents[link.Name])
-						.Select(tuple =>
+						.Select(docWithWords =>
 						{
-							var (document, words) = tuple;
+							var (document, words) = docWithWords;
 							var termFrequency = words.Count(term => term == currentTerm) / (double) words.Count;
 							return new TermEntryStats(currentTerm, document, termFrequency, inverseTermFrequency);
 						});
@@ -88,11 +93,53 @@ namespace SearchSystem.VectorSearch.Phases
 						document.Lines.SelectMany(wordExtractor.Parse).ToImmutableArray()));
 
 		/// <inheritdoc />
-		protected override Task<TermStats> LoadPreviousResultsAsync() => throw new System.NotImplementedException();
+		protected override async Task<TermStats> LoadPreviousResultsAsync()
+			=> (await AppEnvironment.Storage.LoadAsync(AppEnvironment.Storage.Conventions.TermStats))
+				.Lines
+				.Select(TermStatsGrammar.ParseLine)
+				.ToImmutableArray();
 
 		/// <summary>
 		/// Document with pre-parsed words list.
 		/// </summary>
 		private sealed record DocWithWords(IDocument Doc, IReadOnlyCollection<string> Words);
+
+		/// <summary>
+		/// Definition of serialized stats grammar.
+		/// </summary>
+		private static class TermStatsGrammar
+		{
+			/// <summary>
+			/// Parse <paramref name="input"/> to <see cref="TermEntryStats"/> instance. 
+			/// </summary>
+			public static TermEntryStats ParseLine(string input)
+				=> input
+					.Trim()
+					.To(str => Regex.Replace(str, @"\s+", " "))
+					.To(SingleEntry.Parse);
+
+			/// <remarks>
+			/// Stats is always calculated based on normalized documents.
+			/// </remarks>
+			private const string subsectionName = "Normalization";
+
+			/// <summary>
+			/// Single <see cref="TermEntryStats"/> parser.
+			/// </summary>
+			private static Parser<TermEntryStats> SingleEntry =>
+				from term                in Parse.CharExcept(' ').Many().Text()
+				from documentLink        in Parse
+					.Regex(@"^d+\.[a-z]{3}$")
+					.Token()
+					.Select(fileName => new DocumentLink(subsectionName, fileName))
+				from termFrequency       in DoubleParser
+				from inverseDocFrequency in DoubleParser
+				select new TermEntryStats(term, documentLink, termFrequency, inverseDocFrequency);
+
+			/// <summary>
+			/// Double value parser.
+			/// </summary>
+			private static Parser<double> DoubleParser => Parse.DecimalInvariant.Select(double.Parse).Token();
+		}
 	}
 }
