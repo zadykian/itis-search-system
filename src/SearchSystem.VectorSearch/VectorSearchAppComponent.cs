@@ -1,7 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using SearchSystem.Indexing.Phase.External;
 using SearchSystem.Infrastructure.AppComponents;
-using SearchSystem.VectorSearch.Phase;
+using SearchSystem.VectorSearch.Phases;
 
 namespace SearchSystem.VectorSearch
 {

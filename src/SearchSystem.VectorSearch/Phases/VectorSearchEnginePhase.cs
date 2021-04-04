@@ -1,3 +1,4 @@
+// ReSharper disable BuiltInTypeReferenceStyle
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -9,12 +10,10 @@ using SearchSystem.Infrastructure.AppEnvironment;
 using SearchSystem.Infrastructure.Documents;
 using SearchSystem.Infrastructure.SearchEnginePhases;
 using SearchSystem.Infrastructure.Words;
-
-// ReSharper disable BuiltInTypeReferenceStyle
 using Term = System.String;
 using DocName = System.String;
 
-namespace SearchSystem.VectorSearch.Phase
+namespace SearchSystem.VectorSearch.Phases
 {
 	/// <inheritdoc cref="ISearchAlgorithmEnginePhase"/>
 	internal class VectorSearchEnginePhase : EnginePhaseBase<ITermsIndex, Unit>, ISearchAlgorithmEnginePhase
