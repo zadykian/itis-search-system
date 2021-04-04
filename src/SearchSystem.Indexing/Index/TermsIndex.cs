@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -48,6 +49,12 @@ namespace SearchSystem.Indexing.Index
 			=> termsToDocuments
 				.Values
 				.Aggregate(ImmutableHashSet<IDocumentLink>.Empty, (firstSet, secondSet) => firstSet.Union(secondSet));
+
+		/// <inheritdoc />
+		public IEnumerator<KeyValuePair<Term, DocLinks>> GetEnumerator() => termsToDocuments.GetEnumerator();
+
+		/// <inheritdoc />
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
 		/// <summary>
 		/// Represent itself as <see cref="IDocument"/> instance. 
@@ -118,7 +125,7 @@ namespace SearchSystem.Indexing.Index
 		private sealed class LinkConverter : JsonConverter<IDocumentLink>
 		{
 			/// <remarks>
-			/// Index is always being created based on normalized documents.
+			/// Index is always created based on normalized documents.
 			/// </remarks>
 			private const string subsectionName = "Normalization";
 

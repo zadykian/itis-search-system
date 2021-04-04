@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SearchSystem.Infrastructure.AppEnvironment;
@@ -17,12 +18,17 @@ namespace SearchSystem.Infrastructure.SearchEnginePhases
 		/// <summary>
 		/// Name of component which this phase belongs to.
 		/// </summary>
-		protected string ComponentName => GetType().Name.Replace("EnginePhase", string.Empty);
+		protected string ComponentName 
+			=> GetType()
+				.Name
+				.Replace("EnginePhase", string.Empty)
+				.Replace("Subphase", string.Empty);
 
 		/// <inheritdoc />
 		async Task<TOut> ISearchEnginePhase<TIn, TOut>.ExecuteAsync(TIn inputData)
 		{
 			AppEnvironment.Logger.LogInformation($"Phase '{ComponentName}' is started.");
+			var stopwatch = Stopwatch.StartNew();
 
 			TOut output;
 			try
@@ -37,7 +43,8 @@ namespace SearchSystem.Infrastructure.SearchEnginePhases
 				throw;
 			}
 
-			AppEnvironment.Logger.LogInformation($"Phase '{ComponentName}' is finished successfully.");
+			AppEnvironment.Logger.LogInformation(
+				$@"Phase '{ComponentName}' is finished successfully. Elapsed {stopwatch.Elapsed:s\.fff}s.");
 			return output;
 		}
 

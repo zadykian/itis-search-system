@@ -8,5 +8,8 @@ namespace SearchSystem.Infrastructure.Documents.Conventions
 
 		/// <inheritdoc />
 		IDocumentLink IStorageConventions.TermsIndex => new DocumentLink(string.Empty, "terms-index.json");
+
+		/// <inheritdoc />
+		IDocumentLink IStorageConventions.TermStats => new DocumentLink(string.Empty, "term-stats.txt");
 	}
 }

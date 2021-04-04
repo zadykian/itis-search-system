@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SearchSystem.Indexing", "Se
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SearchSystem.BooleanSearch", "SearchSystem.BooleanSearch\SearchSystem.BooleanSearch.csproj", "{8AE80908-6363-4EF6-9208-F358E8088875}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SearchSystem.VectorSearch", "SearchSystem.VectorSearch\SearchSystem.VectorSearch.csproj", "{758D5E1A-58B6-4C91-979B-AE92D2AF14DE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,5 +55,9 @@ Global
 		{8AE80908-6363-4EF6-9208-F358E8088875}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8AE80908-6363-4EF6-9208-F358E8088875}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8AE80908-6363-4EF6-9208-F358E8088875}.Release|Any CPU.Build.0 = Release|Any CPU
+		{758D5E1A-58B6-4C91-979B-AE92D2AF14DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{758D5E1A-58B6-4C91-979B-AE92D2AF14DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{758D5E1A-58B6-4C91-979B-AE92D2AF14DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{758D5E1A-58B6-4C91-979B-AE92D2AF14DE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
