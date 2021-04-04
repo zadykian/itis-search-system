@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace SearchSystem.Infrastructure.Documents
 {
@@ -34,5 +36,11 @@ namespace SearchSystem.Infrastructure.Documents
 		/// </summary>
 		public static IDocument ToDocument(this IDocumentLink documentLink, params string[] lines)
 			=> new Document(documentLink.SubsectionName, documentLink.Name, lines);
+
+		/// <summary>
+		/// Create document from document link. 
+		/// </summary>
+		public static IDocument ToDocument(this IDocumentLink documentLink, IEnumerable<string> lines)
+			=> documentLink.ToDocument(lines.ToArray());
 	}
 }

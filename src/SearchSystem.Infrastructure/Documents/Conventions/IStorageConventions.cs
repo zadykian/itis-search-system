@@ -16,5 +16,10 @@ namespace SearchSystem.Infrastructure.Documents.Conventions
 		/// Link to terms index file.
 		/// </summary>
 		IDocumentLink TermsIndex { get; }
+
+		/// <summary>
+		/// Link to file with per-term statistics.
+		/// </summary>
+		IDocumentLink TermStats { get; }
 	}
 }

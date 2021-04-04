@@ -51,7 +51,7 @@ namespace SearchSystem.VectorSearch.Phase
 				.Select(tuple => tuple.ToString())
 				.ToImmutableArray();
 
-			var termStatsDocument = new Document(string.Empty, "term-stats.txt", termStatsEntries);
+			var termStatsDocument = AppEnvironment.Storage.Conventions.TermStats.ToDocument(termStatsEntries);
 			await AppEnvironment.Storage.SaveOrAppendAsync(termStatsDocument);
 			return Unit.Instance;
 		}
