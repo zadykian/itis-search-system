@@ -21,7 +21,12 @@ namespace SearchSystem.VectorSearch.Phases
 	/// Vector search subphase which is responsible
 	/// for per-term statistics collecting.
 	/// </summary>
-	internal class StatsCollectionSubphase : EnginePhaseBase<ITermsIndex, TermStats>
+	internal interface IStatsCollectionSubphase : ISearchEnginePhase<ITermsIndex, TermStats>
+	{
+	}
+
+	/// <inheritdoc cref="IStatsCollectionSubphase"/>
+	internal class StatsCollectionSubphase : EnginePhaseBase<ITermsIndex, TermStats>, IStatsCollectionSubphase
 	{
 		private readonly IWordExtractor wordExtractor;
 

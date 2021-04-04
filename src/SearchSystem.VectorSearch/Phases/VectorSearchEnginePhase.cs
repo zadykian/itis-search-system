@@ -2,24 +2,19 @@ using System;
 using System.Threading.Tasks;
 using SearchSystem.Indexing.Index;
 using SearchSystem.Indexing.Phase.External;
-using SearchSystem.Infrastructure.AppEnvironment;
 using SearchSystem.Infrastructure.SearchEnginePhases;
 
 namespace SearchSystem.VectorSearch.Phases
 {
-	/// <inheritdoc cref="ISearchAlgorithmEnginePhase"/>
-	internal class VectorSearchEnginePhase : EnginePhaseBase<ITermsIndex, Unit>, ISearchAlgorithmEnginePhase
+	/// <inheritdoc/>
+	internal class VectorSearchEnginePhase : ISearchAlgorithmEnginePhase
 	{
-		public VectorSearchEnginePhase(IAppEnvironment<VectorSearchEnginePhase> appEnvironment) : base(appEnvironment)
-		{
-		}
+		private readonly IStatsCollectionSubphase statsCollectionSubphase;
+
+		public VectorSearchEnginePhase(IStatsCollectionSubphase statsCollectionSubphase)
+			=> this.statsCollectionSubphase = statsCollectionSubphase;
 
 		/// <inheritdoc />
-		protected override Task<Unit> ExecuteAnewAsync(ITermsIndex termsIndex)
-			=> throw new NotImplementedException();
-
-		/// <inheritdoc />
-		protected override Task<Unit> LoadPreviousResultsAsync()
-			=> throw new NotImplementedException();
+		Task<Unit> ISearchEnginePhase<ITermsIndex, Unit>.ExecuteAsync(ITermsIndex inputData) => throw new NotImplementedException();
 	}
 }

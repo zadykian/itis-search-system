@@ -11,6 +11,7 @@ namespace SearchSystem.VectorSearch
 		/// <inheritdoc />
 		void IAppComponent.RegisterServices(IServiceCollection serviceCollection)
 			=> serviceCollection
+				.AddSingleton<IStatsCollectionSubphase, StatsCollectionSubphase>()
 				.AddSingleton<ISearchAlgorithmEnginePhase, VectorSearchEnginePhase>();
 	}
 }
