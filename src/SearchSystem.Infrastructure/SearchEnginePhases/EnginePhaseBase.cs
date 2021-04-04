@@ -17,7 +17,11 @@ namespace SearchSystem.Infrastructure.SearchEnginePhases
 		/// <summary>
 		/// Name of component which this phase belongs to.
 		/// </summary>
-		protected string ComponentName => GetType().Name.Replace("EnginePhase", string.Empty);
+		protected string ComponentName 
+			=> GetType()
+				.Name
+				.Replace("EnginePhase", string.Empty)
+				.Replace("Subphase", string.Empty);
 
 		/// <inheritdoc />
 		async Task<TOut> ISearchEnginePhase<TIn, TOut>.ExecuteAsync(TIn inputData)

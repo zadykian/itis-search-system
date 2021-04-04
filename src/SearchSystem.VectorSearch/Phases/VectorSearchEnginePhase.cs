@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using SearchSystem.Indexing.Index;
 using SearchSystem.Indexing.Phase.External;
@@ -15,6 +14,10 @@ namespace SearchSystem.VectorSearch.Phases
 			=> this.statsCollectionSubphase = statsCollectionSubphase;
 
 		/// <inheritdoc />
-		Task<Unit> ISearchEnginePhase<ITermsIndex, Unit>.ExecuteAsync(ITermsIndex inputData) => throw new NotImplementedException();
+		async Task<Unit> ISearchEnginePhase<ITermsIndex, Unit>.ExecuteAsync(ITermsIndex inputData)
+		{
+			await statsCollectionSubphase.ExecuteAsync(inputData);
+			return Unit.Instance;
+		}
 	}
 }
