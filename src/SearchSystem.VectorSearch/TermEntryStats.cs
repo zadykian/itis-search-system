@@ -98,7 +98,7 @@ namespace SearchSystem.VectorSearch
 			public static Parser<TermEntryStats> SingleEntry =>
 				from term                in Parse.CharExcept(' ').Many().Text()
 				from documentLink        in Parse
-					.Regex(@"^d+\.[a-z]{3}$")
+					.Regex(@"\d+\.[a-z]{3}")
 					.Token()
 					.Select(fileName => new DocumentLink(subsectionName, fileName))
 				from termFrequency       in DoubleParser
