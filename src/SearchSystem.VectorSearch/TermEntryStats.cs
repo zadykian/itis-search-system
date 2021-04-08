@@ -1,4 +1,3 @@
-using System;
 using System.Text.RegularExpressions;
 using SearchSystem.Infrastructure.Documents;
 using SearchSystem.Infrastructure.Extensions;
@@ -16,7 +15,7 @@ namespace SearchSystem.VectorSearch
 	internal readonly struct TermEntryStats
 	{
 		public TermEntryStats(
-			String term,
+			Term term,
 			IDocumentLink documentLink,
 			double termFrequency,
 			double inverseDocFrequency)

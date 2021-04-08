@@ -16,7 +16,7 @@ namespace SearchSystem.VectorSearch.Phases
 		/// <inheritdoc />
 		async Task<Unit> ISearchEnginePhase<ITermsIndex, Unit>.ExecuteAsync(ITermsIndex inputData)
 		{
-			await statsCollectionSubphase.ExecuteAsync(inputData);
+			var termEntryStats = await statsCollectionSubphase.ExecuteAsync(inputData);
 			return Unit.Instance;
 		}
 	}
