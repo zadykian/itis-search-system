@@ -13,7 +13,7 @@ namespace SearchSystem.VectorSearch
 	/// Struct which contains statistics for term <see cref="TermEntryStats.Term"/>
 	/// in context of document <see cref="TermEntryStats.DocumentLink"/>.
 	/// </summary>
-	public readonly struct TermEntryStats
+	internal readonly struct TermEntryStats
 	{
 		public TermEntryStats(
 			String term,
