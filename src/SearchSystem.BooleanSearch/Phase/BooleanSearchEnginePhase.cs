@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,9 +12,11 @@ using SearchSystem.BooleanSearch.UserInterface;
 using SearchSystem.Indexing.Index;
 using SearchSystem.Indexing.Phase.External;
 using SearchSystem.Infrastructure.AppEnvironment;
+using SearchSystem.Infrastructure.Documents;
 using SearchSystem.Infrastructure.Extensions;
 using SearchSystem.Infrastructure.SearchEnginePhases;
 using SearchSystem.Infrastructure.WebPages;
+using Sprache;
 
 // ReSharper disable BuiltInTypeReferenceStyle
 using PageId = System.UInt32;
@@ -73,22 +77,94 @@ namespace SearchSystem.BooleanSearch.Phase
 		/// <summary>
 		/// Get string representation of found docs list. 
 		/// </summary>
-		private async Task<string> StringRepresentation(DocLinks foundDocs, TimeSpan elapsed)
+		private async Task<string> StringRepresentation(
+			IReadOnlyCollection<ISearchResultItem> searchResultItems,
+			TimeSpan elapsed)
 		{
 			var webPagesDocument = await AppEnvironment.Storage.LoadAsync(AppEnvironment.Storage.Conventions.WebPagesIndex);
 
-			var foundPageIds = foundDocs
-				.Select(link => Path.GetFileNameWithoutExtension(link.Name))
-				.Select(PageId.Parse)
-				.ToImmutableArray();
-
 			return new WebPagesIndex(webPagesDocument)
 				.SavedPages
-				.Where(tuple => foundPageIds.Contains(tuple.PageId))
-				.OrderBy(tuple => tuple.PageId)
-				.Select(tuple => $"{tuple.PageId}. {tuple.PageUri}")
-				.BeginWith($@"Found {foundDocs.Count} page(s). Elapsed {elapsed:s\.fff}s")
+				.Join(
+					searchResultItems,
+					entry => entry.PageId, item => item.PageId,
+					(entry, item) => (Page: entry, Result: item))
+				.OrderBy(tuple => tuple.Result)
+				.Select(tuple => tuple
+					.Result
+					.AdditionalInfo()
+					.To(info => string.IsNullOrWhiteSpace(info) ? string.Empty : $" ({info})")
+					.To(info => $"{tuple.Page.PageId}. {tuple.Page.PageUri}{info}"))
+				.BeginWith($@"Found {searchResultItems.Count} page(s). Elapsed {elapsed:s\.fff}s")
 				.JoinBy(Environment.NewLine);
 		}
+	}
+
+	/// <summary>
+	/// 
+	/// </summary>
+	public interface ISearchResultItem : IComparable<ISearchResultItem>
+	{
+		/// <summary>
+		/// Identifier of page which this item corresponds to.
+		/// </summary>
+		PageId PageId { get; }
+
+		/// <summary>
+		/// Additional info which is displayed to user. 
+		/// </summary>
+		string AdditionalInfo();
+	}
+
+	public class DocLinkResultItem : ISearchResultItem
+	{
+		private readonly IDocumentLink pageDocumentLink;
+
+		/// <param name="pageDocumentLink">
+		/// Link to document of page which this item corresponds to.
+		/// </param>
+		public DocLinkResultItem(IDocumentLink pageDocumentLink)
+			=> this.pageDocumentLink = pageDocumentLink;
+
+		/// <inheritdoc />
+		public virtual int CompareTo(ISearchResultItem? other)
+			=> other is null
+				? 1
+				: PageId.CompareTo(other.PageId);
+
+		/// <inheritdoc />
+		public PageId PageId
+			=> pageDocumentLink
+					.Name
+					.To(Path.GetFileNameWithoutExtension)!
+				.To(PageId.Parse);
+
+		/// <inheritdoc />
+		public virtual string AdditionalInfo() => string.Empty;
+	}
+
+	public class WeightedResultItem : DocLinkResultItem
+	{
+		private readonly double weight;
+
+		/// <param name="weight">
+		/// Weight of search item.
+		/// </param>
+		/// <param name="pageDocumentLink">
+		/// Link to document of page which this item corresponds to.
+		/// </param>
+		public WeightedResultItem(
+			double weight,
+			IDocumentLink pageDocumentLink) : base(pageDocumentLink)
+			=> this.weight = weight;
+
+		/// <inheritdoc />
+		public override int CompareTo(ISearchResultItem? other)
+			=> other is WeightedResultItem weighted
+				? weight.CompareTo(weighted.weight)
+				: throw new ArgumentException("Invalid argument type.", nameof(other));
+
+		/// <inheritdoc />
+		public override string AdditionalInfo() => weight.ToString("F2", CultureInfo.InvariantCulture);
 	}
 }

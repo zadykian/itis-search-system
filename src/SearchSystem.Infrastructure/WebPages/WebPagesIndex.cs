@@ -17,7 +17,7 @@ namespace SearchSystem.Infrastructure.WebPages
 	public class WebPagesIndex
 	{
 		public WebPagesIndex(PageId pageId, Uri pageUri)
-			=> SavedPages = new[] {(pageId, pageUri)};
+			=> SavedPages = new[] {new Entry(pageId, pageUri)};
 
 		public WebPagesIndex(IDocument document)
 			=> SavedPages = document
@@ -28,7 +28,7 @@ namespace SearchSystem.Infrastructure.WebPages
 		/// <summary>
 		/// Pages being saved during crawl phase.
 		/// </summary>
-		public IReadOnlyCollection<(PageId PageId, Uri PageUri)> SavedPages { get; }
+		public IReadOnlyCollection<Entry> SavedPages { get; }
 
 		/// <summary>
 		/// Represent itself as <see cref="IDocument"/> instance. 
@@ -47,11 +47,16 @@ namespace SearchSystem.Infrastructure.WebPages
 			/// <summary>
 			/// Single line parser.
 			/// </summary>
-			public static Parser<(PageId PageId, Uri PageUri)> Line =>
+			public static Parser<Entry> Line =>
 				from pageId    in Parse.Number.Select(PageId.Parse)
 				from separator in Parse.String(". ")
 				from pageUri   in Parse.AnyChar.Many().Text().Select(str => new Uri(str))
-				select (pageId, pageUri);
+				select new Entry(pageId, pageUri);
 		}
+
+		/// <summary>
+		/// Single entry of web pages index.
+		/// </summary>
+		public sealed record Entry(PageId PageId, Uri PageUri);
 	}
 }
