@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -16,7 +15,6 @@ using SearchSystem.Infrastructure.Documents;
 using SearchSystem.Infrastructure.Extensions;
 using SearchSystem.Infrastructure.SearchEnginePhases;
 using SearchSystem.Infrastructure.WebPages;
-using Sprache;
 
 // ReSharper disable BuiltInTypeReferenceStyle
 using PageId = System.UInt32;
@@ -47,6 +45,7 @@ namespace SearchSystem.BooleanSearch.Phase
 		{
 			userInterface.ShowMessage($"{Environment.NewLine}enter search expression:");
 			var searchRequest = await userInterface.ConsumeInputAsync();
+			var stopwatch = Stopwatch.StartNew();
 
 			var resultText = expressionParser.Parse(searchRequest) switch
 			{
@@ -54,7 +53,6 @@ namespace SearchSystem.BooleanSearch.Phase
 					.SearchExpression
 					.To(expression =>
 					{
-						var stopwatch = Stopwatch.StartNew();
 						var result = indexScan.Execute(inputData, expression);
 						return (FoundDocs: result, stopwatch.Elapsed);
 					})
@@ -80,10 +78,8 @@ namespace SearchSystem.BooleanSearch.Phase
 		private async Task<string> StringRepresentation(
 			IReadOnlyCollection<ISearchResultItem> searchResultItems,
 			TimeSpan elapsed)
-		{
-			var webPagesDocument = await AppEnvironment.Storage.LoadAsync(AppEnvironment.Storage.Conventions.WebPagesIndex);
-
-			return new WebPagesIndex(webPagesDocument)
+			=> (await AppEnvironment.Storage.LoadAsync(AppEnvironment.Storage.Conventions.WebPagesIndex))
+				.To(document => new WebPagesIndex(document))
 				.SavedPages
 				.Join(
 					searchResultItems,
@@ -97,7 +93,6 @@ namespace SearchSystem.BooleanSearch.Phase
 					.To(info => $"{tuple.Page.PageId}. {tuple.Page.PageUri}{info}"))
 				.BeginWith($@"Found {searchResultItems.Count} page(s). Elapsed {elapsed:s\.fff}s")
 				.JoinBy(Environment.NewLine);
-		}
 	}
 
 	/// <summary>
