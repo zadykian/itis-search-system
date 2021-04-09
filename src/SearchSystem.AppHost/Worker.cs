@@ -7,8 +7,6 @@ using SearchSystem.Indexing.Phase.External;
 using SearchSystem.Infrastructure.SearchEnginePhases;
 using SearchSystem.Normalization.Phase;
 
-using Docs = System.Collections.Generic.IReadOnlyCollection<SearchSystem.Infrastructure.Documents.IDocument>;
-
 namespace SearchSystem.AppHost
 {
 	/// <inheritdoc />
@@ -32,9 +30,9 @@ namespace SearchSystem.AppHost
 		}
 
 		/// <inheritdoc />
-		protected override Task ExecuteAsync(CancellationToken stoppingToken)
+		protected override Task ExecuteAsync(CancellationToken _)
 			=> Composable
-				.Add<Unit, Task<Docs>>(crawlEnginePhase.ExecuteAsync)
+				.Add(crawlEnginePhase.ExecuteAsync)
 				.Add(normalizationEnginePhase.ExecuteAsync)
 				.Add(indexingEnginePhase.ExecuteAsync)
 				.Add(algorithmEnginePhase.ExecuteAsync)
