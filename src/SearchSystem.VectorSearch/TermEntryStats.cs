@@ -56,7 +56,7 @@ namespace SearchSystem.VectorSearch
 		/// of documents which contains term <see cref="Term"/>.
 		/// </para>
 		/// </summary>
-		private double InverseDocFrequency { get; }
+		public double InverseDocFrequency { get; }
 
 		/// <summary>
 		/// <para>

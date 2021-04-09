@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
@@ -37,10 +38,8 @@ namespace SearchSystem.VectorSearch.Phases
 			var termEntryStats = await statsCollectionSubphase.ExecuteAsync(inputData);
 
 			var allTermsInCorpus = termEntryStats
-				.Select(entry => entry.Term)
-				.Distinct()
-				.OrderBy(term => term)
-				.ToImmutableArray();
+				.DistinctBy(entry => entry.Term)
+				.ToImmutableSortedDictionary(entry => entry.Term, entry => entry.InverseDocFrequency);
 
 			var vectors = termEntryStats
 				.GroupBy(entry => entry.DocumentLink)
@@ -53,17 +52,25 @@ namespace SearchSystem.VectorSearch.Phases
 							.ToImmutableDictionary(entry => entry.Term, entry => entry.TfIdf);
 
 						return allTermsInCorpus
-							.Select(term => wordsInDocument.TryGetValue(term, out var tfIdf) ? tfIdf : 0d)
+							.Select(pair => wordsInDocument.TryGetValue(pair.Key, out var tfIdf) ? tfIdf : 0d)
 							.ToImmutableArray();
 					});
 
 			await searchProcess.HandleSearchRequests(request =>
 			{
-				var requestWords = request
+				var requestTerms = request
 					.Split(' ')
 					.Select(token => normalizer.Normalize(token))
 					.ToImmutableArray();
 
+				var requestVector = allTermsInCorpus
+					.Select(pair =>
+					{
+						var (currentTerm, inverseDocFrequency) = pair;
+						var termFrequency = requestTerms.Count(term => term == currentTerm) / (double) requestTerms.Length;
+						return Math.Round(termFrequency * inverseDocFrequency, 8);
+					})
+					.ToImmutableArray();
 			});
 		}
 	}
