@@ -2,6 +2,9 @@ using System.Collections.Generic;
 
 namespace SearchSystem.UserInteraction.Result
 {
+	/// <summary>
+	/// Search result.
+	/// </summary>
 	public interface ISearchResult
 	{
 		/// <summary>

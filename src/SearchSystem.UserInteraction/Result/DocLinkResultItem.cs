@@ -1,10 +1,15 @@
-using System;
 using System.IO;
 using SearchSystem.Infrastructure.Documents;
 using SearchSystem.Infrastructure.Extensions;
 
+// ReSharper disable BuiltInTypeReferenceStyle
+using PageId = System.UInt32;
+
 namespace SearchSystem.UserInteraction.Result
 {
+	/// <summary>
+	/// Search result item which contains only link to page's document.
+	/// </summary>
 	public class DocLinkResultItem : ISearchResultItem
 	{
 		private readonly IDocumentLink pageDocumentLink;
@@ -22,11 +27,11 @@ namespace SearchSystem.UserInteraction.Result
 				: PageId.CompareTo(other.PageId);
 
 		/// <inheritdoc />
-		public UInt32 PageId
+		public PageId PageId
 			=> pageDocumentLink
 					.Name
 					.To(Path.GetFileNameWithoutExtension)!
-				.To(UInt32.Parse);
+				.To(PageId.Parse);
 
 		/// <inheritdoc />
 		public virtual string AdditionalInfo() => string.Empty;

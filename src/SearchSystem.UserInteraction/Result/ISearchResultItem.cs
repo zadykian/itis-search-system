@@ -1,5 +1,8 @@
 using System;
 
+// ReSharper disable BuiltInTypeReferenceStyle
+using PageId = System.UInt32;
+
 namespace SearchSystem.UserInteraction.Result
 {
 	/// <summary>
@@ -10,7 +13,7 @@ namespace SearchSystem.UserInteraction.Result
 		/// <summary>
 		/// Identifier of page which this item corresponds to.
 		/// </summary>
-		UInt32 PageId { get; }
+		PageId PageId { get; }
 
 		/// <summary>
 		/// Additional info which is displayed to user. 

@@ -4,6 +4,9 @@ using SearchSystem.Infrastructure.Documents;
 
 namespace SearchSystem.UserInteraction.Result
 {
+	/// <summary>
+	/// Search result item which has weight relative to other items in <see cref="ISearchResult.Success.Items"/>.
+	/// </summary>
 	public class WeightedResultItem : DocLinkResultItem
 	{
 		private readonly double weight;
