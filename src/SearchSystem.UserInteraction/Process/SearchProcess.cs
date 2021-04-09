@@ -47,7 +47,7 @@ namespace SearchSystem.UserInteraction.Process
 			userInterface.ShowMessage($"{Environment.NewLine}exit? [yes/no]");
 			var input = await userInterface.ConsumeInputAsync();
 
-			if (string.Equals(input, "yes", StringComparison.InvariantCultureIgnoreCase))
+			if (!string.Equals(input, "yes", StringComparison.InvariantCultureIgnoreCase))
 			{
 				await HandleSearchRequests(searchCoreFunc);
 			}
@@ -66,7 +66,7 @@ namespace SearchSystem.UserInteraction.Process
 					searchResultItems,
 					entry => entry.PageId, item => item.PageId,
 					(entry, item) => (Page: entry, Result: item))
-				.OrderBy(tuple => tuple.Result)
+				.OrderByDescending(tuple => tuple.Result)
 				.Select(tuple => tuple
 					.Result
 					.AdditionalInfo()

@@ -29,6 +29,6 @@ namespace SearchSystem.UserInteraction.Result
 				: throw new ArgumentException("Invalid argument type.", nameof(other));
 
 		/// <inheritdoc />
-		public override string AdditionalInfo() => weight.ToString("F2", CultureInfo.InvariantCulture);
+		public override string AdditionalInfo() => weight.ToString("F8", CultureInfo.InvariantCulture);
 	}
 }

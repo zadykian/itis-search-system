@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
@@ -70,7 +69,7 @@ namespace SearchSystem.VectorSearch.Phases
 					{
 						var (currentTerm, inverseDocFrequency) = pair;
 						var termFrequency = requestTerms.Count(term => term == currentTerm) / (double) requestTerms.Length;
-						return Math.Round(termFrequency * inverseDocFrequency, 8);
+						return termFrequency * inverseDocFrequency;
 					})
 					.ToImmutableArray();
 
@@ -79,7 +78,7 @@ namespace SearchSystem.VectorSearch.Phases
 						DocLink: pair.Key,
 						Cosine: new Cosine().Similarity(requestVector.ToArray(), pair.Value.ToArray())))
 					.Select(tuple => new WeightedResultItem(tuple.Cosine, tuple.DocLink))
-					.OrderBy(resultItem => resultItem)
+					.OrderByDescending(resultItem => resultItem)
 					.Take(10)
 					.ToImmutableArray()
 					.To(resultItems => new ISearchResult.Success(resultItems));
