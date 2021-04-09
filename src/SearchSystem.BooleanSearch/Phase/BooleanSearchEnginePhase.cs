@@ -21,7 +21,7 @@ using DocLinks = System.Collections.Generic.IReadOnlyCollection<SearchSystem.Inf
 namespace SearchSystem.BooleanSearch.Phase
 {
 	/// <inheritdoc cref="ISearchAlgorithmEnginePhase" />
-	internal class BooleanSearchEnginePhase : EnginePhaseBase<ITermsIndex, Unit>, ISearchAlgorithmEnginePhase
+	internal class BooleanSearchEnginePhase : TerminatingEnginePhaseBase<ITermsIndex>, ISearchAlgorithmEnginePhase
 	{
 		private readonly IUserInterface userInterface;
 		private readonly ISearchExpressionParser expressionParser;
@@ -39,7 +39,7 @@ namespace SearchSystem.BooleanSearch.Phase
 		}
 
 		/// <inheritdoc />
-		protected override async Task<Unit> ExecuteAnewAsync(ITermsIndex inputData)
+		protected override async Task ExecuteAsync(ITermsIndex inputData)
 		{
 			userInterface.ShowMessage($"{Environment.NewLine}enter search expression:");
 			var searchRequest = await userInterface.ConsumeInputAsync();
@@ -64,9 +64,10 @@ namespace SearchSystem.BooleanSearch.Phase
 			userInterface.ShowMessage($"{Environment.NewLine}exit? [yes/no]");
 			var input = await userInterface.ConsumeInputAsync();
 
-			return string.Equals(input, "yes", StringComparison.InvariantCultureIgnoreCase)
-				? Unit.Instance
-				: await ExecuteAnewAsync(inputData);
+			if (string.Equals(input, "yes", StringComparison.InvariantCultureIgnoreCase))
+			{
+				await ExecuteAsync(inputData);
+			}
 		}
 
 		/// <summary>
@@ -89,8 +90,5 @@ namespace SearchSystem.BooleanSearch.Phase
 				.BeginWith($@"Found {foundDocs.Count} page(s). Elapsed {elapsed:s\.fff}s")
 				.JoinBy(Environment.NewLine);
 		}
-
-		/// <inheritdoc />
-		protected override Task<Unit> LoadPreviousResultsAsync() => Task.FromResult(Unit.Instance);
 	}
 }
