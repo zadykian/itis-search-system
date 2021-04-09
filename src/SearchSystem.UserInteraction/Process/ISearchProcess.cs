@@ -7,7 +7,10 @@ using Request = System.String;
 
 namespace SearchSystem.UserInteraction.Process
 {
-	internal interface ISearchProcess
+	/// <summary>
+	/// Search process which is responsible for user interaction.
+	/// </summary>
+	public interface ISearchProcess
 	{
 		/// <summary>
 		/// Handle user's search requests.
