@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace SearchSystem.BooleanSearch.UserInterface
+namespace SearchSystem.UserInteraction.UserInterface
 {
 	/// <inheritdoc />
 	internal class ConsoleUserInterface : IUserInterface
