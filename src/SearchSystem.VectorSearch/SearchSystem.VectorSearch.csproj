@@ -9,4 +9,8 @@
 		<ProjectReference Include="..\SearchSystem.UserInteraction\SearchSystem.UserInteraction.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<PackageReference Include="Accord.Math" Version="3.8.0" />
+	</ItemGroup>
+
 </Project>

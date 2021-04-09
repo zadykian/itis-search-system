@@ -2,6 +2,7 @@ using System;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
+using Accord.Math.Distances;
 using SearchSystem.Indexing.Index;
 using SearchSystem.Indexing.Phase.External;
 using SearchSystem.Infrastructure.AppEnvironment;
@@ -9,6 +10,7 @@ using SearchSystem.Infrastructure.Extensions;
 using SearchSystem.Infrastructure.SearchEnginePhases;
 using SearchSystem.Normalization.Normalizer;
 using SearchSystem.UserInteraction.Process;
+using SearchSystem.UserInteraction.Result;
 
 namespace SearchSystem.VectorSearch.Phases
 {
@@ -16,7 +18,7 @@ namespace SearchSystem.VectorSearch.Phases
 	internal class VectorSearchEnginePhase : TerminatingEnginePhaseBase<ITermsIndex>, ISearchAlgorithmEnginePhase
 	{
 		// todo: move vectorization to separate phase
-		
+
 		private readonly IStatsCollectionSubphase statsCollectionSubphase;
 		private readonly ISearchProcess searchProcess;
 		private readonly INormalizer normalizer;
@@ -71,6 +73,16 @@ namespace SearchSystem.VectorSearch.Phases
 						return Math.Round(termFrequency * inverseDocFrequency, 8);
 					})
 					.ToImmutableArray();
+
+				return vectors
+					.Select(pair => (
+						DocLink: pair.Key,
+						Cosine: new Cosine().Similarity(requestVector.ToArray(), pair.Value.ToArray())))
+					.Select(tuple => new WeightedResultItem(tuple.Cosine, tuple.DocLink))
+					.OrderBy(resultItem => resultItem)
+					.Take(10)
+					.ToImmutableArray()
+					.To(resultItems => new ISearchResult.Success(resultItems));
 			});
 		}
 	}
