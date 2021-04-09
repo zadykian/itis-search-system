@@ -9,6 +9,7 @@ using SearchSystem.Infrastructure;
 using SearchSystem.Infrastructure.Configuration;
 using SearchSystem.Infrastructure.Extensions;
 using SearchSystem.Normalization;
+using SearchSystem.UserInteraction;
 using SearchSystem.VectorSearch;
 
 namespace SearchSystem.AppHost
@@ -34,6 +35,7 @@ namespace SearchSystem.AppHost
 					.AddComponent<CrawlAppComponent>()
 					.AddComponent<NormalizationAppComponent>()
 					.AddComponent<IndexingAppComponent>()
+					.AddComponent<UserInteractionAppComponent>()
 					.To(AddSearchAlgorithmComponent)
 					.AddComponent<AppHostAppComponent>())
 				.Build()
