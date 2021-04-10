@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
@@ -5,6 +6,7 @@ using Accord.Math.Distances;
 using SearchSystem.Indexing.Index;
 using SearchSystem.Indexing.Phase.External;
 using SearchSystem.Infrastructure.AppEnvironment;
+using SearchSystem.Infrastructure.Documents;
 using SearchSystem.Infrastructure.Extensions;
 using SearchSystem.Infrastructure.SearchEnginePhases;
 using SearchSystem.Normalization.Normalizer;
@@ -38,22 +40,12 @@ namespace SearchSystem.VectorSearch.Phases
 
 			var allTermsInCorpus = termEntryStats
 				.DistinctBy(entry => entry.Term)
-				.ToImmutableSortedDictionary(entry => entry.Term, entry => entry.InverseDocFrequency);
+				.OrderBy(entry => entry.Term)
+				.ToImmutableArray();
+				
+				//.ToImmutableSortedDictionary(entry => entry.Term, entry => entry.InverseDocFrequency);
 
-			var vectors = termEntryStats
-				.GroupBy(entry => entry.DocumentLink)
-				.ToDictionary(
-					group => group.Key,
-					group =>
-					{
-						var wordsInDocument = group
-							.DistinctBy(entry => entry.Term)
-							.ToImmutableDictionary(entry => entry.Term, entry => entry.TfIdf);
-
-						return allTermsInCorpus
-							.Select(pair => wordsInDocument.TryGetValue(pair.Key, out var tfIdf) ? tfIdf : 0d)
-							.ToImmutableArray();
-					});
+			var vectors = CreateDocVectors(termEntryStats, allTermsInCorpus);
 
 			await searchProcess.HandleSearchRequests(request =>
 			{
@@ -82,5 +74,23 @@ namespace SearchSystem.VectorSearch.Phases
 					.To(resultItems => new ISearchResult.Success(resultItems));
 			});
 		}
+
+		private static Dictionary<IDocumentLink, ImmutableArray<double>> CreateDocVectors(
+			IEnumerable<TermEntryStats> termEntryStats,
+			IReadOnlyCollection<TermEntryStats> allTermsInCorpus)
+			=> termEntryStats
+				.GroupBy(entry => entry.DocumentLink)
+				.ToDictionary(
+					group => group.Key,
+					group =>
+					{
+						var wordsInDocument = group
+							.DistinctBy(entry => entry.Term)
+							.ToImmutableDictionary(entry => entry.Term, entry => entry.TfIdf);
+
+						return allTermsInCorpus
+							.Select(pair => wordsInDocument.TryGetValue(pair.Term, out var tfIdf) ? tfIdf : 0d)
+							.ToImmutableArray();
+					});
 	}
 }
