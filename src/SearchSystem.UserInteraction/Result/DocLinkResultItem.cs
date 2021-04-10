@@ -21,16 +21,13 @@ namespace SearchSystem.UserInteraction.Result
 			=> this.pageDocumentLink = pageDocumentLink;
 
 		/// <inheritdoc />
-		public virtual int CompareTo(ISearchResultItem? other)
-			=> other is null
-				? 1
-				: PageId.CompareTo(other.PageId);
+		public virtual int CompareTo(ISearchResultItem? other) => other?.PageId.CompareTo(PageId) ?? 1;
 
 		/// <inheritdoc />
 		public PageId PageId
 			=> pageDocumentLink
-					.Name
-					.To(Path.GetFileNameWithoutExtension)!
+				.Name
+				.To(Path.GetFileNameWithoutExtension)!
 				.To(PageId.Parse);
 
 		/// <inheritdoc />

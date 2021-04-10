@@ -32,7 +32,7 @@ namespace SearchSystem.UserInteraction.Process
 		/// <inheritdoc />
 		public async Task HandleSearchRequests(Func<Request, ISearchResult> searchCoreFunc)
 		{
-			userInterface.ShowMessage($"{Environment.NewLine}enter search expression:");
+			userInterface.ShowMessage($"{Environment.NewLine}Enter search expression:");
 			var searchRequest = await userInterface.ConsumeInputAsync();
 			var stopwatch = Stopwatch.StartNew();
 

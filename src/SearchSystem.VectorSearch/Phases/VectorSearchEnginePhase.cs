@@ -13,6 +13,11 @@ using SearchSystem.Normalization.Normalizer;
 using SearchSystem.UserInteraction.Process;
 using SearchSystem.UserInteraction.Result;
 
+// ReSharper disable BuiltInTypeReferenceStyle
+using Term = System.String;
+using Request = System.String;
+using TfIdfVector = System.Collections.Generic.IReadOnlyCollection<System.Double>;
+
 namespace SearchSystem.VectorSearch.Phases
 {
 	/// <inheritdoc cref="ISearchAlgorithmEnginePhase"/>
@@ -41,43 +46,62 @@ namespace SearchSystem.VectorSearch.Phases
 			var allTermsInCorpus = termEntryStats
 				.DistinctBy(entry => entry.Term)
 				.OrderBy(entry => entry.Term)
+				.Select(entry => (entry.Term, entry.InverseDocFrequency))
 				.ToImmutableArray();
-				
-				//.ToImmutableSortedDictionary(entry => entry.Term, entry => entry.InverseDocFrequency);
 
 			var vectors = CreateDocVectors(termEntryStats, allTermsInCorpus);
 
-			await searchProcess.HandleSearchRequests(request =>
-			{
-				var requestTerms = request
-					.Split(' ')
-					.Select(token => normalizer.Normalize(token))
-					.ToImmutableArray();
-
-				var requestVector = allTermsInCorpus
-					.Select(pair =>
-					{
-						var (currentTerm, inverseDocFrequency) = pair;
-						var termFrequency = requestTerms.Count(term => term == currentTerm) / (double) requestTerms.Length;
-						return termFrequency * inverseDocFrequency;
-					})
-					.ToImmutableArray();
-
-				return vectors
-					.Select(pair => (
-						DocLink: pair.Key,
-						Cosine: new Cosine().Similarity(requestVector.ToArray(), pair.Value.ToArray())))
-					.Select(tuple => new WeightedResultItem(tuple.Cosine, tuple.DocLink))
-					.OrderByDescending(resultItem => resultItem)
-					.Take(10)
-					.ToImmutableArray()
-					.To(resultItems => new ISearchResult.Success(resultItems));
-			});
+			await searchProcess.HandleSearchRequests(request => 
+				string.IsNullOrWhiteSpace(request) 
+					? new ISearchResult.Failure("Input request cannot be empty.")
+					: HandleValidRequest(request, allTermsInCorpus, vectors));
 		}
 
-		private static Dictionary<IDocumentLink, ImmutableArray<double>> CreateDocVectors(
+		/// <summary>
+		/// Handle valid search request. 
+		/// </summary>
+		private ISearchResult.Success HandleValidRequest(
+			Request request,
+			ImmutableArray<(Term Term, double InverseDocFrequency)> allTermsInCorpus,
+			IReadOnlyDictionary<IDocumentLink, TfIdfVector> vectors)
+		{
+			var requestTerms = request
+				.Split(' ')
+				.Select(token => normalizer.Normalize(token))
+				.ToImmutableArray();
+
+			var requestVector = allTermsInCorpus
+				.Select(tuple =>
+				{
+					var (currentTerm, inverseDocFrequency) = tuple;
+					var termFrequency = requestTerms.Count(term => term == currentTerm) / (double) requestTerms.Length;
+					return termFrequency * inverseDocFrequency;
+				})
+				.ToImmutableArray();
+
+			return vectors
+				.Select(pair => (
+					DocLink: pair.Key,
+					Cosine: new Cosine().Similarity(requestVector.ToArray(), pair.Value.ToArray())))
+				.Select(tuple => new WeightedResultItem(tuple.Cosine, tuple.DocLink))
+				.OrderByDescending(resultItem => resultItem)
+				.Take(10)
+				.ToImmutableArray()
+				.To(resultItems => new ISearchResult.Success(resultItems));
+		}
+
+		/// <summary>
+		/// Perform vectorization for all documents.
+		/// </summary>
+		/// <param name="termEntryStats">
+		/// Full list of per-term stats in corpus.
+		/// </param>
+		/// <param name="allTermsInCorpus">
+		/// Unique list of terms with its' inverse document frequency.
+		/// </param>
+		private static IReadOnlyDictionary<IDocumentLink, TfIdfVector> CreateDocVectors(
 			IEnumerable<TermEntryStats> termEntryStats,
-			IReadOnlyCollection<TermEntryStats> allTermsInCorpus)
+			IReadOnlyCollection<(Term Term, double InverseDocFrequency)> allTermsInCorpus)
 			=> termEntryStats
 				.GroupBy(entry => entry.DocumentLink)
 				.ToDictionary(
@@ -88,7 +112,7 @@ namespace SearchSystem.VectorSearch.Phases
 							.DistinctBy(entry => entry.Term)
 							.ToImmutableDictionary(entry => entry.Term, entry => entry.TfIdf);
 
-						return allTermsInCorpus
+						return (TfIdfVector) allTermsInCorpus
 							.Select(pair => wordsInDocument.TryGetValue(pair.Term, out var tfIdf) ? tfIdf : 0d)
 							.ToImmutableArray();
 					});
