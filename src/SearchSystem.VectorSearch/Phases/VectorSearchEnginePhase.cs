@@ -16,8 +16,6 @@ namespace SearchSystem.VectorSearch.Phases
 	/// <inheritdoc cref="ISearchAlgorithmEnginePhase"/>
 	internal class VectorSearchEnginePhase : TerminatingEnginePhaseBase<ITermsIndex>, ISearchAlgorithmEnginePhase
 	{
-		// todo: move vectorization to separate phase
-
 		private readonly IStatsCollectionSubphase statsCollectionSubphase;
 		private readonly ISearchProcess searchProcess;
 		private readonly INormalizer normalizer;
