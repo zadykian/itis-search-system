@@ -51,11 +51,38 @@ namespace SearchSystem.VectorSearch.Phases
 
 			var vectors = CreateDocVectors(termEntryStats, allTermsInCorpus);
 
-			await searchProcess.HandleSearchRequests(request => 
-				string.IsNullOrWhiteSpace(request) 
+			await searchProcess.HandleSearchRequests(request =>
+				string.IsNullOrWhiteSpace(request)
 					? new ISearchResult.Failure("Input request cannot be empty.")
 					: HandleValidRequest(request, allTermsInCorpus, vectors));
 		}
+
+		/// <summary>
+		/// Perform vectorization for all documents.
+		/// </summary>
+		/// <param name="termEntryStats">
+		/// Full list of per-term stats in corpus.
+		/// </param>
+		/// <param name="allTermsInCorpus">
+		/// Unique list of terms with its' inverse document frequency.
+		/// </param>
+		private static IReadOnlyDictionary<IDocumentLink, TfIdfVector> CreateDocVectors(
+			IEnumerable<TermEntryStats> termEntryStats,
+			IReadOnlyCollection<(Term Term, double InverseDocFrequency)> allTermsInCorpus)
+			=> termEntryStats
+				.GroupBy(entry => entry.DocumentLink)
+				.ToDictionary(
+					group => group.Key,
+					group =>
+					{
+						var wordsInDocument = group
+							.DistinctBy(entry => entry.Term)
+							.ToImmutableDictionary(entry => entry.Term, entry => entry.TfIdf);
+
+						return (TfIdfVector) allTermsInCorpus
+							.Select(pair => wordsInDocument.TryGetValue(pair.Term, out var tfIdf) ? tfIdf : 0d)
+							.ToImmutableArray();
+					});
 
 		/// <summary>
 		/// Handle valid search request. 
@@ -89,32 +116,5 @@ namespace SearchSystem.VectorSearch.Phases
 				.ToImmutableArray()
 				.To(resultItems => new ISearchResult.Success(resultItems));
 		}
-
-		/// <summary>
-		/// Perform vectorization for all documents.
-		/// </summary>
-		/// <param name="termEntryStats">
-		/// Full list of per-term stats in corpus.
-		/// </param>
-		/// <param name="allTermsInCorpus">
-		/// Unique list of terms with its' inverse document frequency.
-		/// </param>
-		private static IReadOnlyDictionary<IDocumentLink, TfIdfVector> CreateDocVectors(
-			IEnumerable<TermEntryStats> termEntryStats,
-			IReadOnlyCollection<(Term Term, double InverseDocFrequency)> allTermsInCorpus)
-			=> termEntryStats
-				.GroupBy(entry => entry.DocumentLink)
-				.ToDictionary(
-					group => group.Key,
-					group =>
-					{
-						var wordsInDocument = group
-							.DistinctBy(entry => entry.Term)
-							.ToImmutableDictionary(entry => entry.Term, entry => entry.TfIdf);
-
-						return (TfIdfVector) allTermsInCorpus
-							.Select(pair => wordsInDocument.TryGetValue(pair.Term, out var tfIdf) ? tfIdf : 0d)
-							.ToImmutableArray();
-					});
 	}
 }
