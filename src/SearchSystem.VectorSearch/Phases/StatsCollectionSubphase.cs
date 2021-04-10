@@ -59,7 +59,7 @@ namespace SearchSystem.VectorSearch.Phases
 		/// <summary>
 		/// Calculate statistic values for all terms in index <paramref name="termsIndex"/>. 
 		/// </summary>
-		private static IReadOnlyCollection<TermEntryStats> CalculateTermEntryStats(
+		private static TermStats CalculateTermEntryStats(
 			ITermsIndex termsIndex,
 			IReadOnlyDictionary<DocName, DocWithWords> documents)
 			=> termsIndex

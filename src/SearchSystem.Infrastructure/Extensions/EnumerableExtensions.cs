@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SearchSystem.Infrastructure.Extensions
 {
@@ -24,6 +26,15 @@ namespace SearchSystem.Infrastructure.Extensions
 			{
 				yield return item;
 			}
+		}
+
+		/// <summary>
+		/// Return enumerable which contains elements distinct by <paramref name="selector"/> function result. 
+		/// </summary>
+		public static IEnumerable<T> DistinctBy<T, TKey>(this IEnumerable<T> enumerable, Func<T, TKey> selector)
+		{
+			var hashSet = new HashSet<TKey>();
+			return enumerable.Where(value => hashSet.Add(selector(value)));
 		}
 	}
 }

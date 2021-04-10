@@ -11,10 +11,10 @@ namespace SearchSystem.Infrastructure.SearchEnginePhases
 		/// <summary>
 		/// Begin function composition chain. 
 		/// </summary>
-		public static Func<TIn, TOut> Add<TIn, TOut>(Func<TIn, TOut> func) => func;
+		public static Func<Unit, TOut> Add<TOut>(Func<Unit, TOut> func) => func;
 
 		/// <summary>
-		/// Create composition of two functions. 
+		/// Create composition of two async functions. 
 		/// </summary>
 		public static Func<TIn, Task<TOut>> Add<TIn, TInterim, TOut>(
 			this Func<TIn, Task<TInterim>> leftFunc,

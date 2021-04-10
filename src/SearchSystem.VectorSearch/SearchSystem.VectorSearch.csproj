@@ -6,6 +6,11 @@
 		<ProjectReference Include="..\SearchSystem.Indexing\SearchSystem.Indexing.csproj" />
 		<ProjectReference Include="..\SearchSystem.Infrastructure\SearchSystem.Infrastructure.csproj" />
 		<ProjectReference Include="..\SearchSystem.Normalization\SearchSystem.Normalization.csproj" />
+		<ProjectReference Include="..\SearchSystem.UserInteraction\SearchSystem.UserInteraction.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Accord.Math" Version="3.8.0" />
 	</ItemGroup>
 
 </Project>

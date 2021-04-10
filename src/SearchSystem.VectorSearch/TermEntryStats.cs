@@ -1,4 +1,3 @@
-using System;
 using System.Text.RegularExpressions;
 using SearchSystem.Infrastructure.Documents;
 using SearchSystem.Infrastructure.Extensions;
@@ -13,10 +12,10 @@ namespace SearchSystem.VectorSearch
 	/// Struct which contains statistics for term <see cref="TermEntryStats.Term"/>
 	/// in context of document <see cref="TermEntryStats.DocumentLink"/>.
 	/// </summary>
-	public readonly struct TermEntryStats
+	internal readonly struct TermEntryStats
 	{
 		public TermEntryStats(
-			String term,
+			Term term,
 			IDocumentLink documentLink,
 			double termFrequency,
 			double inverseDocFrequency)
@@ -57,7 +56,7 @@ namespace SearchSystem.VectorSearch
 		/// of documents which contains term <see cref="Term"/>.
 		/// </para>
 		/// </summary>
-		private double InverseDocFrequency { get; }
+		public double InverseDocFrequency { get; }
 
 		/// <summary>
 		/// <para>

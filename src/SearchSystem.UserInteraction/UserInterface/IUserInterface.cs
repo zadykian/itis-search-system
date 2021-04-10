@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace SearchSystem.BooleanSearch.UserInterface
+namespace SearchSystem.UserInteraction.UserInterface
 {
 	/// <summary>
 	/// Component with interaction with user.

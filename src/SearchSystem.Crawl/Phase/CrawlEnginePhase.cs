@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -11,6 +10,7 @@ using SearchSystem.Infrastructure.WebPages;
 
 // ReSharper disable BuiltInTypeReferenceStyle
 using PageId = System.UInt32;
+using Docs = System.Collections.Generic.IReadOnlyCollection<SearchSystem.Infrastructure.Documents.IDocument>;
 
 namespace SearchSystem.Crawl.Phase
 {
@@ -25,7 +25,7 @@ namespace SearchSystem.Crawl.Phase
 			=> this.webCrawler = webCrawler;
 
 		/// <inheritdoc />
-		protected override async Task<IReadOnlyCollection<IDocument>> ExecuteAnewAsync(Unit _)
+		protected override async Task<Docs> ExecuteAnewAsync(Unit _)
 			=> await webCrawler
 				.CrawlThroughPages()
 				.Zip(AsyncEnumerable
