@@ -66,31 +66,39 @@ namespace SearchSystem.VectorSearch.Phases
 		/// <param name="allTermsInCorpus">
 		/// Unique list of terms with its' inverse document frequency.
 		/// </param>
-		private static IReadOnlyDictionary<IDocumentLink, TfIdfVector> CreateDocVectors(
+		private static IReadOnlyCollection<(IDocumentLink DocLink, TfIdfVector Vector)> CreateDocVectors(
 			IEnumerable<TermEntryStats> termEntryStats,
 			IReadOnlyCollection<(Term Term, double InverseDocFrequency)> allTermsInCorpus)
 			=> termEntryStats
 				.GroupBy(entry => entry.DocumentLink)
-				.ToDictionary(
-					group => group.Key,
-					group =>
-					{
-						var wordsInDocument = group
-							.DistinctBy(entry => entry.Term)
-							.ToImmutableDictionary(entry => entry.Term, entry => entry.TfIdf);
+				.Select(group => (
+					DocLink: group.Key,
+					Vector: CreateSingleVector(allTermsInCorpus, group)))
+				.ToImmutableArray();
 
-						return (TfIdfVector) allTermsInCorpus
-							.Select(pair => wordsInDocument.TryGetValue(pair.Term, out var tfIdf) ? tfIdf : 0d)
-							.ToImmutableArray();
-					});
+		/// <summary>
+		/// Create TF-IDF vector based on <paramref name="documentTermStats"/> from single document.
+		/// </summary>
+		private static TfIdfVector CreateSingleVector(
+			IEnumerable<(Term Term, double InverseDocFrequency)> allTermsInCorpus,
+			IEnumerable<TermEntryStats> documentTermStats)
+		{
+			var wordsInDocument = documentTermStats
+				.DistinctBy(entry => entry.Term)
+				.ToImmutableDictionary(entry => entry.Term, entry => entry.TfIdf);
+
+			return allTermsInCorpus
+				.Select(pair => wordsInDocument.TryGetValue(pair.Term, out var tfIdf) ? tfIdf : 0d)
+				.ToImmutableArray();
+		}
 
 		/// <summary>
 		/// Handle valid search request. 
 		/// </summary>
 		private ISearchResult.Success HandleValidRequest(
 			Request request,
-			ImmutableArray<(Term Term, double InverseDocFrequency)> allTermsInCorpus,
-			IReadOnlyDictionary<IDocumentLink, TfIdfVector> vectors)
+			IEnumerable<(Term Term, double InverseDocFrequency)> allTermsInCorpus,
+			IEnumerable<(IDocumentLink Doc, TfIdfVector Vector)> vectors)
 		{
 			var requestTerms = request
 				.Split(' ')
@@ -108,8 +116,8 @@ namespace SearchSystem.VectorSearch.Phases
 
 			return vectors
 				.Select(pair => (
-					DocLink: pair.Key,
-					Cosine: new Cosine().Similarity(requestVector.ToArray(), pair.Value.ToArray())))
+					DocLink: pair.Doc,
+					Cosine: new Cosine().Similarity(requestVector.ToArray(), pair.Vector.ToArray())))
 				.Select(tuple => new WeightedResultItem(tuple.Cosine, tuple.DocLink))
 				.OrderByDescending(resultItem => resultItem)
 				.Take(10)
